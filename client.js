@@ -45,7 +45,7 @@ window.__ModuleLoader__.load({
        current?.cacheStatus&&h('p',{role:'status'},JSON.stringify(current.cacheStatus))
       ),
       h('details',{open:true},h('summary',null,'Reasoning settings'),
-       h('p',{className:'dsh-strata-small'},'Choose the names shown in DSH and the exact reasoning_effort values sent to this engine. These settings apply to this model only.'),
+       h('p',{className:'dsh-strata-small'},'Choose the names shown in DSH and the exact reasoning_effort values sent to this engine. These settings apply to this model only. Backend value off disables thinking through chat_template_kwargs.enable_thinking=false.'),
        h('div',{className:'dsh-strata-grid'},(draft.reasoning?.efforts||[]).map((row,index)=>h('div',{key:row.id,className:'dsh-strata-field'},
         h('label',null,h('span',null,'Display name'),h('input',{'aria-label':'Reasoning name '+(index+1),value:row.name,onChange:e=>edit('reasoning',{...draft.reasoning,efforts:draft.reasoning.efforts.map((r,i)=>i===index?{...r,name:e.target.value}:r)},false)})),
         h('label',null,h('span',null,'Backend value'),h('input',{'aria-label':'Reasoning backend value '+(index+1),value:row.value,onChange:e=>edit('reasoning',{...draft.reasoning,efforts:draft.reasoning.efforts.map((r,i)=>i===index?{...r,value:e.target.value}:r)},false)})),
@@ -54,7 +54,7 @@ window.__ModuleLoader__.load({
        h('label',{className:'dsh-strata-field'},h('span',null,'Default reasoning'),h('select',{'aria-label':'Default reasoning',value:draft.reasoning?.defaultEffort||'',onChange:e=>edit('reasoning',{...draft.reasoning,defaultEffort:e.target.value},false)},h('option',{value:''},'Engine default'),(draft.reasoning?.efforts||[]).map(row=>h('option',{key:row.id,value:row.id},row.name||row.id)))),
        h('div',{className:'dsh-strata-actions',style:{marginTop:10}},
         h('button',{onClick:()=>{const id='effort_'+Date.now().toString(36);edit('reasoning',{efforts:[...(draft.reasoning?.efforts||[]),{id,name:'',value:''}],defaultEffort:draft.reasoning?.defaultEffort||id},false);}},'Add reasoning level'),
-        h('button',{onClick:()=>edit('reasoning',{efforts:[{id:'low',name:'Low',value:'low'},{id:'medium',name:'Medium',value:'medium'},{id:'xhigh',name:'XHigh',value:'xhigh'}],defaultEffort:'medium'},false)},'Qwen3.8 defaults')
+        h('button',{onClick:()=>edit('reasoning',{efforts:[{id:'off',name:'Off',value:'off'},{id:'low',name:'Low',value:'low'},{id:'medium',name:'Medium',value:'medium'},{id:'xhigh',name:'XHigh',value:'xhigh'}],defaultEffort:'medium'},false)},'Qwen3.8 defaults')
        )
       ),
       true&&h('p',{className:'dsh-strata-small'},t('Choose any shard of a complete GGUF set; import discovers the matching shards. A single GGUF works too. MTP remains on the text GPU.')),
