@@ -70,3 +70,16 @@ The search starts at 80% resident KV, probes FP16/FP16, Q4/Q4 and Q8/Q8, refines
 The tuner records actual token usage, timings, observed free VRAM, every trial and manual locks. Memory-search neighbor probes reduce reliance on monotonic allocation. This remains a bounded heuristic: it does not establish a global performance optimum or prove numerical equivalence after quantization. NVIDIA telemetry is currently required. The staged search and manual-lock behavior have automated tests; a new full hardware tuning sweep was intentionally not run for this release because the owner requested reuse of saved settings.
 
 When Start or a chat finds an existing server on the saved port, it automatically reuses it only if `/v1/models` advertises the exact saved model ID. The plugin never takes ownership of that process: Stop detaches, and saved launch changes require restarting the external server yourself. A different model, an invalid response, or an authenticated server without matching credentials is rejected. Strata tuning requires a plugin-owned server and never reuses an external process.
+
+## Per-model reasoning settings
+
+Edit a model profile to add/remove reasoning levels, give each a display name,
+and set the exact `reasoning_effort` backend value. Choose a default level, or
+Engine default to leave the request unspecified. Custom names and values are
+supported; availability is declared per profile, not assumed for every model.
+The engine/template must accept the configured backend values.
+
+Qwen3.8 profiles start with Low → `low`, Medium → `medium`, and XHigh → `xhigh`,
+with Medium as default. The conversation model picker uses these profile-owned
+settings through DSH's existing adapter reasoning metadata. No DSH core patch
+is required. An empty level list hides the reasoning selector for that profile.
