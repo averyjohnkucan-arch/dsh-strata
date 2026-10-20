@@ -83,3 +83,13 @@ Qwen3.8 profiles start with Low → `low`, Medium → `medium`, and XHigh → `x
 with Medium as default. The conversation model picker uses these profile-owned
 settings through DSH's existing adapter reasoning metadata. No DSH core patch
 is required. An empty level list hides the reasoning selector for that profile.
+
+## Model Scheduler integration
+
+Optionally install `dsh-model-scheduler` for shared GPU admission, queued chat switching, manual load/unload and a configurable 30-second idle timeout. This provider remains independently usable. Scheduling policy lives in that separate Cordis service; no Harness core changes are required. Owned engine process groups are stopped before GPU release is reported. External servers are detached, never killed.
+
+## Per-chat native KV checkpoints
+
+Enabled by default for managed single-slot servers; turn it off in a profile’s KV checkpoints section. Checkpoints live under `<dataDir>/kv/chats/<hashed-session-id>/`, default `~/.dsh/dsh-strata/kv`. The latest native snapshot is kept for two model configurations per chat. Each successful model step saves the native slot to a private file, syncs it and atomically publishes its catalog entry before deleting the superseded snapshot. Failed saves preserve the last committed snapshot. Aborted/failed steps retain their earlier checkpoint. Auxiliary title/compaction calls do not replace a chat checkpoint.
+
+Restores happen before generation, including after process restart. A new chat can restore the compatible snapshot with the longest matching system/message prefix; the engine validates its native format and computes the actual token prefix. Launch settings, model paths and file timestamps participate in compatibility checks. Restores never add old messages to a new conversation. Chat operations are serialized around restore/generate/save because the native API exposes slot 0. Large checkpoints require real disk/PCIe transfer time. Full OS power-loss testing has not been performed. Native parallel/batch mode does not support disk snapshots; its API reports that limitation and the card shows a KV warning. Externally managed servers are not checkpointed by this plugin.

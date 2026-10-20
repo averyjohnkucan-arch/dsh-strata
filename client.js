@@ -14,7 +14,7 @@ window.__ModuleLoader__.load({
     const refresh=useCallback(async()=>{const next=await api('list');setData(next);return next;},[]);
     useEffect(()=>{let live=true;api('list').then(x=>{if(live)setData(x);}).catch(e=>{if(live)setError(e.message);});return()=>{live=false;};},[]);
     const runningJobs=data?.jobs.filter(j=>j.status==='running')||[];
-    useEffect(()=>{if(!runningJobs.length)return;let live=true;const timer=setInterval(()=>api('list').then(x=>{if(live)setData(x);}).catch(e=>{if(live)setError(e.message);}),1500);return()=>{live=false;clearInterval(timer);};},[runningJobs.length]);
+    useEffect(()=>{if(!data)return;let live=true;const timer=setInterval(()=>api('list').then(x=>{if(live)setData(x);}).catch(e=>{if(live)setError(e.message);}),1500);return()=>{live=false;clearInterval(timer);};},[!!data]);
     const action=async(name,payload={})=>{setBusy(true);setError('');try{const result=await api(name,payload);await refresh();return result;}catch(e){setError(e.message);throw e;}finally{setBusy(false);}};
     const perform=(name,payload)=>action(name,payload).catch(()=>{});
     function edit(key,value,lock=true){setDraft(p=>({...p,[key]:value,locks:lock?[...new Set([...p.locks,key])]:p.locks}));}
@@ -34,11 +34,16 @@ window.__ModuleLoader__.load({
     return h('section',{className:'dsh-strata-card','aria-label':'Strata'},h('style',null,css),h('div',{className:'dsh-strata-head'},h('h3',null,'Strata'),h('button',{disabled:busy||!!draft,onClick:async()=>{try{setDraft(await action('new'));setRawHelp('');}catch{}}},t('Add model'))),
      h('p',null,t('Local models and saved launch profiles.')),
      error&&h('p',{role:'alert',className:'dsh-strata-error'},error),status&&h('p',{role:'status'},status),!data&&h('p',null,t('Loading…')),
-     data?.profiles.map(p=>h('div',{className:'dsh-strata-row',key:p.id},h('div',null,h('strong',null,p.name),h('div',{className:'dsh-strata-small'},`${p.context.toLocaleString()} · ${p.status}`)),h('div',{className:'dsh-strata-actions'},h('button',{disabled:busy||!!draft,onClick:()=>{setDraft(structuredClone(p));setRawHelp('');setStatus('');}},t('Edit')),h('button',{disabled:busy,onClick:()=>perform(p.status==='running'?'stop':'prepareStart',{id:p.id})},t(p.status==='running'?'Stop':'Start')),p.status!=='running'&&h('button',{disabled:busy,onClick:()=>perform('attach',{id:p.id})},t('Attach running server'))))),
+     data?.profiles.map(p=>h('div',{className:'dsh-strata-row',key:p.id},h('div',null,h('strong',null,p.name),h('div',{className:'dsh-strata-small'},`${p.context.toLocaleString()} · ${p.external?'external attachment':p.status}${p.activeRequests?' · '+p.activeRequests+' active request(s)':''}${p.cacheStatus?' · KV '+(p.cacheStatus.message||p.cacheStatus.phase):''}`)),h('div',{className:'dsh-strata-actions'},h('button',{disabled:busy||!!draft,onClick:()=>{setDraft(structuredClone(p));setRawHelp('');setStatus('');}},t('Edit')),h('button',{disabled:busy,onClick:()=>perform(p.status==='running'?'stop':'prepareStart',{id:p.id})},p.external?'Detach':(p.status==='running'?'Unload':'Load')),p.status!=='running'&&h('button',{disabled:busy,onClick:()=>perform('attach',{id:p.id})},t('Attach running server'))))),
      data&&!data.profiles.length&&h('p',{className:'dsh-strata-small'},t('Add a model, choose its files, then save its configuration.')),
      draft&&h('div',null,
       h('div',{className:'dsh-strata-actions'},h('button',{onClick:()=>{setSelection([]);browse('bulk');}},t('Select model files')),true&&h('button',{onClick:()=>browse('savedConfig')},t('Import saved Strata configuration'))),assignReport&&h('p',{role:'status'},assignReport.files.map(f=>f.kind+': '+f.path.split('/').pop()).join(' · ')),assignReport?.warnings.map(w=>h('p',{key:w,className:'dsh-strata-error'},w)),
       h('div',{className:'dsh-strata-grid'},field('name','Profile name','text',null,false),field('modelId','Model ID (optional)','text',null,false),field('context','Context length','number'),field('port','Local port','number',null,false),field('gpu','GPU index','number'),pathField('modelPath','GGUF model or any shard'),true&&pathField('projectorPath','Vision projector GGUF'),true&&pathField('mtpPath','MTP GGUF or prepared runtime')),
+      h('details',null,h('summary',null,'KV checkpoints'),
+       h('label',null,h('input',{type:'checkbox',checked:draft.kvCache!==false,onChange:e=>edit('kvCache',e.target.checked,false)}),' Save and restore per-chat KV on disk'),
+       h('p',{className:'dsh-strata-small'},'Saves after each model step. Keeps the latest checkpoint for two model configurations per chat. Requires a managed, single-slot Strata server. Large checkpoints take time to transfer.'),
+       current?.cacheStatus&&h('p',{role:'status'},JSON.stringify(current.cacheStatus))
+      ),
       h('details',{open:true},h('summary',null,'Reasoning settings'),
        h('p',{className:'dsh-strata-small'},'Choose the names shown in DSH and the exact reasoning_effort values sent to this engine. These settings apply to this model only.'),
        h('div',{className:'dsh-strata-grid'},(draft.reasoning?.efforts||[]).map((row,index)=>h('div',{key:row.id,className:'dsh-strata-field'},
