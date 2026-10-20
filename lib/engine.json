@@ -1,0 +1,7 @@
+{
+  "id": "strata",
+  "title": "Strata",
+  "source": "https://github.com/averyjohnkucan-arch/StrataUnleashed",
+  "revision": "c73cde37581e6a79664176a08a232480c1b1fcfc",
+  "catalogGeneratedFrom": "unleashed-current-tqp/strata --help"
+}

@@ -1,0 +1,4 @@
+- insert:
+    - id: dsh-strata
+      name: dsh-strata
+      config: {}
