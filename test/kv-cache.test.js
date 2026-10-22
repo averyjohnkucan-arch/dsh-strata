@@ -12,3 +12,11 @@ test('third model evicts oldest model only after successful publication',async t
 test('serial gate prevents interleaved restore/generate/save and releases cancelled waiters',async()=>{const gate=new SerialGate(),release=await gate.acquire();const abort=new AbortController();let entered=false;const pending=gate.acquire(abort.signal).then(()=>entered=true);abort.abort(new Error('cancelled'));assert.equal(entered,false);release();await assert.rejects(pending,/cancelled/);const next=await gate.acquire();next();});
 
 test('display and runtime state never change native checkpoint compatibility',async t=>{const f=await fixture(t),file=join(f.root,'model.gguf');await writeFile(file,'weights');const profile={modelPath:file,executable:file,options:{'--kv':'FP16/FP16'}};assert.equal(await f.cache.identity(profile),await f.cache.identity({...profile,name:'renamed',status:'running',activeRequests:1,log:'process output',cacheStatus:{phase:'saved'},kvCache:true}));});
+
+test('own-chat tool edits defer partial invalidation to native token validation',async t=>{
+ const f=await fixture(t);
+ await f.cache.save(f.state,'edited-chat','model-a',['old-system-tools','hello'],{});
+ const own=await f.cache.candidate('edited-chat','model-a',['new-system-tools','hello']);
+ assert.equal(own.own,true);assert.equal(own.common,0);
+ assert.equal(await f.cache.candidate('unrelated-chat','model-a',['new-system-tools','hello']),undefined);
+});

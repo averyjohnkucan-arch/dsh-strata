@@ -1,6 +1,6 @@
 {
   "name": "dsh-strata",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Strata local inference provider, model profiles and engine controls for DeepSeek Harness.",
   "type": "module",
   "license": "MIT",

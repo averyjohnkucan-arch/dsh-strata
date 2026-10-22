@@ -1,5 +1,10 @@
 # Checkpoint verification — 2026-10-21
 
+Version 0.1.5 additionally covers own-chat system/tool edits in a regression
+test. A matching model checkpoint from that chat remains eligible for native
+token-prefix validation when the logical system/tool hash changes. Cross-chat
+reuse still requires a matching logical prefix. All 30 plugin tests pass.
+
 RTX PRO 5000 Blackwell laptop GPU; Atomic Q5 Turbo; 32,768-token context; local Strata source `e76d4c3d8e25bde81a1333f3f4254ffc5c00d035`. These are individual correctness-test measurements while an unrelated CUDA build and CPU background work were running, not a throughput benchmark.
 
 | Operation | Measured time | Native cache reuse |
