@@ -97,3 +97,9 @@ Restores happen before generation, including after process restart. A new chat c
 The **Off** reasoning level disables thinking with `chat_template_kwargs.enable_thinking=false`; it does not send the literal `off` as an unsupported reasoning-effort value. Existing version-1 model profiles gain Off once on upgrade; custom names and Medium defaults are preserved. Set a custom row's backend value to `off` for the same behavior.
 
 The provider marks the leading system/tool message with Strata's native shared-prefix metadata. For Qwen templates that reject system-only rendering, it prepares a tokenizer copy under the plugin data directory: only the non-generation prefix-rendering check is relaxed. Normal generation retains the original check and prompt output. Original tokenizer/model files are never edited. Other templates are used unchanged.
+
+### Independent starting checkpoint
+
+Fresh chats use a separate `kv/bases/` checkpoint keyed to the model and exact system/tool/rendering configuration. The base survives per-chat model eviction; changes create a new compatible base once. Existing chats prefer their latest per-step checkpoint. Each chat keeps its last two model configurations, with successful saves replacing the preceding step for that configuration.
+
+The native server retains state only after a generation request. The plugin builds a base using system/tools, a blank synthetic user message and one discarded token. No real user or assistant history enters that request. The native `strata_prefix` anchor restricts reuse to the matching system/tool prefix before the real user prompt. The synthetic tail is never added to a conversation. Established chats do not pause to build new bases when their toolsets change. Legacy cross-chat matching is only a fallback when no base exists.
