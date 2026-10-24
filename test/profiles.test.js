@@ -10,3 +10,24 @@ test('imported argument vectors retain exact ordering until an inference control
 test('binary memory boundary returns the largest acceptable allocation and checks neighbors',async()=>{const result=await binaryBoundary({low:0,high:100,probe:async n=>({ok:n<=71}),acceptable:r=>r.ok});assert.equal(result.best.value,71);assert.ok(result.visited.some(([n])=>n===72));});
 test('argv values have no shell expansion and tuple parameters remain adjacent',()=>{assert.deepEqual(optionArgs({'--path':'$(touch /tmp/nope)','--control-vector-layer-range':{argv:[1,48]},'--native-dense-gguf':['a','b']}),['--path','$(touch /tmp/nope)','--control-vector-layer-range','1','48','--native-dense-gguf','a','--native-dense-gguf','b']);});
 test('staged tuner preserves locks and rejects prefill gains that lose over 5 percent decode',async()=>{const {tune}=await import('../lib/tuner.js');const p=freshProfile('strata');p.kvK='Q8';p.kvV='Q5';p.expertCount=1024;p.tunePolicy.maxTrials=80;p.options['--pool-workers']=3;p.locks=['kvK','kvV','context','residentMode','residentPercent','visionDevice','options.--spec','options.--pool-workers','options.--short-read','options.--batch','options.--pool-tasks'];const candidates=[];const result=await tune(p,{running:new Map()},new AbortController().signal,()=>{},{gpuReader:async()=>({totalMiB:24576,freePercent:99,utilization:0}),evaluator:async c=>{candidates.push(c);assert.equal(c.kvK,'Q8');assert.equal(c.kvV,'Q5');assert.equal(c.options['--pool-workers'],3);const prefill=c.tuned.options['--prefill']||512,experts=c.tuned.options['--expert-cache']||0;return{ok:true,decode:prefill===1024?90:prefill===8192?96:100,prefill:prefill===1024?9999:prefill,freePercent:10-experts/100};}});assert.equal(result.tuned.options['--prefill'],8192);assert.notEqual(result.tuned.options['--prefill'],1024);assert.ok(result.final.freePercent>=0.7&&result.final.freePercent<=1.5);assert.equal(result.decodePeak,100);assert.ok(result.finalShort.decode>=95);assert.ok(candidates.length>10);});
+
+test('Qwen35 native options preserve numeric embedded MTP and map exact KV modes',()=>{
+ const p={...freshProfile('strata'),architecture:'qwen35moe',modelPath:'/models/q36.gguf',kvCache:false,residentPercent:100,options:{'--mtp':2}};
+ for(const [type,flag] of [['FP16','fp16'],['Q8','int8']]){
+  p.kvK=p.kvV=type;const clean=normalizeProfile(p,'strata');assert.equal(clean.options['--mtp'],2);assert.equal(clean.mtpPath,'');
+  const args=strataArgs(clean);assert.equal(args[args.indexOf('--kv')+1],flag);assert.equal(args[args.indexOf('--mtp')+1],'2');assert.ok(!args.includes('--pack'));assert.ok(!args.includes('--kv-resident'));
+ }
+ p.kvK='FP16';assert.throws(()=>strataArgs(p),/supports FP16/);
+});
+test('Qwen35 rejects invented residency and checkpoint capabilities',()=>{
+ const p={...freshProfile('strata'),architecture:'qwen35moe',kvCache:false,residentPercent:80};assert.throws(()=>strataArgs(p),/partial token-cell/);
+ p.residentPercent=100;p.kvCache=true;assert.throws(()=>strataArgs(p),/checkpoint/);
+ p.kvCache=false;p.options['--spec']=2;assert.throws(()=>strataArgs(p),/does not use --spec/);
+});
+
+test('external Qwen MTP is explicit, numeric and fingerprinted without replacing target weights',()=>{
+ const p={...freshProfile('strata'),architecture:'qwen35moe',modelPath:'/target.gguf',externalMtpPath:'/donor.gguf',embeddedMtp:false,kvCache:false,residentPercent:100,options:{'--mtp':2}};
+ const a=strataArgs(p);assert.equal(a[a.indexOf('--native')+1],'/target.gguf');assert.equal(a[a.indexOf('--mtp-model')+1],'/donor.gguf');
+ const old=launchFingerprint(p);p.externalMtpPath='/other.gguf';assert.notEqual(launchFingerprint(p),old);
+ p.embeddedMtp=true;assert.throws(()=>strataArgs(p),/cannot replace/);p.embeddedMtp=false;p.options['--mtp']=0;assert.throws(()=>strataArgs(p),/positive MTP/);
+});
