@@ -45,7 +45,7 @@ Node 22.19+ is required. Development provider dependencies may report skipped op
 
 ## Strata runtime and supported formats
 
-Engine source: [StrataUnleashed](https://github.com/averyjohnkucan-arch/StrataUnleashed), pinned to `c73cde37581e6a79664176a08a232480c1b1fcfc`, the latest revision inspected for this release. Engine updates are explicit version changes, independent of saved model settings.
+Engine source: [StrataUnleashed](https://github.com/averyjohnkucan-arch/StrataUnleashed), pinned to `efdd78c4decbfa7514a4daa13e3a75969604d5e5`, the latest revision inspected for this release. Engine updates are explicit version changes, independent of saved model settings.
 
 The automated setup currently builds the NVIDIA CUDA engine on Linux from that pinned source, creates a Python environment, installs the engine's requirements, and builds CPU/CUDA vision readers. It attempts a Vulkan vision reader and retains CPU fallback if Vulkan tools are unavailable. This requires Python with venv support, Git, CMake, Ninja, a C++ compiler and a compatible CUDA toolkit/driver. These system prerequisites are not installed with administrator privileges. Another supported engine binary can be supplied manually. This first release is not a universal precompiled engine distribution.
 
@@ -103,3 +103,24 @@ The provider marks the leading system/tool message with Strata's native shared-p
 Fresh chats use a separate `kv/bases/` checkpoint keyed to the model and exact system/tool/rendering configuration. The base survives per-chat model eviction; changes create a new compatible base once. Existing chats prefer their latest per-step checkpoint. Each chat keeps its last two model configurations, with successful saves replacing the preceding step for that configuration.
 
 The native server retains state only after a generation request. The plugin builds a base using system/tools, a blank synthetic user message and one discarded token. No real user or assistant history enters that request. The native `strata_prefix` anchor restricts reuse to the matching system/tool prefix before the real user prompt. The synthetic tail is never added to a conversation. Established chats do not pause to build new bases when their toolsets change. Legacy cross-chat matching is only a fallback when no base exists.
+
+### Managed native GGUF profiles
+
+Saved profiles with `nativeServer: "llama"` launch a compatible `llama-server`
+through the same Cordis provider and shared scheduler. They use explicit native
+context and FP16 or Q8 KV, preserve their configured model identity, and stop
+only their owned process group. These profiles set `kvCache: false` to disable
+Strata's incompatible checkpoint serialization; the native server still has its
+normal inference KV cache. Per-mode `samplingPresets` are applied on the outgoing
+DSH request, including separate image-input recommendations where supplied.
+Registration is not a claim of model-format, memory-fit, quality or performance
+qualification. Profiles marked as awaiting tuning retain unmeasured p?/d? labels.
+
+
+### Native Qwen 35B A3B import
+
+Import `qwen35moe` GGUF files with the Strata engine. Import extracts the file's tokenizer and keeps the original weights; it does not requantize them. The native family uses FP16/FP16 or Q8/Q8 (INT8) KV and a numeric MTP draft count. Set that count to zero for a model without MTP. Native Qwen profiles keep their full cache on the GPU; Flash-Next token-cell residency and external disk checkpoint serialization are not available on this path.
+
+A non-MTP target can optionally use an **external MTP donor GGUF** with a positive draft count. The engine requires matching trunk geometry and tokenizer IDs, uploads only the donor's MTP block, and retains the target's embedding, output head and verification. Draft acceptance can differ on fine-tunes. An external donor cannot replace an embedded draft. Numerical correctness, memory fit and speed must be measured before selecting a donor.
+
+The engine merge's build and hardware checks are recorded separately from import. Successful tokenizer extraction is not model qualification. Existing profiles are not automatically migrated by installing an engine update. The external family-specific tuning queue compares FP16 against INT8 at approximately 1,024 input tokens and three 512-token outputs; final acceptance alone uses 80% context and 100 outputs. The older Flash-Next automatic tuner refuses Qwen35 profiles instead of passing ineffective controls.
