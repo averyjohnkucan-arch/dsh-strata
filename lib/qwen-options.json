@@ -1,0 +1,86 @@
+[
+  {
+    "flag": "--expert-slots",
+    "kind": "text",
+    "metavar": "N",
+    "help": "Number of GPU expert slots per layer; zero uses the native memory-fitting policy.",
+    "group": "Stock Qwen3.6 options"
+  },
+  {
+    "flag": "--expert-vram",
+    "kind": "text",
+    "metavar": "GiB",
+    "help": "GPU memory budget for routed experts, in GiB.",
+    "group": "Stock Qwen3.6 options"
+  },
+  {
+    "flag": "--hybrid-rows",
+    "kind": "text",
+    "metavar": "N",
+    "help": "Rows processed by the native hybrid expert path.",
+    "group": "Stock Qwen3.6 options"
+  },
+  {
+    "flag": "--batch-mtp",
+    "kind": "boolean",
+    "metavar": "",
+    "help": "Enable MTP verification with multiple native decode slots.",
+    "group": "Stock Qwen3.6 options"
+  },
+  {
+    "flag": "--draft-vocab",
+    "kind": "text",
+    "metavar": "N",
+    "help": "Limit draft proposals to the first N token IDs.",
+    "group": "Stock Qwen3.6 options"
+  },
+  {
+    "flag": "--no-graph",
+    "kind": "boolean",
+    "metavar": "",
+    "help": "Disable native CUDA graphs.",
+    "group": "Stock Qwen3.6 options"
+  },
+  {
+    "flag": "--no-warmup",
+    "kind": "boolean",
+    "metavar": "",
+    "help": "Skip engine warmup.",
+    "group": "Stock Qwen3.6 options"
+  },
+  {
+    "flag": "--prefill",
+    "kind": "text",
+    "metavar": "CHUNK",
+    "help": "batched prompt processing in chunks of CHUNK tokens (needs --native); auto = the largest chunk up to 8192 whose buffers the expert cache can lend; auto:16384 / auto:32768 (or STRATA_PREFILL_AUTO_MAX) allow bigger ones",
+    "group": "Stock Qwen3.6 options"
+  },
+  {
+    "flag": "--pool-workers",
+    "kind": "text",
+    "metavar": "N",
+    "help": "R2.2: CPU expert pool worker count.  Default 0 = every physical core except the one the host loop spins on (with --pool-affinity auto or p-cores on a hybrid CPU: P-cores minus 1).  A sweep is how the pool's deviation from `cpu_s2` is attributed.",
+    "group": "Stock Qwen3.6 options"
+  },
+  {
+    "flag": "--batch",
+    "kind": "text",
+    "metavar": "N / --slots N",
+    "help": "--serve (opt-in): up to N requests decode together in batch slots (2..8 normally; --batch-mtp waves more through eight-row windows), each slot with its own session (VRAM like the main one); docs/BATCHING.md",
+    "group": "Stock Qwen3.6 options"
+  },
+  {
+    "flag": "--vision",
+    "kind": "boolean",
+    "metavar": "",
+    "help": "--serve takes images too (GENI requests; embeddings from strata-vision)",
+    "group": "Stock Qwen3.6 options"
+  },
+  {
+    "flag": "--max-new",
+    "kind": "text",
+    "metavar": "N",
+    "help": "tokens to generate (default 16)",
+    "group": "Stock Qwen3.6 options"
+  }
+]

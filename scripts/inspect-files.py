@@ -68,7 +68,8 @@ def assign(paths):
   missing=[i+1 for i in range(expected) if i not in indices]
   if missing:warnings.append('Missing model shards: '+', '.join(map(str,missing)))
   if 0 not in indices:warnings.append('Select the first model shard before importing.')
-  result.update(modelPath=shards[0]['path'],modelFiles=[x['path'] for x in shards])
+  result.update(modelPath=shards[0]['path'],modelFiles=[x['path'] for x in shards],architecture=shards[0]['architecture'],embeddedMtp=shards[0]['embeddedMtp'])
+  if shards[0]['architecture']=='qwen35moe':result.update(kvK='FP32',kvV='FP32',kvCache=False,residentPercent=100)
   if shards[0]['name']:result['suggestedName']=shards[0]['name']
  for role,key in [('projector','projectorPath'),('mtp','mtpPath'),('ninfer','modelPath')]:
   candidates=[x for x in items if x['kind']==role]

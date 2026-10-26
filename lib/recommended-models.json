@@ -1,0 +1,396 @@
+{
+  "version": 1,
+  "models": [
+    {
+      "id": "gyro-l-regular",
+      "name": "QWEN 3.8 Flash \u00b7 AGENTIONAI Gyro Large Regular Vision",
+      "recommended": true,
+      "files": [
+        {
+          "repo": "agentionai/Qwen3.8-Flash-Next-Gyro-GGUF",
+          "revision": "aa0a0c3e24f9e08716ae806d40489abc7db6237f",
+          "file": "Qwen3.8-Flash-Next-Gyro-L-TQ3_0.gguf",
+          "sha256": "5428a5646eaeaa56cc00a892f92e7546aeadb255233503969ad25cf48c7f359b",
+          "size": 108323559808,
+          "name": "Qwen3.8-Flash-Next-Gyro-L-TQ3_0.gguf",
+          "role": "modelPath",
+          "target": "Qwen3.8-Flash-Next-Gyro-L-TQ3_0.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        },
+        {
+          "repo": "agentionai/Qwen3.8-Flash-Next-Gyro-GGUF",
+          "revision": "aa0a0c3e24f9e08716ae806d40489abc7db6237f",
+          "file": "mmproj-F16.gguf",
+          "sha256": "f456cd796fdbdef0cadb22710b54e0071b6cdf22c07963365baa898267aec517",
+          "size": 904004128,
+          "name": "mmproj-F16.gguf",
+          "role": "projectorPath",
+          "target": "mmproj-F16.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        }
+      ],
+      "notes": "From your saved setup. Confirm engine compatibility and memory fit before loading. Local runtime packs are prepared separately.",
+      "settings": {
+        "context": 262144,
+        "kvK": "Q8",
+        "kvV": "Q8"
+      }
+    },
+    {
+      "id": "flash-huihui-q4",
+      "name": "QWEN 3.8 Flash \u00b7 HUIHUI UD-Q4_K_XL Abliterated v2",
+      "recommended": true,
+      "files": [
+        {
+          "repo": "huihui-ai/Huihui-Qwen3.8-Flash-Next-abliterated-v2-GGUF",
+          "revision": "d7b7fd6c2bda71446542da4e8e325f430f69ec8c",
+          "file": "unsloth-UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf",
+          "sha256": "4448186216b3af4cc558bbce2c3213f01608f8f8b2e5267a9767971dd3ec8082",
+          "size": 10946624,
+          "name": "Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf",
+          "role": "modelPath",
+          "target": "Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        },
+        {
+          "repo": "huihui-ai/Huihui-Qwen3.8-Flash-Next-abliterated-v2-GGUF",
+          "revision": "d7b7fd6c2bda71446542da4e8e325f430f69ec8c",
+          "file": "unsloth-UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00002-of-00004.gguf",
+          "sha256": "6f3e21a5ae10c9124c2405061d89f90b575a0704b2927f059621b7936850b276",
+          "size": 49859583136,
+          "name": "Qwen3.8-Flash-Next-UD-Q4_K_XL-00002-of-00004.gguf",
+          "role": "modelPath",
+          "target": "Qwen3.8-Flash-Next-UD-Q4_K_XL-00002-of-00004.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        },
+        {
+          "repo": "huihui-ai/Huihui-Qwen3.8-Flash-Next-abliterated-v2-GGUF",
+          "revision": "d7b7fd6c2bda71446542da4e8e325f430f69ec8c",
+          "file": "unsloth-UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00003-of-00004.gguf",
+          "sha256": "bb24c1d9c42c129ad93d427d3be6ca9a8d5ca6bf07ca9a50ddca03328d08c702",
+          "size": 49376141504,
+          "name": "Qwen3.8-Flash-Next-UD-Q4_K_XL-00003-of-00004.gguf",
+          "role": "modelPath",
+          "target": "Qwen3.8-Flash-Next-UD-Q4_K_XL-00003-of-00004.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        },
+        {
+          "repo": "huihui-ai/Huihui-Qwen3.8-Flash-Next-abliterated-v2-GGUF",
+          "revision": "d7b7fd6c2bda71446542da4e8e325f430f69ec8c",
+          "file": "unsloth-UD-Q4_K_XL/Qwen3.8-Flash-Next-UD-Q4_K_XL-00004-of-00004.gguf",
+          "sha256": "3d6a9aee4ade5740394da9bcb9fa22ea9343471f246af6914f8fcc8327ceab8e",
+          "size": 12087983520,
+          "name": "Qwen3.8-Flash-Next-UD-Q4_K_XL-00004-of-00004.gguf",
+          "role": "modelPath",
+          "target": "Qwen3.8-Flash-Next-UD-Q4_K_XL-00004-of-00004.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        }
+      ],
+      "notes": "From your saved setup. Confirm engine compatibility and memory fit before loading. Local runtime packs are prepared separately.",
+      "settings": {
+        "context": 262144,
+        "kvK": "Q8",
+        "kvV": "Q8"
+      }
+    },
+    {
+      "id": "bonsai-27b",
+      "name": "TERNARY BONSAI 2 27B \u00b7 PRISM PTQ1_0 Vision",
+      "recommended": true,
+      "files": [
+        {
+          "repo": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+          "revision": "b072e1d3b35a0a630cece372c2127528e0994386",
+          "file": "Ternary-Bonsai-2-27B-PTQ1_0.gguf",
+          "sha256": "53107f530aa52eb00912263ab1ee29bd199261c87cd7b4ad4ca1318c1fe33ee3",
+          "size": 5946648928,
+          "name": "Ternary-Bonsai-2-27B-PTQ1_0.gguf",
+          "role": "modelPath",
+          "target": "Ternary-Bonsai-2-27B-PTQ1_0.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        },
+        {
+          "sha256": "6c5709383a5ef46a3735e6d5e0fe0f1a41306682c18d45ecc735179938b0b6cc",
+          "name": "mmproj-Ternary-Bonsai-2-27B-F16.gguf",
+          "role": "projectorPath",
+          "target": "mmproj-Ternary-Bonsai-2-27B-F16.gguf",
+          "downloadable": false,
+          "evidence": "Existing local download/hash receipt",
+          "size": 931145856
+        }
+      ],
+      "notes": "From your saved setup. Confirm engine compatibility and memory fit before loading. Local runtime packs are prepared separately.",
+      "settings": {
+        "context": 262144,
+        "kvK": "Q8",
+        "kvV": "Q8",
+        "nativeServer": "llama",
+        "kvCache": false
+      }
+    },
+    {
+      "id": "qwen36-atomic-q8",
+      "name": "QWEN 3.6 35B A3B \u00b7 ATOMICCHAT UDT-Q8_K_XL-MTP Vision",
+      "recommended": true,
+      "files": [
+        {
+          "repo": "AtomicChat/Qwen3.6-35B-A3B-UDT-MTP-GGUF",
+          "revision": "f4295f08b5d821404cd92a83f771c7a83fd99802",
+          "file": "Qwen3.6-35B-A3B-UDT-Q8_K_XL_MTP.gguf",
+          "sha256": "7d0d90e4db4a343240bb5cc3c6341b07bbd0953b035a1dd426c7464bef9e5104",
+          "size": 37750815040,
+          "name": "Qwen3.6-35B-A3B-UDT-Q8_K_XL_MTP.gguf",
+          "role": "modelPath",
+          "target": "Qwen3.6-35B-A3B-UDT-Q8_K_XL_MTP.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        },
+        {
+          "repo": "AtomicChat/Qwen3.6-35B-A3B-UDT-MTP-GGUF",
+          "revision": "f4295f08b5d821404cd92a83f771c7a83fd99802",
+          "file": "mmproj-F16.gguf",
+          "sha256": "71f3cbc1f7cc0f30d09d41cfa924c0060827ebc33bf15ace7e86661e856f0160",
+          "size": 899283584,
+          "name": "mmproj-F16.gguf",
+          "role": "projectorPath",
+          "target": "mmproj-F16.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        }
+      ],
+      "notes": "From your saved setup. Confirm engine compatibility and memory fit before loading. Local runtime packs are prepared separately.",
+      "settings": {
+        "context": 262144,
+        "kvK": "FP32",
+        "kvV": "FP32",
+        "architecture": "qwen35moe",
+        "kvCache": false,
+        "residentMode": "percent",
+        "residentPercent": 100
+      }
+    },
+    {
+      "id": "qwen36-gsq2",
+      "name": "QWEN 3.6 35B A3B \u00b7 UNSLOTH UD-Q2_K_XL",
+      "recommended": true,
+      "files": [
+        {
+          "repo": "unsloth/Qwen3.6-35B-A3B-GGUF",
+          "revision": "a483e9e6cbd595906af30beda3187c2663a1118c",
+          "file": "Qwen3.6-35B-A3B-UD-Q2_K_XL.gguf",
+          "sha256": "96b9c0af5c77a4ecaabe3983175112b5ece763261c1ece12b2494b692a70dad7",
+          "size": 12290628576,
+          "name": "Qwen3.6-35B-A3B-UD-Q2_K_XL.gguf",
+          "role": "modelPath",
+          "target": "Qwen3.6-35B-A3B-UD-Q2_K_XL.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        }
+      ],
+      "notes": "From your saved setup. Confirm engine compatibility and memory fit before loading. Local runtime packs are prepared separately.",
+      "settings": {
+        "context": 262144,
+        "kvK": "FP32",
+        "kvV": "FP32",
+        "architecture": "qwen35moe",
+        "kvCache": false,
+        "residentMode": "percent",
+        "residentPercent": 100
+      }
+    },
+    {
+      "id": "qwen36-unsloth-iq4",
+      "name": "QWEN 3.6 35B A3B \u00b7 UNSLOTH UD-IQ4_NL Vision",
+      "recommended": true,
+      "files": [
+        {
+          "repo": "unsloth/Qwen3.6-35B-A3B-MTP-GGUF",
+          "revision": "5bc3e238d916f48a861bac2f8a1990a0e9b7e98d",
+          "file": "Qwen3.6-35B-A3B-UD-IQ4_NL.gguf",
+          "sha256": "d0ad78047bd0a583bfcb484e9defc63112c5f1f856e310dcf88dc48f2ebeae5b",
+          "size": 18536192288,
+          "name": "Qwen3.6-35B-A3B-UD-IQ4_NL.gguf",
+          "role": "modelPath",
+          "target": "Qwen3.6-35B-A3B-UD-IQ4_NL.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        },
+        {
+          "repo": "unsloth/Qwen3.6-35B-A3B-GGUF",
+          "revision": "a483e9e6cbd595906af30beda3187c2663a1118c",
+          "file": "mmproj-F16.gguf",
+          "sha256": "8971ee4f331ff0a4c609374f32984b3d4e6dc086c0aa35f1d637fad1829e887f",
+          "size": 899283680,
+          "name": "mmproj-F16.gguf",
+          "role": "projectorPath",
+          "target": "mmproj-F16.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        }
+      ],
+      "notes": "From your saved setup. Confirm engine compatibility and memory fit before loading. Local runtime packs are prepared separately.",
+      "settings": {
+        "context": 262144,
+        "kvK": "FP32",
+        "kvV": "FP32",
+        "architecture": "qwen35moe",
+        "kvCache": false,
+        "residentMode": "percent",
+        "residentPercent": 100
+      }
+    },
+    {
+      "id": "qwen36-huihui-q8",
+      "name": "QWEN 3.6 35B A3B \u00b7 HUIHUI Q8_0 Abliterated \u00b7 mradermacher",
+      "recommended": true,
+      "files": [
+        {
+          "repo": "mradermacher/Huihui-Qwen3.6-35B-A3B-abliterated-GGUF",
+          "revision": "0693fc2b47f66380f4b568b01e05195d22edd3a2",
+          "file": "Huihui-Qwen3.6-35B-A3B-abliterated.Q8_0.gguf",
+          "sha256": "7981c833234041b6dc2852b8140a0c08419b16c96f5b20c3c1270813cabd965c",
+          "size": 36903140224,
+          "name": "Huihui-Qwen3.6-35B-A3B-abliterated.Q8_0.gguf",
+          "role": "modelPath",
+          "target": "Huihui-Qwen3.6-35B-A3B-abliterated.Q8_0.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        }
+      ],
+      "notes": "From your saved setup. Confirm engine compatibility and memory fit before loading. Local runtime packs are prepared separately.",
+      "settings": {
+        "context": 262144,
+        "kvK": "FP32",
+        "kvV": "FP32",
+        "architecture": "qwen35moe",
+        "kvCache": false,
+        "residentMode": "percent",
+        "residentPercent": 100
+      }
+    },
+    {
+      "id": "qwen35-4b",
+      "name": "QWEN 3.5 4B \u00b7 UNSLOTH BF16 Vision",
+      "recommended": true,
+      "files": [
+        {
+          "repo": "unsloth/Qwen3.5-4B-MTP-GGUF",
+          "revision": "86835bf9949e4d14d6860f7910b1340ad4f271a9",
+          "file": "Qwen3.5-4B-BF16.gguf",
+          "sha256": "65c0fa68c10d6d8f2bb90e4e26d83c1421c7dde6ce98b9f93624a411f7eb0113",
+          "size": 8665620544,
+          "name": "Qwen3.5-4B-BF16.gguf",
+          "role": "modelPath",
+          "target": "Qwen3.5-4B-BF16.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        },
+        {
+          "repo": "unsloth/Qwen3.5-4B-MTP-GGUF",
+          "revision": "86835bf9949e4d14d6860f7910b1340ad4f271a9",
+          "file": "mmproj-F16.gguf",
+          "sha256": "d63b1a847fe9cd52e8e1525008cd33703821299f5a9eae40b2865426208767e7",
+          "size": 672423488,
+          "name": "mmproj-F16.gguf",
+          "role": "projectorPath",
+          "target": "mmproj-F16.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        }
+      ],
+      "notes": "From your saved setup. Confirm engine compatibility and memory fit before loading. Local runtime packs are prepared separately.",
+      "settings": {
+        "context": 262144,
+        "kvK": "FP16",
+        "kvV": "FP16",
+        "nativeServer": "llama",
+        "kvCache": false
+      }
+    },
+    {
+      "id": "qwen35-2b",
+      "name": "QWEN 3.5 2B \u00b7 UNSLOTH BF16 Vision",
+      "recommended": true,
+      "files": [
+        {
+          "repo": "unsloth/Qwen3.5-2B-MTP-GGUF",
+          "revision": "e05864f8066d874d5f85aaff007ae57a2a7d1efe",
+          "file": "Qwen3.5-2B-BF16.gguf",
+          "sha256": "715edf061c75d430f122d6876252871789210498c3d5521ab951be9bca2e8548",
+          "size": 3897388192,
+          "name": "Qwen3.5-2B-BF16.gguf",
+          "role": "modelPath",
+          "target": "Qwen3.5-2B-BF16.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        },
+        {
+          "repo": "unsloth/Qwen3.5-2B-MTP-GGUF",
+          "revision": "e05864f8066d874d5f85aaff007ae57a2a7d1efe",
+          "file": "mmproj-F16.gguf",
+          "sha256": "6385ece50b2c6898e417170867b5a05fb8a0bb1c205f2e7e4e0698e51c0b65c8",
+          "size": 668227136,
+          "name": "mmproj-F16.gguf",
+          "role": "projectorPath",
+          "target": "mmproj-F16.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        }
+      ],
+      "notes": "From your saved setup. Confirm engine compatibility and memory fit before loading. Local runtime packs are prepared separately.",
+      "settings": {
+        "context": 262144,
+        "kvK": "Q8",
+        "kvV": "Q8",
+        "nativeServer": "llama",
+        "kvCache": false
+      }
+    },
+    {
+      "id": "qwen35-08b",
+      "name": "QWEN 3.5 0.8B \u00b7 UNSLOTH BF16 Vision",
+      "recommended": true,
+      "files": [
+        {
+          "repo": "unsloth/Qwen3.5-0.8B-MTP-GGUF",
+          "revision": "cf8a611f6ed2c2060046219a19f12cd3d5ecd67c",
+          "file": "Qwen3.5-0.8B-BF16.gguf",
+          "sha256": "dc7e9018bbb5eac8b188b2f8e39391d901654d0caea1c24069daf24d8e47b3b1",
+          "size": 1557662880,
+          "name": "Qwen3.5-0.8B-BF16.gguf",
+          "role": "modelPath",
+          "target": "Qwen3.5-0.8B-BF16.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        },
+        {
+          "repo": "unsloth/Qwen3.5-0.8B-MTP-GGUF",
+          "revision": "cf8a611f6ed2c2060046219a19f12cd3d5ecd67c",
+          "file": "mmproj-F16.gguf",
+          "sha256": "ea8519d0c6240e465a0265d6912f73d750a17ca7d42150281b778b8b59f05798",
+          "size": 204987104,
+          "name": "mmproj-F16.gguf",
+          "role": "projectorPath",
+          "target": "mmproj-F16.gguf",
+          "downloadable": true,
+          "evidence": "Existing local download/hash receipt"
+        }
+      ],
+      "notes": "From your saved setup. Confirm engine compatibility and memory fit before loading. Local runtime packs are prepared separately.",
+      "settings": {
+        "context": 262144,
+        "kvK": "Q8",
+        "kvV": "Q8",
+        "nativeServer": "llama",
+        "kvCache": false
+      }
+    }
+  ]
+}

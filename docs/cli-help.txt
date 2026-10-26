@@ -17,8 +17,6 @@ strata generate --pack DIR --tokens "1,2,3" [options]
   --ple-inflight N     outstanding SSD reads (default 256)
   --ple-delay-us U     fault injection: each row read completes no earlier than U us
   --ple-sync-submit    A/B arm: submit table reads on the token thread (default: an I/O thread)
-  --kv FP16/FP16|FP16/Q8|FP16/Q6|Q8/Q8|Q8/Q6|Q6/Q8|Q6/Q6|Q8/Q5|Q5/Q5|Q5/Q4|Q4/Q4
-                       independent main-model K/V precision; mixed modes require resident KV
   --kv fp16|int8       KV storage (plan v0.3 P7): int8 codes + fp16 scale per 64 values, half the
                        VRAM; default fp16 until gate G-C accepts int8
   --kv q4_0            4-bit K/V after a Hadamard rotation (PR #21): half of int8's memory,
@@ -85,7 +83,7 @@ strata generate --pack DIR --tokens "1,2,3" [options]
   --vision             --serve takes images too (GENI requests; embeddings from strata-vision)
   --prompt-cache N     --serve: keep N conversation checkpoints between requests (default 6, ~118 MB
                        of RAM each; 0 = read every prompt from the start)
-  --conversation-cache-mib N  --serve: RAM budget for parked conversations (default 0 = off)
+  --conversation-cache-mib N  --serve: RAM budget for parked conversations (default: sized from the free RAM, up to 8192; 0 = off)
   --conversation-cache-slots N  --serve: at most N parked conversations (default 4)
   --conversation-cache-min-free-mib N  --serve: RAM floor (under MemAvailable, the cgroup limits and
                        --memory-limit-mib) when parking, saving or restoring a session (default 2560)
@@ -141,6 +139,10 @@ strata generate --pack DIR --tokens "1,2,3" [options]
                        (default) or one per stream (llama.cpp's MTP graph)
   --mtp-q4 all|proj|head  opt-in: the draft layer's projections and/or draft head as 4-bit copies
   --mtp-draft-vocab FILE  opt-in: the draft head's token subset (default <mtp>/draft_vocab.bin)
+  --draft mtp|dflash2  the draft source (default mtp); dflash2 needs --draft-model PACK (tools/dflash2_pack.py)
+                       and keeps the MTP layer loaded as the fallback (opt-in, Flash-Next, CUDA / HIP)
+  --draft-conf P       with --draft dflash2: end the window where the product of the selector's probabilities falls below P (default 0 = --spec-min-p)
+  --draft-cap N        the widest verify window with --draft dflash2 (default by card: 5 on Strix Halo / iGPU, --spec as given elsewhere)
   --control-vector-scaled FILE:SCALE[,...]  a control vector GGUF on the residual stream (llama.cpp's
                        format; --control-vector FILE = scale 1).  --serve: requests switch it (cvec=0|1)
   --control-vector-layer-range A B  the layers it follows (inclusive; default 1 .. the last)
@@ -227,6 +229,13 @@ strata generate --pack DIR --tokens "1,2,3" [options]
                        result.  Not on hybrid CPUs.  sibling: the first core's other hardware thread
                        (SMT), so the interrupts keep the first logical processor and the workers keep
                        every core; hybrid CPUs too, first without SMT (STRATA_HOST_CORE sets it too).
+  --pool-cores LIST    Experimental, off by default: pin the CPU workers to exactly these logical
+                       processors (0,2,4,6 or 2-14:2; the numbers Task Manager and lscpu show).  The
+                       default is one worker per physical core, which the start-up line names.  Two
+                       entries on one core, or the host's own, are kept with a warning; processors the
+                       process may not use are left out.  The worker count is the list's length unless
+                       --pool-workers says otherwise.  Moves threads only, never a result.
+                       STRATA_POOL_CORES sets it too.
   --aux-cpus SET       Where the threads that are neither pool workers nor the host thread run (the
                        adaptive tier's job thread, the prefill helpers, the CUDA driver's threads, ...):
                        off (the default: wherever they were created), auto (the SMT siblings of the host's
@@ -255,7 +264,9 @@ strata generate --pack DIR --tokens "1,2,3" [options]
                        does not fit.  Same answers as --mmap-experts for the same placement.
   --adapt-min-gain F   the adaptive tier swaps an expert in only when its decayed routing count beats
                        the one it replaces by more than F (default 1.5; higher = fewer, surer swaps)
-  --adapt-async 1      --serve with the resident RAM mode or the arena (one GPU; opt-in): the adaptive
+  --adapt-async 0|1    --serve with the resident RAM mode or the arena (one GPU): the adaptive
                        tier's swaps advance between verify windows instead of a window waiting for a
-                       whole round (the arena: copy-in only).  Not bit-exact run to run.  0 (default)
-                       = the blocking tier.
+                       whole round (the arena: copy-in only).  Not bit-exact run to run.  Without the flag,
+                       the expert arena on one CUDA GPU (no --batch) starts blocking and tries it for a
+                       while when the swaps hold the windows up, keeping it only if it is faster; 0 = the
+                       blocking tier always (also STRATA_ADAPT_ASYNC=0); 1 = always on.

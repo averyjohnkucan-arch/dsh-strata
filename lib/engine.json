@@ -1,7 +1,24 @@
 {
   "id": "strata",
   "title": "Strata",
-  "source": "https://github.com/averyjohnkucan-arch/StrataUnleashed",
-  "revision": "efdd78c4decbfa7514a4daa13e3a75969604d5e5",
-  "catalogGeneratedFrom": "unleashed-current-tqp/strata --help"
+  "source": "https://github.com/Niko1221/Strata",
+  "release": "v0.2.6",
+  "revision": "4b9e05a2a806a3fe24f7b2560d98626c37dade35",
+  "engineVersion": "0.1.50",
+  "controlVersion": "0.1.51",
+  "catalogGeneratedFrom": "Strata v0.2.6 source CLI help",
+  "assets": {
+    "strata-control-0.1.51-linux-x86_64.tar.gz": {
+      "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.6/strata-control-0.1.51-linux-x86_64.tar.gz",
+      "sha256": "39c06025f9d090802f9700a6ce271f7c4da767f48028d7389e0ddc47f6baa9c2"
+    },
+    "strata-engine-0.1.50-linux-x86_64-cuda-cuda12.tar.gz": {
+      "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.6/strata-engine-0.1.50-linux-x86_64-cuda-cuda12.tar.gz",
+      "sha256": "dfe10975e7afe7320c5f75582c674039652e2f821e737069e898c0287a689811"
+    },
+    "strata-engine-0.1.50-linux-x86_64-cuda-cuda13.tar.gz": {
+      "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.6/strata-engine-0.1.50-linux-x86_64-cuda-cuda13.tar.gz",
+      "sha256": "90c601dc1060af48aaccf85062975a11c4ae25690ec242e3bc93e99457c9380b"
+    }
+  }
 }

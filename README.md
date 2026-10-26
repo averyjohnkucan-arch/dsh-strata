@@ -1,6 +1,6 @@
 # Strata for DeepSeek Harness
 
-Manage Strata Unleashed GGUF models, vision/projector files, MTP, saved profiles and measured Flash Next tuning inside DSH.
+Manage official stock Strata models, vision/projector files, MTP and saved profiles inside DSH. Uses upstream auto-tune, with optional engine extensions kept separate and off by default.
 
 ## Install in DSH
 
@@ -45,31 +45,45 @@ Node 22.19+ is required. Development provider dependencies may report skipped op
 
 ## Strata runtime and supported formats
 
-Engine source: [StrataUnleashed](https://github.com/averyjohnkucan-arch/StrataUnleashed), pinned to `efdd78c4decbfa7514a4daa13e3a75969604d5e5`, the latest revision inspected for this release. Engine updates are explicit version changes, independent of saved model settings.
+Engine source: [Niko1221/Strata](https://github.com/Niko1221/Strata), release **v0.2.6**, revision `4b9e05a2a806a3fe24f7b2560d98626c37dade35`. This release contains Control 0.1.51 and the unchanged Qwen engine 0.1.50. Installation verifies the official archive SHA-256 checksums. The stock path downloads prebuilt binaries and a private Python runtime; it does not compile an engine or modify system Python.
 
-The automated setup currently builds the NVIDIA CUDA engine on Linux from that pinned source, creates a Python environment, installs the engine's requirements, and builds CPU/CUDA vision readers. It attempts a Vulkan vision reader and retains CPU fallback if Vulkan tools are unavailable. This requires Python with venv support, Git, CMake, Ninja, a C++ compiler and a compatible CUDA toolkit/driver. These system prerequisites are not installed with administrator privileges. Another supported engine binary can be supplied manually. This first release is not a universal precompiled engine distribution.
+Automatic installation supports Linux x86-64 NVIDIA, choosing the official CUDA 12 or CUDA 13 archive from the installed driver. Other platforms require manually configured compatible runtime paths and are not qualified by this plugin release. NVFP4 routed experts are **already upstream** and need no optional patch; use a compatible Flash-Next NVFP4 model and pack. NVFP4 is not a KV-cache format.
 
-Automatic model packing currently supports **qwen4exp / Flash Next** using the fork's own `iq_pack.py`. Other architectures need an upstream-prepared compatible runtime pack. A selected MTP GGUF must be Strata's packed Q2_0 format accepted by `mtp_rt.py`; arbitrary standalone FP16/Q4/Q8 MTP GGUFs are recognized but explicitly rejected before conversion. A prepared MTP runtime is supported. MTP is never silently dropped and the tuner does not move it off the text GPU.
+GGUF import supports **qwen4exp / Flash-Next** and **qwen35moe / Qwen3.6 35B A3B**. Flash-Next uses upstream `iq_pack.py`; native Qwen keeps its original weights and extracts the tokenizer. An existing prepared pack can be selected directly. This plugin does not yet provision the separate DeepSeek V4.1 engine.
 
-Vision choices are Auto, GPU, iGPU/Vulkan, CPU, and Off. Auto uses iGPU on cards with at most 12 GiB when a compatible Vulkan reader and device index are configured, otherwise CPU; larger cards prefer GPU. An independently configured CPU vision reader is the fallback. Vulkan device selection uses a plugin-owned launcher wrapper so its environment does not redirect the CUDA text engine. Automatic iGPU discovery is not implemented; supply the Vulkan index. GPU/CPU/iGPU vision execution has not been rebenchmarked for this plugin release.
+Stock Flash-Next KV formats are FP16/FP16, Q8/Q8, Q8/Q4 and Q4/Q4. Stock native Qwen uses **FP32 KV** and embedded MTP. Its external disk checkpoints and partial KV residency are unavailable. UI choices and final launch validation reflect those differences.
 
-Only the engine's actual mixed K/V formats are accepted: FP16/FP16, FP16/Q8, FP16/Q6, Q8/Q8, Q8/Q6, Q6/Q8, Q6/Q6, Q8/Q5, Q5/Q5, Q5/Q4, Q4/Q4. K/V dropdowns do not imply that every Cartesian combination is supported. The explicit expert-tail-skipping environment control can alter model output and is never enabled automatically by the tuner.
+### Optional engine extensions
 
-## Saved configurations
+Under **Optional engine extensions**, enable each desired capability separately, save, then select **Build / apply saved extensions** (Load also prepares them). The plugin applies only the selected patches to a pinned, private stock checkout. Enabling a capability does not change the selected KV format; choose that separately. Disable all extensions to return to the verified stock binary.
 
-Use **Import saved Strata configuration** to import an existing JSON run configuration. Existing engine arguments are retained in their original order until an inference control changes. Supplied settings are locked against tuning. The import records the source-file SHA-256 and its existing validation status. Moving `/opt/prod/...` paths to an existing Local AI v2 location changes paths only.
+| Checkbox | Additional capability |
+| --- | --- |
+| Flash-Next Q6 KV | Q6/Q6, Q8/Q6, Q6/Q8, FP16/Q6 |
+| Flash-Next Q5 KV | Q8/Q5, Q5/Q5, Q5/Q4 |
+| Flash-Next FP16/Q8 KV | FP16 keys and Q8 values |
+| Qwen3.6 INT8 KV | Q8/Q8 cache for the native Qwen driver |
+| Qwen3.6 external MTP donor | Compatible donor GGUF for a target without embedded MTP |
 
-The owner's local installation includes Atomic Chat Q5 Regular/Turbo and Gyro Large Regular/Turbo from Local AI v2. These machine-specific profiles and model weights are not bundled into this public repository. Their saved records contain pending validation statuses; importing them does not make them newly validated and does not run inference.
+Extensions require a CUDA toolkit (`nvcc`, optionally via `CUDA_HOME`), CMake 3.24+, Git and a C++20 compiler. Mixed KV cannot use parked conversation cache, elastic KV growth or this plugin's disk checkpoints. External MTP requires a positive draft count, matching geometry/tokenizer and a target without embedded MTP. These extensions are opt-in: build and kernel checks do not establish model quality or speed. See [migration and limits](docs/MIGRATION.md) and [patch provenance](patches/NOTICE.md).
 
-## Tuning
+Vision choices remain Auto, GPU, iGPU/Vulkan, CPU and Off. Auto uses the configured iGPU reader on GPUs with at most 12 GiB, otherwise CPU fallback; larger cards prefer GPU. Stock installation includes the upstream vision reader. A Vulkan reader and device index must be supplied separately for iGPU use.
 
-**Tune saved profile** is opt-in and measures the selected model on the current GPU. Editing a value enables **Keep my value**; clear it to let the tuner adjust that control. Imported existing tunes are locked. Failed or cancelled tuning preserves the previous saved tune.
+## Saved configurations and migration
 
-The search starts at 80% resident KV, probes FP16/FP16, Q4/Q4 and Q8/Q8, refines supported pairs with K prioritized, searches resident cells when needed, and targets 6–10% free GPU memory. It measures decode candidates, then prefill candidates with a separate decode regression check capped at 5% loss. Finally it searches expert slots toward 0.7–1.5% free VRAM, retaining a larger margin if the next allocation does not fit. The final candidate is measured at the requested full context and checked again for short decode. MTP stays on GPU when configured.
+Use **Import saved Strata configuration** for a compatible JSON run configuration. Its original argv order is retained until an inference control changes, with final capability validation. Imports record provenance and do not run inference.
 
-The tuner records actual token usage, timings, observed free VRAM, every trial and manual locks. Memory-search neighbor probes reduce reliance on monotonic allocation. This remains a bounded heuristic: it does not establish a global performance optimum or prove numerical equivalence after quantization. NVIDIA telemetry is currently required. The staged search and manual-lock behavior have automated tests; a new full hardware tuning sweep was intentionally not run for this release because the owner requested reuse of saved settings.
+On the first load after upgrading, the plugin backs up the entire old profiles file before migration. Model weights and original tokenizer files remain in place. Unleashed runtime paths and settings are retained in `legacyEngine` and the backup; fork-only precision, donor and launch flags are disabled for the stock default. Existing independent `llama-server` profiles are preserved. Installing an engine is an explicit background operation triggered by Setup or Load.
 
-When Start or a chat finds an existing server on the saved port, it automatically reuses it only if `/v1/models` advertises the exact saved model ID. The plugin never takes ownership of that process: Stop detaches, and saved launch changes require restarting the external server yourself. A different model, an invalid response, or an authenticated server without matching credentials is rejected. Strata tuning requires a plugin-owned server and never reuses an external process.
+## Stock auto-tune
+
+Open **Automatic tuning** and choose **Quick** or **Thorough**, goal **Speed** or **Room**, and **Chat** or **Coding** workload. Save, unload managed models, then select **Tune saved profile**. Quick may take about 20 minutes; thorough about two hours. The plugin calls upstream `strata.py tune auto` and displays its progress/result. It does not substitute its former custom tuner.
+
+Speed seeks measured throughput, not a promise of 100% VRAM occupancy. Room reserves more headroom. **Leave system RAM (%)** concerns system RAM, not GPU VRAM. Small answer differences and non-repeatable results require their own explicit checkboxes.
+
+**Apply saved preset on launch** resolves the active upstream preset for that model, hardware and workload. Invalid/stale presets follow upstream handling. Preset choices may override manual inference settings; turn the checkbox off to use only manual settings. The final applied launch configuration participates in checkpoint identity. Tuning must return a confirmed result and a saved preset ID before the plugin reports success.
+
+When Start or a chat finds an existing server on the saved port, it reuses it only if `/v1/models` advertises the exact saved model ID. Stop only detaches an external server. Changed launch settings require restarting it in its owning application. Managed GPU work uses the optional Model Scheduler service; tuning and extension validation request background admission.
 
 ## Per-model reasoning settings
 
@@ -92,7 +106,7 @@ Optionally install `dsh-model-scheduler` for shared GPU admission, queued chat s
 
 Enabled by default for managed single-slot servers; turn it off in a profile’s KV checkpoints section. Checkpoints live under `<dataDir>/kv/chats/<hashed-session-id>/`, default `~/.dsh/dsh-strata/kv`. The latest native snapshot is kept for two model configurations per chat. Each successful model step saves the native slot to a private file, syncs it and atomically publishes its catalog entry before deleting the superseded snapshot. Failed saves preserve the last committed snapshot. Aborted/failed steps retain their earlier checkpoint. Auxiliary title/compaction calls do not replace a chat checkpoint.
 
-Restores happen before generation, including after process restart. A new chat can restore the compatible snapshot with the longest matching system/message prefix; the engine validates its native format and computes the actual token prefix. Launch settings, model paths and file timestamps participate in compatibility checks. Restores never add old messages to a new conversation. Chat operations are serialized around restore/generate/save because the native API exposes slot 0. Large checkpoints require real disk/PCIe transfer time. Full OS power-loss testing has not been performed. Automatic tuning skips parallel/batch candidates while per-chat KV is enabled. Native parallel/batch mode does not support disk snapshots; its API reports that limitation and the card shows a KV warning. Externally managed servers are not checkpointed by this plugin.
+Restores happen before generation, including after process restart. A new chat can restore the compatible snapshot with the longest matching system/message prefix; the engine validates its native format and computes the actual token prefix. Launch settings, model paths and file timestamps participate in compatibility checks. Restores never add old messages to a new conversation. Chat operations are serialized around restore/generate/save because the native API exposes slot 0. Large checkpoints require real disk/PCIe transfer time. Full OS power-loss testing has not been performed. Native parallel/batch mode does not support disk snapshots; its API reports that limitation and the card shows a KV warning. Externally managed servers are not checkpointed by this plugin.
 
 The **Off** reasoning level disables thinking with `chat_template_kwargs.enable_thinking=false`; it does not send the literal `off` as an unsupported reasoning-effort value. Existing version-1 model profiles gain Off once on upgrade; custom names and Medium defaults are preserved. Set a custom row's backend value to `off` for the same behavior.
 
@@ -117,10 +131,10 @@ Registration is not a claim of model-format, memory-fit, quality or performance
 qualification. Profiles marked as awaiting tuning retain unmeasured p?/d? labels.
 
 
-### Native Qwen 35B A3B import
+## Recommended models and verified downloads
 
-Import `qwen35moe` GGUF files with the Strata engine. Import extracts the file's tokenizer and keeps the original weights; it does not requantize them. The native family uses FP16/FP16 or Q8/Q8 (INT8) KV and a numeric MTP draft count. Set that count to zero for a model without MTP. Native Qwen profiles keep their full cache on the GPU; Flash-Next token-cell residency and external disk checkpoint serialization are not available on this path.
+Open **Recommended models · exact revisions and hashes** in this plugin's settings card. The catalog records the checkpoints/components from the owner's configured setup with immutable repository revisions and SHA-256 (or Git blob hashes for small snapshot assets). Expand **Files, sizes and exact identities** before selecting a set.
 
-A non-MTP target can optionally use an **external MTP donor GGUF** with a positive draft count. The engine requires matching trunk geometry and tokenizer IDs, uploads only the donor's MTP block, and retains the target's embedding, output head and verification. Draft acceptance can differ on fine-tunes. An external donor cannot replace an embedded draft. Numerical correctness, memory fit and speed must be measured before selecting a donor.
+**Download / verify recommended** saves a complete pinned set in this plugin's private `recommended-models` directory. Downloads resume from partial files, validate content before publishing final files, preserve existing models, and expose progress, cancellation and explicit failures. Repeating the action verifies/reuses existing files. Downloads do not start inference. **Add downloaded files** fills the existing model import/edit workflow for review and saving. Runtime installation remains separate.
 
-The engine merge's build and hardware checks are recorded separately from import. Successful tokenizer extraction is not model qualification. Existing profiles are not automatically migrated by installing an engine update. The external family-specific tuning queue compares FP16 against INT8 at approximately 1,024 input tokens and three 512-token outputs; final acceptance alone uses 80% context and 100 outputs. The older Flash-Next automatic tuner refuses Qwen35 profiles instead of passing ineffective controls.
+Some configured artifacts are locally converted or assembled from multiple sources. Their exact local hashes are listed, but downloading the original publisher checkpoint cannot recreate those bytes. Use **Add existing model** and the normal importer for those entries. No incomplete component set is presented as a working download. Recommendations describe the saved setup; they do not establish memory fit or model quality on another computer.
