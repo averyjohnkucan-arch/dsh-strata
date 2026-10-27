@@ -10,6 +10,7 @@ const explanations = {
   Draft: "Speculative draft weights",
   DFlash: "DFlash speculative draft model",
   Vision: "Image encoder / vision projector",
+  "Control vector": "Activation steering data; not a standalone model",
 };
 
 export function Files({ model }) {
@@ -99,9 +100,6 @@ function ModelsTable({ models, selected, setSelected, incomplete = false }) {
                 )}
                 <td>
                   <strong>{model.name}</strong>
-                  <small>
-                    {model.files[0]?.path.split("/").slice(0, -1).join("/")}
-                  </small>
                 </td>
                 <td>
                   {model.architecture ||
@@ -164,10 +162,13 @@ export function Inventory({ inventory, selected, setSelected, add, disabled }) {
           placeholder="Model name or folder"
         />
       </label>
-      <p>
-        {inventory.filesScanned} GGUF files scanned in{" "}
-        <code>{inventory.root}</code>
-      </p>
+      <p>{inventory.filesScanned} GGUF files scanned</p>
+      {inventory.root && (
+        <details>
+          <summary>Scan location</summary>
+          <code>{inventory.root}</code>
+        </details>
+      )}
       <h4>
         Complete models <span>{complete.length}</span>
       </h4>
@@ -193,11 +194,8 @@ export function Inventory({ inventory, selected, setSelected, add, disabled }) {
         Models missing shards or needing review <span>{incomplete.length}</span>
       </h4>
       <ModelsTable models={incomplete} incomplete />
-      <details>
-        <summary>
-          Engram, MTP, DFlash, vision and other components (
-          {inventory.components.length})
-        </summary>
+      <details open={!inventory.models.length && !!inventory.components.length}>
+        <summary>Components ({inventory.components.length})</summary>
         <div className="strata-scroll">
           <table>
             <thead>

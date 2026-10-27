@@ -150,14 +150,9 @@
   margin: 16px 0;
   padding: 12px;
 }
-.strata-saved,
 .strata-job {
   padding: 12px 0;
   border-bottom: 1px solid var(--dsw-alias-border-l3);
-}
-.strata-job > span {
-  display: block;
-  margin: 5px 0;
 }
 .strata-folders {
   max-height: 220px;
@@ -204,4 +199,205 @@
 }
 .strata-files strong {
   display: block;
+}
+
+/* Keep the provider overview compact; editors and inventory replace it as separate views. */
+.strata-card .strata-header {
+  align-items: center;
+  margin-bottom: 16px;
+}
+.strata-card .strata-header h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.strata-version {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--dsw-alias-label-secondary);
+}
+.strata-card .strata-header small {
+  margin-top: 4px;
+}
+.strata-card .strata-text-button {
+  border-color: transparent;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+}
+.strata-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--dsw-alias-border-l3);
+}
+.strata-toolbar nav {
+  display: flex;
+  gap: 3px;
+}
+.strata-toolbar nav button {
+  border-color: transparent;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  padding: 7px 8px;
+}
+.strata-toolbar nav button[aria-current="page"] {
+  color: var(--dsw-alias-label-primary);
+  background: var(--dsw-alias-bg-layer-2, rgba(128, 128, 128, 0.15));
+}
+.strata-card .strata-primary {
+  background: var(--dsw-alias-label-primary, #ddd);
+  color: var(--dsw-alias-bg-layer-1, #202020);
+  border-color: transparent;
+}
+.strata-list-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.strata-list-heading h4 {
+  margin: 16px 0 10px;
+}
+.strata-model-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--dsw-alias-border-l3);
+}
+.strata-model-row:last-child {
+  border-bottom: 0;
+}
+.strata-model-title {
+  flex: 1;
+  min-width: 0;
+}
+.strata-model-title strong {
+  display: block;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+.strata-model-title small {
+  margin-top: 5px;
+  font-size: 11px;
+}
+.strata-status {
+  font-size: 11px;
+  color: var(--dsw-alias-label-secondary);
+  white-space: nowrap;
+}
+.strata-status.is-loaded {
+  color: var(--dsw-alias-success-primary, #7fc897);
+}
+.strata-row-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.strata-card .strata-row-actions button {
+  font-size: 12px;
+  padding: 6px 8px;
+}
+.strata-card .strata-menu {
+  margin: 0;
+  position: relative;
+}
+.strata-menu summary {
+  list-style: none;
+  padding: 4px 6px;
+  font-size: 18px;
+  line-height: 1;
+}
+.strata-menu summary::-webkit-details-marker {
+  display: none;
+}
+.strata-menu > div {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 5;
+  min-width: 145px;
+  display: grid;
+  gap: 3px;
+  padding: 6px;
+  border: 1px solid var(--dsw-alias-border-l3);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-1, #252525);
+  box-shadow: 0 8px 20px #0004;
+}
+.strata-menu > div button {
+  text-align: left;
+  border-color: transparent;
+}
+.strata-selection {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  font-size: 12px;
+}
+.strata-card .strata-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--dsw-alias-label-secondary);
+  border-top: 1px solid var(--dsw-alias-border-l3);
+  margin-top: 12px;
+  padding-top: 12px;
+  font-size: 11px;
+}
+.strata-card .strata-empty {
+  padding: 18px 0;
+  margin: 0;
+  font-size: 13px;
+}
+.strata-card .strata-back {
+  margin: 6px 0;
+  padding-left: 0;
+}
+.strata-content:focus,
+.strata-panel h4:focus {
+  outline: none;
+}
+.strata-content > .strata-panel {
+  margin-top: 8px;
+}
+.strata-job p {
+  font-size: 12px;
+  margin: 8px 0;
+}
+@media (max-width: 600px) {
+  .strata-model-row {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .strata-model-title {
+    min-width: 140px;
+  }
+  .strata-status {
+    display: none;
+  }
+  .strata-toolbar {
+    gap: 10px;
+  }
+  .strata-row-actions {
+    margin-left: auto;
+  }
+}
+.strata-count {
+  display: inline-block;
+  padding: 0 5px;
+  margin-left: 5px;
+  border-radius: 5px;
+  font-size: 10px;
+  background: var(--dsw-alias-bg-layer-2, rgba(128, 128, 128, 0.15));
+}
+.strata-card .strata-notice {
+  margin: 10px 0;
+  font-size: 12px;
 }

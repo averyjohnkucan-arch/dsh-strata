@@ -69,6 +69,8 @@ class Reader:
 
 
 def tensor_role(name):
+    if name.startswith("direction."):
+        return "Control vector"
     name = name.lower()
     if (
         "engram" in name
@@ -159,10 +161,14 @@ def inspect(path):
         if re.search(pattern, hint):
             role = label
             break
+    if architecture == "controlvector":
+        role = "Control vector"
     if role == "Model" and roles and set(roles) <= {"MTP"}:
         role = "MTP"
     if role == "Model" and roles and set(roles) <= {"Engram"}:
         role = "Engram"
+    if role == "Model" and roles and set(roles) <= {"Control vector"}:
+        role = "Control vector"
     return {
         "path": str(path),
         "name": path.name,

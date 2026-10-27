@@ -1,6 +1,6 @@
 # Updating
 
-Uninstall the previous plugin package, import the **0.5.1 release `.tgz`**, enable it, restart DSH and reload the Web page. Look for **Import files** and **Purge all cache** in Settings → Models. The release includes the runtime and Gyro L fork; source installs acquire the same runtime bundle when needed.
+Uninstall the previous plugin package, import the **0.5.2 release `.tgz`**, enable it, restart DSH and reload the Web page. Look for **Import files** and **Purge all cache** in Settings → Models. The release includes the runtime and Gyro L fork; source installs acquire the same runtime bundle when needed.
 
 Profiles created by the 0.3/0.4 rebuild remain readable under `dsh-strata-v2`. The much earlier plugin used a different schema: import its original GGUF files again. Original weights are not copied or modified. Runtime changes invalidate prepared launch configurations; the upstream packer can reuse staged data.
 
@@ -11,3 +11,5 @@ Native SSD checkpoints live in the plugin's writable data directory, outside the
 The bundled engines target the tested Linux x86-64 Blackwell sm_120 system. Both carry the documented optional-MTP checkpoint fix. See README and VALIDATION for cache precision limits and the exact checks performed.
 
 0.5.1 adds Low, Medium, High and Uncensored presets for recognized original Flash-Next models. Unload and reload once after updating to preload the vector. Subsequent changes are per request. Existing context values are retained; choose Native to use the model's full declared context. Newly imported models use it by default.
+
+0.5.2 uses separate Models, Files and Activity views. Settings replaces the model list and receives focus. Previously misclassified control-vector profiles are archived to component-profiles.json and shown under Components. The original vector files and real model profiles are retained.

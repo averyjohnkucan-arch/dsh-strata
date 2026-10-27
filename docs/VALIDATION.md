@@ -32,3 +32,11 @@ These checks establish functional loading, native save/restore and cache bookkee
 - The supplied vector's checksum matches the original official Control archive. No vector was created or trained for this plugin. No refusal-rate, safety-quality or broad language-quality benchmark was performed; Uncensored is a selectable experimental preset, not a guarantee about every answer.
 
 The compatible 0.5.0 runtime ABI is reused by 0.5.1. An already running 0.5.0 model must be unloaded and loaded once after the plugin update; changing the new presets thereafter is per request. New imports default to native context. Existing explicit saved contexts are retained until Native is selected.
+
+# Validation of 0.5.2
+
+- 38 JavaScript and 18 Python tests passed; browser build, lint and formatting checks passed. New regressions verify control-vector classification and repeatable migration of earlier accidental vector profiles into Components, retaining their saved records and original file bytes.
+- In an isolated DSH Web profile seeded with the user's three model types and a legacy projection entry, GSQ-RCO, Gyro L and Gyro S each opened the correct Settings view. KV/context controls and Save stayed visible. Saving Native on each row updated that model independently; the others retained their values until edited. Back navigation and optional bulk selection were exercised.
+- The Models overview contains three compact rows. Files and component tables are confined to the Files view; completed operation logs are confined to Activity. Both light and dark themes were inspected. The user's running DSH profile was not restarted for these tests.
+- A fresh read-only scan of the real Flash-Next folder inspected 54 GGUF files, found three complete models and classified the refusal projection as a control-vector component. No control-vector architecture remained in the model list. Existing accidental component profiles were archived once, with no duplicate records after reopening.
+- Native engines, inference controls, checkpoint formats and Thorough tuning are unchanged from 0.5.1. Their previous GPU tests remain applicable; GPU generation benchmarks were not repeated for this UI/classification change.

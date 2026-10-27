@@ -22,7 +22,7 @@ def compatibility(model):
         if unsupported and set(unsupported) <= {147, 148, 149}:
             return 'Gyro L requires a TQP5/6/7 Strata fork. Choose it under Runtime compatibility.'
         if unsupported:
-            return 'Stock Strata v0.2.6 does not support tensor encoding(s): ' + ', '.join(map(str, unsupported))
+            return 'Stock Strata v0.2.7 does not support tensor encoding(s): ' + ', '.join(map(str, unsupported))
         return None
     if arch == 'qwen35moe':
         if not any('qwen35moe.nextn_predict_layers' in file['metadata'] for file in model['files']):

@@ -1,11 +1,9 @@
-Self-contained Strata model provider for DSH 0.2.1-rc.2.
+Self-contained Strata provider for DSH 0.2.1-rc.2.
 
-Download the `.tgz` below and import its local path in DSH's plugin installer. It includes Strata Control, portable Python, CUDA libraries, the pinned GGUF helper and the Gyro L fork. Model weights are supplied separately.
+0.5.2 separates Models, Files and Activity. Per-model Settings opens a focused view with a Back button. Compact model rows keep Load and Settings visible; bulk tuning and logs appear only when needed. Control-vector GGUFs are classified as components, and old accidental vector profiles are archived without deleting original files.
 
-Target: Linux x86-64, NVIDIA Blackwell sm_120, driver compatible with CUDA 13, glibc 2.43 or newer. Other GPUs and operating systems have not been validated. Both engines include the recorded native checkpoint fix for models without MTP; regular Strata otherwise uses v0.2.7 sources.
+Download the `.tgz` and import its local path in DSH. It includes Strata Control, portable Python, CUDA libraries, the GGUF helper and the Gyro L fork. Model weights are separate. No compiler or separate Strata installation is required.
 
-Native SSD conversation checkpoints retain up to 16 GiB per model across restarts and reboots. Oldest last-used checkpoints are evicted first. Mixed KV snapshots are unsupported by the current fork. A single Purge all cache button is at the top of the provider card. Strata owns tuning and RAM caching.
+Native context defaults, Low / Medium / High / Uncensored presets, Strata's Thorough tuner and 16 GiB per-model persistent SSD checkpoints remain available. High sends xhigh; Uncensored also enables the upstream experimental projection on compatible Flash-Next models. Mixed KV disk snapshots remain unsupported by the fork.
 
-No separate Strata installation, Python package installation or compiler is required. See README and docs/VALIDATION.md for usage and test limits.
-
-0.5.1 adds Low / Medium / High / Uncensored thinking presets for compatible Flash-Next models. High sends xhigh; Uncensored also enables the upstream experimental projection per request. Ordinary presets disable it. New imports default to their native GGUF context. Existing compatible 0.5.0 runtime installations are reused.
+Target: Linux x86-64, NVIDIA Blackwell sm_120, CUDA 13 driver compatibility, glibc 2.43 or newer. Other GPUs and operating systems have not been validated. The compatible 0.5.0 runtime ABI and engines are unchanged. See README and docs/VALIDATION.md for test scope and limits.

@@ -1,24 +1,23 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { request } from "./api.js";
 import { Inventory } from "./Inventory.jsx";
 import { FilePicker } from "./FilePicker.jsx";
 import { ProfileEditor } from "./ProfileEditor.jsx";
 import { Download } from "./Download.jsx";
+import { ModelList } from "./ModelList.jsx";
+import { Operations } from "./Operations.jsx";
 import css from "./styles.css";
 
 function StrataCard() {
   const [state, setState] = useState(null),
     [error, setError] = useState(""),
     [connectionError, setConnectionError] = useState(""),
-    [view, setView] = useState(""),
+    [view, setView] = useState("models"),
     [selected, setSelected] = useState([]),
-    [tuneIds, setTuneIds] = useState([]),
-    [help, setHelp] = useState(""),
     [pending, setPending] = useState(false),
     [importJob, setImportJob] = useState("");
-  const refresh = useCallback(async () => {
-    setState(await request("state"));
-  }, []);
+  const content = useRef(null);
+  const refresh = useCallback(async () => setState(await request("state")), []);
   useEffect(() => {
     let live = true;
     const update = () =>
@@ -43,15 +42,21 @@ function StrataCard() {
     const job = state?.jobs.find((job) => job.id === importJob);
     if (job?.status === "complete") {
       setImportJob("");
-      if (job.result.ids?.length) setView(job.result.ids[0]);
+      setView(job.result.ids?.[0] || "files");
     }
   }, [state, importJob]);
+  useEffect(() => {
+    if (view !== "models") {
+      // A view replaces the list; keep its start visible inside DSH's scrolling settings panel.
+      content.current?.focus({ preventScroll: true });
+      content.current?.scrollIntoView({ block: "nearest" });
+    }
+  }, [view]);
   async function run(action, payload = {}) {
     setPending(true);
     setError("");
     try {
       const value = await request(action, payload);
-      if (action === "help") setHelp(value);
       await refresh();
       return value;
     } catch (error) {
@@ -61,223 +66,173 @@ function StrataCard() {
       setPending(false);
     }
   }
-  // Event handlers consume their errors here; the alert remains visible on the card.
   const act = (action, payload) => run(action, payload).catch(() => {});
   const busy =
     pending ||
     state?.jobs.some((job) => ["queued", "running"].includes(job.status));
   const profile = state?.profiles.find((profile) => profile.id === view);
+  const primary = ["models", "files", "activity"].includes(view);
+  const missing =
+    state?.inventory?.models.filter((model) => model.status !== "complete")
+      .length || 0;
   return (
     <section className="strata-card" aria-label="Strata">
       <style>{css}</style>
-      <header>
+      <header className="strata-header">
         <div>
           <h3>
-            Strata <small>0.5.1</small>
+            Strata <span className="strata-version">0.5.2</span>
           </h3>
-          <p>Local models</p>
+          <small>
+            {state?.settings.bundledVersion
+              ? "Included runtime"
+              : "Local model provider"}
+          </small>
         </div>
-        <div className="strata-actions">
-          <button
-            type="button"
-            disabled={busy || !state}
-            onClick={() => act("purge-cache")}
-          >
-            Purge all cache
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => setView("download")}
-          >
-            Download a model
-          </button>
-          <button
-            type="button"
-            disabled={busy || !state}
-            onClick={() => setView("scan")}
-          >
-            Import files
-          </button>
-        </div>
+        <button
+          type="button"
+          className="strata-text-button"
+          disabled={busy || !state}
+          onClick={() => act("purge-cache")}
+        >
+          Purge all cache
+        </button>
       </header>
       {(error || connectionError) && (
-        <p role="alert" className="strata-error">
-          {error || connectionError}
-        </p>
+        <p role="alert">{error || connectionError}</p>
       )}
       {!state ? (
         <p>Connecting to Strata…</p>
       ) : (
         <>
-          <small>
-            Strata 0.2.7 ·{" "}
-            {state.settings.bundledVersion
-              ? "Included runtime"
-              : "Runtime available from this plugin’s release package"}
-          </small>
-          {view === "scan" && (
-            <FilePicker
-              initialPath={state.inventory?.root}
-              onCancel={() => setView("")}
-              onSelect={async (selection) => {
-                const job = await run("import", selection);
-                setImportJob(job.id);
-                setSelected([]);
-                setView("");
-              }}
-            />
-          )}
-          {view === "download" && (
-            <Download busy={busy} run={act} close={() => setView("")} />
-          )}
-          {profile && (
-            <ProfileEditor
-              key={profile.id}
-              profile={profile}
-              inventory={state.inventory}
-              busy={busy}
-              save={async (p) => {
-                await run("save", { profile: p });
-                setView("");
-              }}
-              run={act}
-              close={() => setView("")}
-            />
-          )}
-          <section aria-label="Saved Strata models">
-            <h4>Saved models</h4>
-            {!state.profiles.length && (
-              <p className="strata-muted">
-                Choose Import files to add your models.
-              </p>
-            )}
-            {state.profiles.map((profile) => (
-              <div className="strata-saved" key={profile.id}>
-                <label className="strata-check">
-                  <input
-                    type="checkbox"
-                    aria-label={"Queue tuning for " + profile.name}
-                    checked={tuneIds.includes(profile.id)}
-                    onChange={(e) =>
-                      setTuneIds(
-                        e.target.checked
-                          ? [...tuneIds, profile.id]
-                          : tuneIds.filter((id) => id !== profile.id),
-                      )
-                    }
-                  />
-                  <strong>{profile.name}</strong>
-                </label>
-                <small>
-                  {profile.status} · {profile.context.toLocaleString()} context
-                  · {profile.config ? "prepared" : "not prepared"}
-                </small>
+          {primary ? (
+            <>
+              <div className="strata-toolbar">
+                <nav aria-label="Strata views">
+                  {[
+                    ["models", "Models"],
+                    ["files", "Files"],
+                    ["activity", "Activity"],
+                  ].map(([id, name]) => (
+                    <button
+                      key={id}
+                      type="button"
+                      aria-current={view === id ? "page" : undefined}
+                      onClick={() => setView(id)}
+                    >
+                      {name}
+                      {id === "files" && missing > 0 && (
+                        <span
+                          className="strata-count"
+                          title={missing + " incomplete models"}
+                        >
+                          {missing}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </nav>
                 <div className="strata-actions">
                   <button
                     type="button"
                     disabled={busy}
-                    onClick={() => setView(profile.id)}
+                    onClick={() => setView("download")}
                   >
-                    Settings
+                    Download
                   </button>
                   <button
                     type="button"
+                    className="strata-primary"
                     disabled={busy}
-                    onClick={() =>
-                      act(profile.status === "running" ? "stop" : "start", {
-                        id: profile.id,
-                      })
-                    }
+                    onClick={() => setView("scan")}
                   >
-                    {profile.status === "running" ? "Unload" : "Load"}
-                  </button>
-                  <button
-                    type="button"
-                    disabled={busy}
-                    onClick={() => act("remove", { id: profile.id })}
-                  >
-                    Remove profile
+                    Import files
                   </button>
                 </div>
               </div>
-            ))}
-            {!!state.profiles.length && (
-              <button
-                type="button"
-                disabled={busy || !tuneIds.length}
-                onClick={() => act("tune", { ids: tuneIds })}
-              >
-                Auto-tune selected models ({tuneIds.length})
-              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              className="strata-back strata-text-button"
+              onClick={() => setView("models")}
+            >
+              ← Back to models
+            </button>
+          )}
+          <div ref={content} tabIndex={-1} className="strata-content">
+            {view === "models" && (
+              <ModelList
+                profiles={state.profiles}
+                busy={busy}
+                open={setView}
+                run={act}
+              />
             )}
-          </section>
-          <details
-            open={
-              state.inventory?.models.some(
-                (model) => model.status !== "complete",
-              ) || undefined
-            }
-          >
-            <summary>Files and shards</summary>
-            <Inventory
-              inventory={state.inventory}
-              selected={selected}
-              setSelected={setSelected}
-              disabled={busy}
-              add={async () => {
-                const ids = await run("add", { ids: selected });
-                setSelected([]);
-                if (ids.length) setView(ids[0]);
-              }}
-            />
-          </details>
-          <small>
-            SSD checkpoints: 16 GiB per model · least recently used removed
-            first · survive restarts
-          </small>
-          {state.cache?.notice && (
-            <small role="status">{state.cache.notice}</small>
-          )}
-          <section aria-label="Strata operations">
-            {state.jobs.slice(-6).map((job) => (
-              <div className="strata-job" key={job.id}>
-                <strong>{job.kind}</strong>
-                <span>
-                  {job.status}: {job.progress}
-                </span>
-                {["queued", "running"].includes(job.status) && (
-                  <button
-                    type="button"
-                    onClick={() => act("cancel", { id: job.id })}
-                  >
-                    Cancel
-                  </button>
+            {view === "files" && (
+              <Inventory
+                inventory={state.inventory}
+                selected={selected}
+                setSelected={setSelected}
+                disabled={busy}
+                add={async () => {
+                  await run("add", { ids: selected });
+                  setSelected([]);
+                  setView("models");
+                }}
+              />
+            )}
+            {view === "activity" && (
+              <>
+                <Operations jobs={state.jobs} run={act} history />
+                {state.cache?.notice && (
+                  <p className="strata-notice" role="status">
+                    {state.cache.notice}
+                  </p>
                 )}
-                {job.log && (
-                  <details>
-                    <summary>Operation log</summary>
-                    <pre>{job.log}</pre>
-                  </details>
-                )}
-              </div>
-            ))}
-          </section>
-          {help && (
-            <details open>
-              <summary>Installed engine options</summary>
-              <pre>{help}</pre>
-              <button type="button" onClick={() => setHelp("")}>
-                Close options
-              </button>
-            </details>
-          )}
+              </>
+            )}
+            {view === "scan" && (
+              <FilePicker
+                initialPath={state.inventory?.root}
+                onCancel={() => setView("models")}
+                onSelect={async (selection) => {
+                  const job = await run("import", selection);
+                  setImportJob(job.id);
+                  setSelected([]);
+                  setView("models");
+                }}
+              />
+            )}
+            {view === "download" && (
+              <Download busy={busy} run={act} close={() => setView("models")} />
+            )}
+            {profile && (
+              <ProfileEditor
+                key={profile.id}
+                profile={profile}
+                busy={busy}
+                save={async (p) => {
+                  await run("save", { profile: p });
+                  setView("models");
+                }}
+                run={act}
+                close={() => setView("models")}
+              />
+            )}
+          </div>
+          {view !== "activity" && <Operations jobs={state.jobs} run={act} />}
+          <footer className="strata-footer">
+            <span>16 GiB cache / model</span>
+            <span title="Least recently used checkpoints are removed first; files survive restarts">
+              Survives restarts
+            </span>
+          </footer>
         </>
       )}
     </section>
   );
 }
-
 export const inject = ["slots"];
 export function apply(ctx) {
   ctx.slots.inject("settings.models.footer", () =>

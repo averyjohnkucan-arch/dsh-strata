@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { request } from "./api.js";
 import { FilePicker } from "./FilePicker.jsx";
 import {
@@ -9,6 +9,10 @@ import {
 } from "../lib/choices.js";
 
 export function ProfileEditor({ profile, busy, save, run, close }) {
+  const heading = useRef(null);
+  useEffect(() => {
+    heading.current?.focus();
+  }, []);
   const [draft, setDraft] = useState(() => ({
     ...structuredClone(profile),
     kv: kvLabel(profile.kv),
@@ -49,7 +53,9 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
   const native = nativeContext(draft);
   return (
     <section className="strata-panel" aria-label="Model settings">
-      <h4>{draft.name}</h4>
+      <h4 ref={heading} tabIndex={-1}>
+        {draft.name}
+      </h4>
       {error && <p role="alert">{error}</p>}
       <div className="strata-grid">
         <label>
@@ -109,7 +115,7 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
           <p>
             {draft.projectorChoice === "none"
               ? "Text only."
-              : "No matching mmproj found. Select a projector for images, or continue without vision."}
+              : "Select an mmproj file for images."}
           </p>
         )}
         <div className="strata-actions">
@@ -131,7 +137,7 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
               }))
             }
           >
-            Continue without vision
+            Text only
           </button>
         </div>
       </div>
@@ -156,15 +162,6 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
           }}
         />
       )}
-      <p>
-        Strata's Thorough tuner measures settings for your chosen KV precision
-        and context.
-      </p>
-      <p>
-        Conversation checkpoints use up to 16 GiB of SSD space per model. Oldest
-        last-used checkpoints are removed first. Strata manages RAM caching
-        automatically.
-      </p>
       {!["FP16/FP16", "Q8/Q8", "Q4/Q4", "Q8/Q4"].includes(draft.kv) && (
         <p role="status">
           This engine does not support SSD checkpoints for this KV pair.
@@ -172,7 +169,11 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
         </p>
       )}
       <details>
-        <summary>Runtime compatibility</summary>
+        <summary>Advanced</summary>
+        <p>
+          16 GiB SSD checkpoints per model, oldest last-used removed first.
+          Strata manages RAM caching.
+        </p>
         <p>
           Use the installed Strata runtime, or supply a compatible fork for this
           model.
@@ -211,15 +212,21 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
       </details>
       <div className="strata-actions">
         <button type="button" onClick={close}>
-          Close
+          Cancel
         </button>
         <button type="button" disabled={busy} onClick={() => commit()}>
           Save
         </button>
-        <button type="button" disabled={busy} onClick={() => commit(true)}>
+        <button
+          type="button"
+          className="strata-primary"
+          disabled={busy}
+          onClick={() => commit(true)}
+        >
           Save and auto-tune
         </button>
       </div>
+      <small>Auto-tune uses Strata's native Thorough tuner.</small>
     </section>
   );
 }

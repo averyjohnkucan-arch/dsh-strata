@@ -1,6 +1,6 @@
 # Strata for DSH
 
-A local model provider for DeepSeek Harness. **0.5.1** includes its Strata runtime, native SSD conversation checkpoints and a **Purge all cache** button at the top of the provider card.
+A local model provider for DeepSeek Harness. **0.5.2** separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata is included, with native SSD checkpoints and a top-level Purge all cache button.
 
 ## Install
 
@@ -19,12 +19,14 @@ A source installation acquires the same verified release bundle from this reposi
 ## Import models
 
 1. Choose **Import files**, then select any shard or a folder. The host file picker works on the DSH machine, including mounted drives.
-2. The importer recursively reads GGUF headers and groups shards. **Files and shards** lists complete models, incomplete sets, each file's purpose and its size. Original weights stay where they are.
+2. The importer recursively reads GGUF headers and groups shards. **Files** lists complete models, incomplete sets, each file's purpose and its size. Original weights stay where they are.
 3. A single vision projector under the model folder is selected automatically. Otherwise choose **Select mmproj file** or **Continue without vision**. Strata checks compatibility when loading.
 4. Choose **KV precision (K / V)** and **Context**, then **Save and auto-tune**. Context defaults to **Native**, using the model's declared GGUF context. Smaller choices remain available in **32,768-token increments**. Saved explicit choices are retained.
 5. When tuning finishes, choose **Load** and select the model in DSH's conversation picker.
 
-The KV choices are **FP16/FP16, FP16/Q8, Q8/Q8, Q8/Q5, Q5/Q5, Q5/Q4, Q4/Q4**. Unsupported choices are disabled. The importer never silently substitutes precision. The bundled TQP fork is selected automatically for Gyro L's TQP5/6/7 encodings; Gyro S uses the regular Strata engine. Explicit runtime overrides remain available under **Runtime compatibility**.
+The KV choices are **FP16/FP16, FP16/Q8, Q8/Q8, Q8/Q5, Q5/Q5, Q5/Q4, Q4/Q4**. Unsupported choices are disabled. The importer never silently substitutes precision. The bundled TQP fork is selected automatically for Gyro L's TQP5/6/7 encodings; Gyro S uses the regular Strata engine. Explicit runtime overrides remain available under **Advanced**.
+
+Control-vector GGUFs appear under **Files → Components**, never as loadable models. Earlier accidental vector profiles are preserved in `component-profiles.json` and removed from model routes; original GGUF files are untouched. **Select** reveals bulk tuning controls. Logs remain under **Activity**.
 
 ## Thinking presets
 

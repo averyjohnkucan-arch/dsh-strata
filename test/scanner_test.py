@@ -93,6 +93,14 @@ class ScannerTests(unittest.TestCase):
             all(len({Path(f["path"]).parent for f in m["files"]}) == 1 for m in models)
         )
 
+    def test_control_vectors_are_components_even_when_named_like_models(self):
+        gguf(self.root / "model.gguf")
+        gguf(self.root / "Qwen-refusal-projection.gguf", {"general.architecture": "controlvector"}, ["direction.1"])
+        result = scan(self.root)
+        self.assertEqual(len(result["models"]), 1)
+        self.assertEqual(result["components"][0]["role"], "Control vector")
+        self.assertIn("Control vector", result["components"][0]["files"][0]["tensors"])
+
     def test_components_remain_separate(self):
         for name in (
             "model.gguf",
