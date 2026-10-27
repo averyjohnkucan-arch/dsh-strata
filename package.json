@@ -1,6 +1,6 @@
 {
   "name": "dsh-strata",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Strata model downloads, recursive shard inventory, manual setup and native auto-tuning for DSH.",
   "type": "module",
   "license": "MIT",

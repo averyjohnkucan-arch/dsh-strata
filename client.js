@@ -273,6 +273,12 @@ var kvChoices = Object.freeze([
   "Q4/Q4"
 ]);
 var contextStep = 32768;
+function nativeContext(profile) {
+  const model = profile.model || profile;
+  const metadata = model.files?.find((file) => file.index === 1)?.metadata || {};
+  const value = Number(metadata[model.architecture + ".context_length"]);
+  return Number.isInteger(value) && value >= 4096 && value <= 4194304 ? value : null;
+}
 function kvLabel(value) {
   return { fp16: "FP16/FP16", int8: "Q8/Q8", q4_0: "Q4/Q4", k8v4: "Q8/Q4" }[value] || value;
 }
@@ -281,10 +287,11 @@ function contextChoices(profile) {
   const trained = Number(metadata[profile.model?.architecture + ".context_length"]) || contextStep;
   const limit = Math.min(4194304, Math.max(4096, trained));
   if (limit < contextStep) return [limit];
-  return Array.from(
+  const choices = Array.from(
     { length: Math.floor(limit / contextStep) },
     (_, index) => (index + 1) * contextStep
   );
+  return [.../* @__PURE__ */ new Set([limit, ...choices])].sort((a, b) => a - b);
 }
 
 // client/ProfileEditor.jsx
@@ -323,6 +330,7 @@ function ProfileEditor({ profile, busy, save, run, close }) {
     }
   }
   const contexts = contextChoices(draft);
+  const native = nativeContext(draft);
   return /* @__PURE__ */ import_react3.default.createElement("section", { className: "strata-panel", "aria-label": "Model settings" }, /* @__PURE__ */ import_react3.default.createElement("h4", null, draft.name), error && /* @__PURE__ */ import_react3.default.createElement("p", { role: "alert" }, error), /* @__PURE__ */ import_react3.default.createElement("div", { className: "strata-grid" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "KV precision (K / V)", /* @__PURE__ */ import_react3.default.createElement(
     "select",
     {
@@ -346,8 +354,9 @@ function ProfileEditor({ profile, busy, save, run, close }) {
       value: draft.context,
       onChange: (event) => edit("context", Number(event.target.value))
     },
+    native && /* @__PURE__ */ import_react3.default.createElement("option", { value: native }, "Native (", native.toLocaleString(), " tokens)"),
     !contexts.includes(draft.context) && /* @__PURE__ */ import_react3.default.createElement("option", { value: draft.context }, draft.context.toLocaleString(), " tokens (saved)"),
-    contexts.map((value) => /* @__PURE__ */ import_react3.default.createElement("option", { key: value, value }, value.toLocaleString(), " tokens"))
+    contexts.filter((value) => value !== native).map((value) => /* @__PURE__ */ import_react3.default.createElement("option", { key: value, value }, value.toLocaleString(), " tokens"))
   ))), /* @__PURE__ */ import_react3.default.createElement("div", null, /* @__PURE__ */ import_react3.default.createElement("strong", null, "Vision projector"), draft.projector ? /* @__PURE__ */ import_react3.default.createElement("p", { title: draft.projector }, draft.projector.split("/").pop()) : /* @__PURE__ */ import_react3.default.createElement("p", null, draft.projectorChoice === "none" ? "Text only." : "No matching mmproj found. Select a projector for images, or continue without vision."), /* @__PURE__ */ import_react3.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react3.default.createElement(
     "button",
     {
@@ -499,7 +508,7 @@ function StrataCard() {
   });
   const busy = pending || state?.jobs.some((job) => ["queued", "running"].includes(job.status));
   const profile = state?.profiles.find((profile2) => profile2.id === view);
-  return /* @__PURE__ */ import_react5.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react5.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react5.default.createElement("header", null, /* @__PURE__ */ import_react5.default.createElement("div", null, /* @__PURE__ */ import_react5.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react5.default.createElement("small", null, "0.5.0")), /* @__PURE__ */ import_react5.default.createElement("p", null, "Local models")), /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react5.default.createElement(
+  return /* @__PURE__ */ import_react5.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react5.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react5.default.createElement("header", null, /* @__PURE__ */ import_react5.default.createElement("div", null, /* @__PURE__ */ import_react5.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react5.default.createElement("small", null, "0.5.1")), /* @__PURE__ */ import_react5.default.createElement("p", null, "Local models")), /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react5.default.createElement(
     "button",
     {
       type: "button",

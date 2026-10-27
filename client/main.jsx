@@ -73,7 +73,7 @@ function StrataCard() {
       <header>
         <div>
           <h3>
-            Strata <small>0.5.0</small>
+            Strata <small>0.5.1</small>
           </h3>
           <p>Local models</p>
         </div>

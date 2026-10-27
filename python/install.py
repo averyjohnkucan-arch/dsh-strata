@@ -10,7 +10,7 @@ import tarfile
 import tempfile
 import urllib.request
 
-VERSION = "0.5.0"
+VERSION = json.loads((Path(__file__).parents[1] / "engine.json").read_text())["runtimeVersion"]
 NAME = f"dsh-strata-{VERSION}-linux-x64-cuda13.tgz"
 BASE = f"https://github.com/averyjohnkucan-arch/dsh-strata/releases/download/v{VERSION}"
 

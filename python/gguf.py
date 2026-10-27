@@ -104,7 +104,7 @@ def inspect(path):
         for _ in range(keys):
             key = r.string()
             capture = key.startswith(("general.", "split.")) or key.endswith(
-                (".context_length", ".block_count", ".expert_count", '.nextn_predict_layers')
+                (".context_length", ".embedding_length", ".block_count", ".expert_count", '.nextn_predict_layers')
             )
             value = r.value(r.number("I"), capture)
             if capture:

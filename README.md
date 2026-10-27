@@ -1,6 +1,6 @@
 # Strata for DSH
 
-A local model provider for DeepSeek Harness. **0.5.0** includes its Strata runtime, native SSD conversation checkpoints and a **Purge all cache** button at the top of the provider card.
+A local model provider for DeepSeek Harness. **0.5.1** includes its Strata runtime, native SSD conversation checkpoints and a **Purge all cache** button at the top of the provider card.
 
 ## Install
 
@@ -21,10 +21,16 @@ A source installation acquires the same verified release bundle from this reposi
 1. Choose **Import files**, then select any shard or a folder. The host file picker works on the DSH machine, including mounted drives.
 2. The importer recursively reads GGUF headers and groups shards. **Files and shards** lists complete models, incomplete sets, each file's purpose and its size. Original weights stay where they are.
 3. A single vision projector under the model folder is selected automatically. Otherwise choose **Select mmproj file** or **Continue without vision**. Strata checks compatibility when loading.
-4. Choose **KV precision (K / V)** and **Context**, then **Save and auto-tune**. Context increases by **32,768 tokens**, within the model's declared limit.
+4. Choose **KV precision (K / V)** and **Context**, then **Save and auto-tune**. Context defaults to **Native**, using the model's declared GGUF context. Smaller choices remain available in **32,768-token increments**. Saved explicit choices are retained.
 5. When tuning finishes, choose **Load** and select the model in DSH's conversation picker.
 
 The KV choices are **FP16/FP16, FP16/Q8, Q8/Q8, Q8/Q5, Q5/Q5, Q5/Q4, Q4/Q4**. Unsupported choices are disabled. The importer never silently substitutes precision. The bundled TQP fork is selected automatically for Gyro L's TQP5/6/7 encodings; Gyro S uses the regular Strata engine. Explicit runtime overrides remain available under **Runtime compatibility**.
+
+## Thinking presets
+
+The conversation selector offers **Low**, **Medium**, **High** and, for compatible original Flash-Next models, **Uncensored**. The native requests are `low`, `medium`, `xhigh`, and `xhigh` with the bundled experimental refusal-direction projection enabled. Ordinary choices explicitly disable projection. The vector loads once with the model; switching presets applies to the next request without a model reload. Native KV state is separated by projection mode, and SSD checkpoint names are partitioned by it.
+
+The projection came unchanged from upstream Strata, not from this plugin's author. It is a model-specific experiment, not a guarantee that every refusal disappears. Disabling it does not undo changes already baked into an abliterated model. See [projection provenance and behavior](docs/PROJECTION.md).
 
 ## Tuning and checkpoints
 

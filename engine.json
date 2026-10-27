@@ -18,5 +18,6 @@
       "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.7/strata-engine-0.1.52-linux-x86_64-cuda-cuda13.tar.gz",
       "sha256": "4177c1a8ffc59bf66074093b22ac55ed477bcbe84f8bd12e378b0f1236da55c7"
     }
-  ]
+  ],
+  "runtimeVersion": "0.5.0"
 }

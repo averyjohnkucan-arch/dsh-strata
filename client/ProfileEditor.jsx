@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { request } from "./api.js";
 import { FilePicker } from "./FilePicker.jsx";
-import { contextChoices, kvChoices, kvLabel } from "../lib/choices.js";
+import {
+  contextChoices,
+  nativeContext,
+  kvChoices,
+  kvLabel,
+} from "../lib/choices.js";
 
 export function ProfileEditor({ profile, busy, save, run, close }) {
   const [draft, setDraft] = useState(() => ({
@@ -41,6 +46,7 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
     }
   }
   const contexts = contextChoices(draft);
+  const native = nativeContext(draft);
   return (
     <section className="strata-panel" aria-label="Model settings">
       <h4>{draft.name}</h4>
@@ -75,16 +81,23 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
             value={draft.context}
             onChange={(event) => edit("context", Number(event.target.value))}
           >
+            {native && (
+              <option value={native}>
+                Native ({native.toLocaleString()} tokens)
+              </option>
+            )}
             {!contexts.includes(draft.context) && (
               <option value={draft.context}>
                 {draft.context.toLocaleString()} tokens (saved)
               </option>
             )}
-            {contexts.map((value) => (
-              <option key={value} value={value}>
-                {value.toLocaleString()} tokens
-              </option>
-            ))}
+            {contexts
+              .filter((value) => value !== native)
+              .map((value) => (
+                <option key={value} value={value}>
+                  {value.toLocaleString()} tokens
+                </option>
+              ))}
           </select>
         </label>
       </div>

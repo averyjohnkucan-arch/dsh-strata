@@ -7,3 +7,5 @@ Target: Linux x86-64, NVIDIA Blackwell sm_120, driver compatible with CUDA 13, g
 Native SSD conversation checkpoints retain up to 16 GiB per model across restarts and reboots. Oldest last-used checkpoints are evicted first. Mixed KV snapshots are unsupported by the current fork. A single Purge all cache button is at the top of the provider card. Strata owns tuning and RAM caching.
 
 No separate Strata installation, Python package installation or compiler is required. See README and docs/VALIDATION.md for usage and test limits.
+
+0.5.1 adds Low / Medium / High / Uncensored thinking presets for compatible Flash-Next models. High sends xhigh; Uncensored also enables the upstream experimental projection per request. Ordinary presets disable it. New imports default to their native GGUF context. Existing compatible 0.5.0 runtime installations are reused.

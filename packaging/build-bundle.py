@@ -67,6 +67,7 @@ def build(runtime, output):
         shutil.rmtree(package / "vendor/strata-engine/parts")
         manifest = {
             "pluginVersion": version,
+            "runtimeVersion": expected["runtimeVersion"],
             "platform": "linux",
             "arch": "x64",
             "cuda": "13",

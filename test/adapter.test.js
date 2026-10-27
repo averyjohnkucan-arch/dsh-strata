@@ -40,7 +40,11 @@ test("DSH adapter streams text and usage, preserves the prompt, and releases GPU
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   t.after(() => server.close());
   const profile = createProfile(
-    { name: "Fixture", architecture: "qwen4exp", files: [] },
+    {
+      name: "Qwen3.8-Flash-Next-Gyro-S",
+      architecture: "qwen4exp",
+      files: [{ index: 1, metadata: { "qwen4exp.block_count": 48 } }],
+    },
     server.address().port,
   );
   const service = {
@@ -81,4 +85,25 @@ test("DSH adapter streams text and usage, preserves the prompt, and releases GPU
   );
   assert.equal(captured.max_completion_tokens ?? captured.max_tokens, 8);
   assert.equal(releases, 1);
+  assert.deepEqual(
+    call.model.reasoning.efforts.map((x) => x.name),
+    ["Low", "Medium", "High", "Uncensored"],
+  );
+  for (const [choice, wire, projection] of [
+    ["low", "low", false],
+    ["medium", "medium", false],
+    ["high", "xhigh", false],
+    ["uncensored", "xhigh", true],
+  ]) {
+    for await (const chunk of call.stream({
+      provider: "strata",
+      model: profile.id,
+      reasoningEffort: choice,
+      messages: [{ role: "user", content: [{ type: "text", text: "Say OK" }] }],
+      maxTokens: 8,
+    }))
+      void chunk;
+    assert.equal(captured.reasoning_effort, wire);
+    assert.equal(captured.experimental_speed_projection, projection);
+  }
 });

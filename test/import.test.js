@@ -131,7 +131,7 @@ test("importing selected files adds the complete model and detected projector in
   assert.ok(args.includes("--files"));
   assert.equal(service.profiles.length, 1);
   assert.equal(service.profiles[0].projector, "/models/a/mmproj.gguf");
-  assert.equal(service.profiles[0].context, 32768);
+  assert.equal(service.profiles[0].context, 262144);
   assert.deepEqual(service.profiles[0].extraArgs, []);
   assert.deepEqual(service.profiles[0].environment, {});
   assert.deepEqual(service.jobs.list()[0].result.ids, [service.profiles[0].id]);
