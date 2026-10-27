@@ -1,33 +1,11 @@
-# Plugin 0.2.0 — stock Strata migration
+# Validation of 0.4.0
 
-Validated on Linux x86-64, NVIDIA RTX PRO 5000 Blackwell Laptop (sm_120), CUDA 13.1, 2026-10-26.
+- JavaScript tests: 27 passing. Python tests: 17 passing.
+- Build, ESLint and formatting checks pass. The included browser bundle activates through DSH's module loader and settings slot.
+- In an isolated DSH 0.2.1-rc.2 Web profile: imported the retained Gyro S GGUF through the host file picker, created the model automatically, selected a 65,536-token context, opened the projector picker and selected an existing Flash-Next FP16 mmproj, and saved both choices.
+- Official Strata v0.2.7 / Control and engine 0.1.52 were downloaded and their archive checksums verified. Gyro S loaded through the DSH adapter at 32,768 context, FP16/FP16, without manual worker, PCIe or environment overrides, and answered `2 + 2` with `4`. Native IQ startup requires `--spec 2` or greater as well as enabled prefill; the adapter uses the minimum valid verifier and automatic allocation.
+- Real engine help was inspected for regular Strata and the local TQP fork. The former advertised three of the requested KV pairs; the fork advertised all seven. Unsupported choices are not silently mapped to other formats.
+- Synthetic GGUF tests cover cross-directory shards, duplicates, missing shards, selected-file imports, component roles and malformed headers. Filesystem tests cover actual directory navigation and missing paths.
+- Native tuning tests check the actual argument vector: Thorough mode with no plugin goal, RAM, answer-difference or repeatability overrides. Previous separate validation included a bounded native Thorough run which saved a preset; that was not a completed two-hour optimization sweep.
 
-- Official v0.2.6 Control 0.1.51 and Qwen engine 0.1.50 archives downloaded and SHA-256 verified; private Python imports and engine version check passed.
-- 51 Node tests: profiles, final launch arguments, feature gating, migration backup, stock preset integration, cancellation/lifecycle, native adapter, checkpoints and recommended downloads.
-- 3 Python GGUF selection/import tests and 15 upstream stock preset tests passed.
-- All 8 combinations of the three independent patch files apply cleanly to stock revision `4b9e05a2a806a3fe24f7b2560d98626c37dade35`.
-- Combined optional CUDA engine built successfully. `model_family_test`, `kv_mixed_parity` and `kv_stream_parity` passed; streamed/resident and stage/DMA/graph comparisons passed for all additional KV formats. `conversation_validation_test` passed 996 host-only checks.
-- External-MTP compatibility checker passed six synthetic cases: compatible donor, incompatible geometry, reordered tokenizer, different control token, already-embedded target and missing donor draft.
-- Each of the six existing Strata profiles generated a valid stock configuration using the real official preset helper, in a temporary data directory. Original live profiles were not changed by that check.
-- Package contents checked for engine scripts, metadata, catalogs, patch files and licenses; local engines, model weights and credentials are not shipped.
-
-Limits: no fresh full-model quantization-quality benchmark, long-context speed qualification or completed 20-minute/two-hour auto-tune sweep is claimed. Qwen INT8 kernels compile in the combined build; model-level numerical quality remains to be evaluated. The settings UI has syntax/integration checks but was not visually revalidated in a running DSH browser for this release. HIP/SYCL/Metal extension builds are untested. Stock defaults keep extensions off.
-
----
-
-# Earlier release validation (historical)
-
-# Validation for v0.1.0
-
-- Host and Client JavaScript syntax checks.
-- Profile persistence, multiple models, deleting a profile without deleting model files.
-- Native argv construction and reproduction of the supplied NInfer launch flags.
-- Owned subprocess readiness and termination; external attachment detaches without terminating its server.
-- Local streaming through the public DSH PiAiAdapter, with usage and DSH attribution.
-- Packed installation in a clean DSH 0.2.1-rc.2 Web profile without dependency build scripts.
-- Both cards rendered in the real DSH Models settings; existing model profiles visible.
-- Strata: manual tuning locks, staged search / 5% decode constraint under deterministic evaluator tests, GGUF classification and incomplete/ambiguous selections.
-- Strata: real 33-shard Atomic Q5 selection and projector identification; source profiles retained exact argument order and existing referenced paths.
-- NInfer: pinned OCI manifest and presence of expected runtime layer verified against the registry.
-
-Not performed: new full-model inference, new GPU tuning, repeated calibration, clean-machine compiler/runtime installation on every platform, or numerical parity after quantization. Existing saved tunes were imported as requested. Supported platform and format limits are in README.md.
+These checks do not establish image-generation quality, numerical compatibility of arbitrary projector/model pairs, or performance for every KV format and context. Strata remains responsible for validating a selected setup and measuring it with its own tuner. Gyro L also loaded through the adapter with its TQP fork at 32,768 context and FP16/FP16, without manual performance or environment overrides, and answered the same prompt with `4`. Its first cold load spent several minutes reading the model drive; this was a functional generation check, not a tuned speed benchmark. The previously retained Gyro L and Gyro S benchmark reports are separate from this UI and importer validation.

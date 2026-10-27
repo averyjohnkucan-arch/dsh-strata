@@ -1,110 +1,649 @@
-window.__ModuleLoader__.load({
- id:'dsh-strata',
- factory(require){
-  const React=require('react'),h=React.createElement,{useState,useEffect,useCallback}=React;
-  const css=`.dsh-strata-card{margin-top:16px;padding:16px;border:1px solid var(--dsw-alias-settings-card-stroke);border-radius:12px;background:var(--dsw-alias-settings-card-fill);color:var(--dsw-alias-label-primary);font:inherit;font-size:14px}.dsh-strata-card *{box-sizing:border-box}.dsh-strata-card h3{margin:0;font-size:15px;font-weight:500}.dsh-strata-head,.dsh-strata-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.dsh-strata-head{justify-content:space-between}.dsh-strata-card p{margin:8px 0;color:var(--dsw-alias-label-secondary);line-height:1.5}.dsh-strata-card button,.dsh-strata-card input,.dsh-strata-card select,.dsh-strata-card textarea{font:inherit;color:inherit;border:1px solid var(--dsw-alias-border-l3);border-radius:8px;background:var(--dsw-alias-bg-layer-1);padding:7px 10px;min-width:0}.dsh-strata-card button{cursor:pointer}.dsh-strata-card button:hover{background:var(--dsw-alias-interactive-bg-hover)}.dsh-strata-card button:disabled{opacity:.5;cursor:default}.dsh-strata-card :focus-visible{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:2px}.dsh-strata-primary{background:var(--dsw-alias-button-primary-fill)!important;color:var(--dsw-alias-label-primary-foreground)!important}.dsh-strata-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}.dsh-strata-field{display:flex;flex-direction:column;gap:5px}.dsh-strata-field>span{font-size:13px;color:var(--dsw-alias-label-secondary)}.dsh-strata-lock{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--dsw-alias-label-tertiary)}.dsh-strata-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 0;border-bottom:1px solid var(--dsw-alias-border-l2)}.dsh-strata-card details{border-top:1px solid var(--dsw-alias-border-l2);padding-top:12px;margin-top:12px}.dsh-strata-card summary{cursor:pointer;color:var(--dsw-alias-label-secondary)}.dsh-strata-card textarea{width:100%;min-height:100px;font-family:monospace;font-size:12px}.dsh-strata-error{color:var(--dsw-alias-state-error-primary)!important;white-space:pre-wrap}.dsh-strata-card pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto;font-size:12px}.dsh-strata-path{display:flex;gap:6px}.dsh-strata-path input{flex:1;min-width:0}.dsh-strata-browser{padding:12px;margin:12px 0;border:1px solid var(--dsw-alias-border-l3);border-radius:8px}.dsh-strata-files{max-height:230px;overflow:auto;display:flex;flex-direction:column;gap:4px}.dsh-strata-files button{text-align:left;overflow-wrap:anywhere}.dsh-strata-small{font-size:12px!important;color:var(--dsw-alias-label-tertiary)!important}@media(max-width:650px){.dsh-strata-grid{grid-template-columns:1fr}.dsh-strata-row{align-items:flex-start;flex-direction:column}}`;
-  return{inject:['slots','locale'],apply(ctx){
-   ctx.effect(()=>ctx.locale.register('dsh-strata',{'en':{"Remove profile": "Remove profile", "": "", "CPU expert workers": "CPU expert workers", "Tune saved profile": "Tune saved profile", "Strata Unleashed source directory": "Strata Unleashed source directory", "Import saved model files": "Import saved model files", "GPU resident experts": "GPU resident experts", "Automatic tuning": "Automatic tuning", "Save first. Runtime installation and import use the saved profile. Model files stay in their current location.": "Save first. Runtime installation and import use the saved profile. Model files stay in their current location.", "Server CLI values (JSON)": "Server CLI values (JSON)", "Browse": "Browse", "Up": "Up", "KV residency mode": "KV residency mode", "Vision device": "Vision device", "Prepared model pack": "Prepared model pack", "power-saver": "power-saver", "Expert tail skipping (may change output)": "Expert tail skipping (may change output)", "ENGINE_MODEL_LABEL": "ENGINE_MODEL_LABEL", "Tuning policy": "Tuning policy", "Python executable": "Python executable", "FP16": "FP16", "Add model": "Add model", "Stop": "Stop", "Environment variables": "Environment variables", "Remove this saved profile? Model files will be kept.": "Remove this saved profile? Model files will be kept.", "Strata server CLI options": "Strata server CLI options", "Vulkan iGPU vision encoder": "Vulkan iGPU vision encoder", "Attach running server": "Attach running server", "context": "context", "K precision": "K precision", "Context length": "Context length", "Local port": "Local port", "Loading\u2026": "Loading\u2026", "Only the engine-supported K/V pairs can launch. Auto vision uses an iGPU or CPU at 12 GB and below, and GPU above 12 GB.": "Only the engine-supported K/V pairs can launch. Auto vision uses an iGPU or CPU at 12 GB and below, and GPU above 12 GB.", "Vision projector GGUF": "Vision projector GGUF", "Start": "Start", "Profile saved. Select the model in the conversation model picker.": "Profile saved. Select the model in the conversation model picker.", "Select model files": "Select model files", "Q8": "Q8", "gpu": "gpu", "Cancel operation": "Cancel operation", "Calibrate GPU": "Calibrate GPU", "Close": "Close", "GGUF model or any shard": "GGUF model or any shard", "Profile name": "Profile name", "cpu": "cpu", "Server, environment and advanced arguments": "Server, environment and advanced arguments", "Complete CLI options (JSON)": "Complete CLI options (JSON)", "Restart DSH to load the plugin connection.": "Restart DSH to load the plugin connection.", "Tokenizer directory": "Tokenizer directory", "Fix the invalid JSON before saving.": "Fix the invalid JSON before saving.", "Q4": "Q4", "balanced": "balanced", "Omit flag": "Omit flag", "Vulkan iGPU index": "Vulkan iGPU index", "Engine executable": "Engine executable", "CPU vision encoder fallback": "CPU vision encoder fallback", "Prefill batch size": "Prefill batch size", "MTP GGUF or prepared runtime": "MTP GGUF or prepared runtime", "KV resident tokens": "KV resident tokens", "Complete Strata server configuration": "Complete Strata server configuration", "Tune only changes unlocked settings. It measures decode first, limits prefill tuning to 5% decode loss, then fills expert residency and validates full context.": "Tune only changes unlocked settings. It measures decode first, limits prefill tuning to 5% decode loss, then fills expert residency and validates full context.", "GPU vision encoder": "GPU vision encoder", "Choose folder": "Choose folder", "percent": "percent", "Inspect and assign": "Inspect and assign", "Q6": "Q6", "KV resident on GPU (%)": "KV resident on GPU (%)", "V precision": "V precision", "Blank means engine default. An active stock tuning preset may override these values; turn off Apply saved preset to use only manual settings. Repeated flags accept a JSON array.": "Blank means engine default. An active stock tuning preset may override these values; turn off Apply saved preset to use only manual settings. Repeated flags accept a JSON array.", "On": "On", "All engine CLI options": "All engine CLI options", "Default": "Default", "VRAM reserve (MiB)": "VRAM reserve (MiB)", "off": "off", "Save profile": "Save profile", "Directory listing truncated; enter a more specific path.": "Directory listing truncated; enter a more specific path.", "Temporary power profile": "Temporary power profile", "Concurrent decode slots": "Concurrent decode slots", "Host directory": "Host directory", "/": "/", "Reference provenance": "Reference provenance", "Local models and saved launch profiles.": "Local models and saved launch profiles.", "Runtime and imported model data": "Runtime and imported model data", "performance": "performance", "Install engine runtime": "Install engine runtime", "Additional argv (JSON array; no shell expansion)": "Additional argv (JSON array; no shell expansion)", "Operation log": "Operation log", "auto": "auto", "Keep my value": "Keep my value", "Select all model files here": "Select all model files here", "Import saved Strata configuration": "Import saved Strata configuration", "igpu": "igpu", "Go": "Go", "Add a model, choose its files, then save its configuration.": "Add a model, choose its files, then save its configuration.", "Clear saved tune": "Clear saved tune", "Cancel": "Cancel", "Edit": "Edit", "Choose any shard of a complete GGUF set; import discovers the matching shards. A single GGUF works too. MTP remains on the text GPU.": "Choose any shard of a complete GGUF set; import discovers the matching shards. A single GGUF works too. MTP remains on the text GPU.", "Search options": "Search options", "Read installed engine help": "Read installed engine help", "Enter valid JSON before saving.": "Enter valid JSON before saving.", "Q5": "Q5", "GPU index": "GPU index", "Model ID (optional)": "Model ID (optional)", "Memory and throughput": "Memory and throughput", "NInfer model artifact": "NInfer model artifact", "Saved configuration imported without running inference.": "Saved configuration imported without running inference.", "KV format": "KV format", "Uses stock Strata auto-tune. Speed seeks measured throughput; room leaves more GPU memory available. Quick can take about 20 minutes; thorough can take about two hours. Save first, unload models, then tune.": "Uses stock Strata auto-tune. Speed seeks measured throughput; room leaves more GPU memory available. Quick can take about 20 minutes; thorough can take about two hours. Save first, unload models, then tune.", "Apply saved preset on launch": "Apply saved preset on launch", "Leave system RAM (%)": "Leave system RAM (%)", "Optional engine extensions": "Optional engine extensions", "All off uses the official stock engine. Each checkbox enables one capability; enabled patches build in a separate directory. Save, then build or load. Building requires a CUDA toolkit, C++ compiler and CMake. NVFP4 is already part of stock Strata.": "All off uses the official stock engine. Each checkbox enables one capability; enabled patches build in a separate directory. Save, then build or load. Building requires a CUDA toolkit, C++ compiler and CMake. NVFP4 is already part of stock Strata.", "Mixed Q6/Q5/FP16-Q8 modes require disk checkpoints, parked conversation cache and elastic KV growth to be disabled. Select a stock KV format before disabling its extension.": "Mixed Q6/Q5/FP16-Q8 modes require disk checkpoints, parked conversation cache and elastic KV growth to be disabled. Select a stock KV format before disabling its extension.", "Build / apply saved extensions": "Build / apply saved extensions", "Installed extension build": "Installed extension build"}}));
-   const translate=ctx.locale.bind('dsh-strata');
-   const t=text=>translate(text);
-   async function api(action,payload={}){const config=window.__DSH_STRATA__;if(!config)throw new Error(t('Restart DSH to load the plugin connection.'));const response=await fetch(config.path,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+config.token},body:JSON.stringify({action,payload})});const data=await response.json();if(!response.ok||data.error)throw new Error(data.error||response.statusText);return data.result;}
-   function JsonField({label,value,onChange}){const[text,setText]=useState(JSON.stringify(value,null,2));const[error,setError]=useState('');useEffect(()=>setText(JSON.stringify(value,null,2)),[value]);return h('label',{className:'dsh-strata-field'},h('span',null,label),h('textarea',{value:text,onChange:e=>{setText(e.target.value);try{const v=JSON.parse(e.target.value);onChange(v);setError('');}catch{setError(t('Enter valid JSON before saving.'));}},'aria-invalid':!!error}),error&&h('span',{className:'dsh-strata-error'},error));}
-     function RecommendedModels({request,onUse}){
-   const [catalog,setCatalog]=React.useState(null),[error,setError]=React.useState(''),[busy,setBusy]=React.useState(false);
-   React.useEffect(()=>{let live=true;const refresh=()=>request('recommended').then(value=>{if(live){setCatalog(value);setError('');}}).catch(e=>{if(live)setError(e.message);});refresh();const timer=setInterval(refresh,2000);return()=>{live=false;clearInterval(timer);};},[]);
-   async function run(action,payload){setBusy(true);setError('');try{await request(action,payload);setCatalog(await request('recommended'));}catch(e){setError(e.message);}finally{setBusy(false);}}
-   return h('details',{'aria-label':'Recommended models',style:{margin:'16px 0',padding:12,border:'1px solid var(--dsw-alias-border-l3)',borderRadius:8}},h('summary',null,'Recommended models · exact revisions and hashes'),
-    h('p',null,'These are the models from your saved setup. Download a pinned set or add existing files, then review and save in the normal importer. Downloads do not load models or change your current selection.'),
-    error&&h('p',{role:'alert'},error),!catalog&&h('p',null,'Loading recommendations…'),
-    catalog?.models.map(model=>{const job=catalog.jobs.filter(j=>j.modelId===model.id).at(-1),downloadable=model.files.length>0&&model.files.every(f=>f.downloadable);return h('div',{key:model.id,style:{margin:'14px 0',overflowWrap:'anywhere'}},h('strong',null,'Recommended · '+model.name),h('p',null,model.notes),model.revision&&h('code',null,model.revision),
-     h('details',null,h('summary',null,'Files, sizes and exact identities'),model.files.map((f,i)=>h('div',{key:i,style:{margin:'8px 0'}},h('div',null,f.name+(f.size?' · '+(f.size/1073741824).toFixed(2)+' GiB':'')),f.repo&&h('div',null,f.repo+' @ '+f.revision),h('code',null,f.sha256?'SHA-256 '+f.sha256:f.gitBlob?'Git blob '+f.gitBlob:'Revision '+(f.revision||'Local file; select through importer')),!f.downloadable&&h('p',null,'Local conversion or assembled component; import the existing file.')))),
-     downloadable&&h('button',{type:'button',disabled:busy||catalog.jobs.some(j=>j.status==='running'),onClick:()=>run('recommendedDownload',{id:model.id})},'Download / verify recommended'),
-     onUse&&h('button',{type:'button',disabled:busy||job?.status==='running',onClick:()=>Promise.resolve(onUse(model,job?.status==='complete'?job:null)).catch(e=>setError(e.message))},job?.status==='complete'?'Add downloaded files':'Add existing model'),
-     !downloadable&&h('p',null,'This set needs existing local files or the setup command described above.'),
-     job&&h('div',{role:'status'},job.status+' · '+job.progress+(job.total?' · '+Math.min(100,Math.floor(job.received/job.total*100))+'%':''),job.directory&&h('code',{style:{display:'block'}},job.directory),job.status==='running'&&h('button',{type:'button',onClick:()=>run('recommendedCancel',{id:job.id})},'Cancel download')));})
-   );
+// Generated from client/ by npm run build. Edit the source modules.
+window.__ModuleLoader__.load({id:'dsh-strata',factory(require){
+const module={exports:{}};const exports=module.exports;
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
   }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
- function Card(){
-    const[data,setData]=useState(null),[draft,setDraft]=useState(null),[error,setError]=useState(''),[status,setStatus]=useState(''),[busy,setBusy]=useState(false),[filter,setFilter]=useState(''),[browser,setBrowser]=useState(null),[target,setTarget]=useState('modelPath'),[rawHelp,setRawHelp]=useState(''),[selection,setSelection]=useState([]),[assignReport,setAssignReport]=useState(null);
-    const refresh=useCallback(async()=>{const next=await api('list');setData(next);return next;},[]);
-    useEffect(()=>{let live=true;api('list').then(x=>{if(live)setData(x);}).catch(e=>{if(live)setError(e.message);});return()=>{live=false;};},[]);
-    const runningJobs=data?.jobs.filter(j=>j.status==='running')||[];
-    useEffect(()=>{if(!data)return;let live=true;const timer=setInterval(()=>api('list').then(x=>{if(live)setData(x);}).catch(e=>{if(live)setError(e.message);}),1500);return()=>{live=false;clearInterval(timer);};},[!!data]);
-    const action=async(name,payload={})=>{setBusy(true);setError('');try{const result=await api(name,payload);await refresh();return result;}catch(e){setError(e.message);throw e;}finally{setBusy(false);}};
-    const perform=(name,payload)=>action(name,payload).catch(()=>{});
-    function edit(key,value,lock=true){setDraft(p=>({...p,[key]:value,locks:lock?[...new Set([...p.locks,key])]:p.locks}));}
-    function option(flag,value){setDraft(p=>({...p,options:{...p.options,[flag]:value},locks:[...new Set([...p.locks,'options.'+flag])]}));}
-    const unlock=key=>setDraft(p=>({...p,locks:p.locks.filter(x=>x!==key)}));
-    const lockControl=()=>null; // Stock presets have their own validity rules; legacy locks do not override them.
-    const field=(key,label,type='text',choices=null,lock=true)=>h('label',{className:'dsh-strata-field',key},h('span',null,t(label)),choices?h('select',{value:draft[key]??'',onChange:e=>edit(key,e.target.value,lock)},choices.map(c=>h('option',{key:c,value:c},t(c)))):h('input',{type,value:draft[key]??'',onChange:e=>edit(key,type==='number'?Number(e.target.value):e.target.value,lock)}),lock&&lockControl(key));
-    async function browse(key,path){setTarget(key);try{const result=await api('browse',{path:path||undefined});setBrowser(result);}catch(e){setError(e.message);}}
-    const pathField=(key,label)=>h('label',{className:'dsh-strata-field',key},h('span',null,t(label)),h('div',{className:'dsh-strata-path'},h('input',{value:draft[key]||'',onChange:e=>edit(key,e.target.value)}),h('button',{type:'button',onClick:()=>browse(key)},t('Browse'))));
-    const assignSelected=async()=>{try{const result=await action('assign',{paths:selection});const values={...result.assignments};const suggested=values.suggestedName;delete values.suggestedName;setDraft(p=>({...p,...values,name:p.name==='New model'&&suggested?suggested:p.name,locks:[...new Set([...p.locks,...Object.keys(values)])]}));setAssignReport(result);setBrowser(null);}catch{}};
-    const save=async()=>{if(document.querySelector('.dsh-strata-card [aria-invalid="true"]')){setError(t('Fix the invalid JSON before saving.'));return;}try{await action('save',{profile:draft});setDraft(null);setStatus(t('Profile saved. Select the model in the conversation model picker.'));}catch{}};
-    const current=data?.profiles.find(p=>p.id===draft?.id);
-    const jobActive=runningJobs.some(j=>j.profileId===draft?.id);
-    const footer=h('div',{className:'dsh-strata-actions'},h('button',{disabled:busy||jobActive,onClick:()=>{setDraft(null);setBrowser(null);}},t('Cancel')),h('button',{className:'dsh-strata-primary',disabled:busy||jobActive,onClick:save},t('Save profile')));
-    const ext=draft?.extensions||{};
-    const pairs=draft?.architecture==='qwen35moe'?['FP32/FP32',...(ext.qwenInt8Kv?['Q8/Q8']:[])]:['FP16/FP16','Q8/Q8','Q8/Q4','Q4/Q4',...(ext.kvQ6?['Q6/Q6','Q8/Q6','Q6/Q8','FP16/Q6']:[]),...(ext.kvQ5?['Q8/Q5','Q5/Q5','Q5/Q4']:[]),...(ext.kvMixed?['FP16/Q8']:[])];
-    const tune=draft?.autoTune||{enabled:true,mode:'quick',goal:'speed',use:'chat',leaveRam:0};
-    const editTune=(key,value)=>edit('autoTune',{...tune,[key]:value},false);
-    const catalog=(draft?.architecture==='qwen35moe'?data?.qwenOptions:data?.options)||[];
-    return h('section',{className:'dsh-strata-card','aria-label':'Strata'},h('style',null,css),h('div',{className:'dsh-strata-head'},h('h3',null,'Strata'),h('button',{disabled:busy||!!draft,onClick:async()=>{try{setDraft(await action('new'));setRawHelp('');}catch{}}},t('Add model'))),
-     h('p',null,t('Local models and saved launch profiles.')),h(RecommendedModels,{request:api,onUse:async(model,job)=>{const profile=await api('new');for(const f of job?.paths||[])if(!profile[f.role])profile[f.role]=f.path;const native=model.settings?.nativeServer;const prior=native?data?.profiles.find(p=>p.nativeServer===native&&p.executable):null;setDraft({...profile,...model.settings,...(native?{executable:prior?.executable||'',sourceDir:'',kvCache:false}:{}),name:model.name});setStatus('Review the recommended profile, select any existing files, then save.');}}),
-     error&&h('p',{role:'alert',className:'dsh-strata-error'},error),status&&h('p',{role:'status'},status),!data&&h('p',null,t('Loading…')),
-     data?.profiles.map(p=>h('div',{className:'dsh-strata-row',key:p.id},h('div',null,h('strong',null,p.name),h('div',{className:'dsh-strata-small'},`${p.context.toLocaleString()} · ${p.external?'external attachment':p.status}${p.activeRequests?' · '+p.activeRequests+' active request(s)':''}${p.cacheStatus?' · KV '+(p.cacheStatus.message||p.cacheStatus.phase):''}`)),h('div',{className:'dsh-strata-actions'},h('button',{disabled:busy||!!draft,onClick:()=>{setDraft(structuredClone(p));setRawHelp('');setStatus('');}},t('Edit')),h('button',{disabled:busy,onClick:()=>perform(p.status==='running'?'stop':'prepareStart',{id:p.id})},p.external?'Detach':(p.status==='running'?'Unload':'Load')),p.status!=='running'&&h('button',{disabled:busy,onClick:()=>perform('attach',{id:p.id})},t('Attach running server'))))),
-     data&&!data.profiles.length&&h('p',{className:'dsh-strata-small'},t('Add a model, choose its files, then save its configuration.')),
-     draft&&h('div',null,
-      h('div',{className:'dsh-strata-actions'},h('button',{onClick:()=>{setSelection([]);browse('bulk');}},t('Select model files')),true&&h('button',{onClick:()=>browse('savedConfig')},t('Import saved Strata configuration'))),assignReport&&h('p',{role:'status'},assignReport.files.map(f=>f.kind+': '+f.path.split('/').pop()).join(' · ')),assignReport?.warnings.map(w=>h('p',{key:w,className:'dsh-strata-error'},w)),
-      h('div',{className:'dsh-strata-grid'},field('name','Profile name','text',null,false),field('modelId','Model ID (optional)','text',null,false),field('context','Context length','number'),field('port','Local port','number',null,false),field('gpu','GPU index','number'),pathField('modelPath','GGUF model or any shard'),true&&pathField('projectorPath','Vision projector GGUF'),draft.architecture!=='qwen35moe'&&pathField('mtpPath','MTP GGUF or prepared runtime')),
-      h('details',null,h('summary',null,'KV checkpoints'),
-       h('label',null,h('input',{type:'checkbox',disabled:!!draft.nativeServer||draft.architecture==='qwen35moe',checked:draft.kvCache!==false,onChange:e=>edit('kvCache',e.target.checked,false)}),' Save and restore per-chat KV on disk'),
-       h('p',{className:'dsh-strata-small'},'Saves after each model step. Keeps the latest checkpoint for two model configurations per chat. Requires a managed, single-slot Strata server. Large checkpoints take time to transfer.'),
-       current?.cacheStatus&&h('p',{role:'status'},JSON.stringify(current.cacheStatus))
-      ),
-      h('details',{open:true},h('summary',null,'Reasoning settings'),
-       h('p',{className:'dsh-strata-small'},'Choose the names shown in DSH and the exact reasoning_effort values sent to this engine. These settings apply to this model only. Backend value off disables thinking through chat_template_kwargs.enable_thinking=false.'),
-       h('div',{className:'dsh-strata-grid'},(draft.reasoning?.efforts||[]).map((row,index)=>h('div',{key:row.id,className:'dsh-strata-field'},
-        h('label',null,h('span',null,'Display name'),h('input',{'aria-label':'Reasoning name '+(index+1),value:row.name,onChange:e=>edit('reasoning',{...draft.reasoning,efforts:draft.reasoning.efforts.map((r,i)=>i===index?{...r,name:e.target.value}:r)},false)})),
-        h('label',null,h('span',null,'Backend value'),h('input',{'aria-label':'Reasoning backend value '+(index+1),value:row.value,onChange:e=>edit('reasoning',{...draft.reasoning,efforts:draft.reasoning.efforts.map((r,i)=>i===index?{...r,value:e.target.value}:r)},false)})),
-        h('button',{onClick:()=>{const efforts=draft.reasoning.efforts.filter(r=>r.id!==row.id);edit('reasoning',{efforts,defaultEffort:draft.reasoning.defaultEffort===row.id?(efforts[0]?.id||''):draft.reasoning.defaultEffort},false);}},'Remove level')
-       ))),
-       h('label',{className:'dsh-strata-field'},h('span',null,'Default reasoning'),h('select',{'aria-label':'Default reasoning',value:draft.reasoning?.defaultEffort||'',onChange:e=>edit('reasoning',{...draft.reasoning,defaultEffort:e.target.value},false)},h('option',{value:''},'Engine default'),(draft.reasoning?.efforts||[]).map(row=>h('option',{key:row.id,value:row.id},row.name||row.id)))),
-       h('div',{className:'dsh-strata-actions',style:{marginTop:10}},
-        h('button',{onClick:()=>{const id='effort_'+Date.now().toString(36);edit('reasoning',{efforts:[...(draft.reasoning?.efforts||[]),{id,name:'',value:''}],defaultEffort:draft.reasoning?.defaultEffort||id},false);}},'Add reasoning level'),
-        h('button',{onClick:()=>edit('reasoning',{efforts:[{id:'off',name:'Off',value:'off'},{id:'low',name:'Low',value:'low'},{id:'medium',name:'Medium',value:'medium'},{id:'xhigh',name:'XHigh',value:'xhigh'}],defaultEffort:'medium'},false)},'Qwen3.8 defaults')
-       )
-      ),
-      draft.architecture==='qwen35moe'&&h('div',{className:'dsh-strata-grid'},ext.externalMtp&&pathField('externalMtpPath','External MTP donor GGUF'),h('label',{className:'dsh-strata-field'},h('span',null,'MTP draft tokens'),h('input',{type:'number',min:0,max:7,value:draft.options['--mtp']??0,onChange:e=>edit('options',{...draft.options,'--mtp':Number(e.target.value)})}))),
-      draft.architecture==='qwen35moe'&&h('p',{className:'dsh-strata-small'},'Stock Qwen3.6 uses native FP32 KV and embedded MTP. Enable the separate extensions below to select INT8 KV or a compatible external MTP donor. Qwen checkpoint serialization is unavailable.'),
-      true&&h('p',{className:'dsh-strata-small'},t('Choose any shard of a complete GGUF set; import discovers the matching shards. A single GGUF works too. MTP remains on the text GPU.')),
-      true&&h('div',{className:'dsh-strata-grid'},h('label',{className:'dsh-strata-field'},h('span',null,t('KV format')),h('select',{value:draft.kvK+'/'+draft.kvV,onChange:e=>{const [kvK,kvV]=e.target.value.split('/');setDraft(p=>({...p,kvK,kvV}));}},pairs.map(pair=>h('option',{key:pair,value:pair},pair)))),draft.architecture!=='qwen35moe'&&field('residentMode','KV residency mode','text',['percent','context']),draft.architecture!=='qwen35moe'&&(draft.residentMode==='percent'?field('residentPercent','KV resident on GPU (%)','number'):field('residentContext','KV resident tokens','number')),field('visionDevice','Vision device','text',['auto','gpu','igpu','cpu','off']),pathField('visionExecutable','GPU vision encoder'),pathField('visionIgpuExecutable','Vulkan iGPU vision encoder'),pathField('visionCpuExecutable','CPU vision encoder fallback'),field('visionGpuIndex','Vulkan iGPU index'),h('label',{className:'dsh-strata-field'},h('span',null,t('Expert tail skipping (may change output)')),h('input',{type:'number',min:0,max:7,value:draft.environment.STRATA_ROUTE_TAIL_SKIP||'0',onChange:e=>edit('environment',{...draft.environment,STRATA_ROUTE_TAIL_SKIP:e.target.value})}))),
-      true&&h('p',{className:'dsh-strata-small'},t('Only the engine-supported K/V pairs can launch. Auto vision uses an iGPU or CPU at 12 GB and below, and GPU above 12 GB.')),
-      browser&&h('div',{className:'dsh-strata-browser'},h('div',{className:'dsh-strata-actions'},h('button',{onClick:()=>browse(target,browser.parent)},t('Up')),h('input',{'aria-label':t('Host directory'),value:browser.path,onChange:e=>setBrowser({...browser,path:e.target.value}),onKeyDown:e=>{if(e.key==='Enter'){e.preventDefault();browse(target,browser.path);}}}),h('button',{onClick:()=>browse(target,browser.path)},t('Go')),target!=='bulk'&&h('button',{onClick:()=>{edit(target,browser.path);setBrowser(null);}},t('Choose folder')),h('button',{onClick:()=>setBrowser(null)},t('Close'))),h('div',{className:'dsh-strata-files'},target==='bulk'&&h('button',{onClick:()=>setSelection(paths=>[...new Set([...paths,...browser.entries.filter(e=>!e.directory&&/\.(gguf|ninfer)$/i.test(e.name)).map(e=>e.path)])])},t('Select all model files here')),browser.entries.map(e=>target==='bulk'&&!e.directory?h('label',{key:e.path},h('input',{type:'checkbox',checked:selection.includes(e.path),onChange:event=>setSelection(paths=>event.target.checked?[...paths,e.path]:paths.filter(p=>p!==e.path))}),e.name):h('button',{key:e.path,onClick:()=>e.directory?browse(target,e.path):target==='savedConfig'?action('importConfig',{path:e.path}).then(()=>{setDraft(null);setBrowser(null);setStatus(t('Saved configuration imported without running inference.'));}).catch(()=>{}):(edit(target,e.path),setBrowser(null))},`${e.directory?'▸ ':''}${e.name}`))),target==='bulk'&&h('button',{disabled:busy||!selection.length,onClick:assignSelected},t('Inspect and assign')+' ('+selection.length+')'),browser.truncated&&h('p',null,t('Directory listing truncated; enter a more specific path.'))),
-      h('details',null,h('summary',null,t('Runtime and imported model data')),h('div',{className:'dsh-strata-grid'},pathField('executable','Engine executable'),true&&pathField('sourceDir','Stock Strata control directory'),true&&field('python','Python executable','text',null,false),true&&pathField('packPath','Prepared model pack'),true&&pathField('tokenizerPath','Tokenizer directory'),!true&&field('powerProfile','Temporary power profile','text',['','performance','balanced','power-saver'],false)),h('div',{className:'dsh-strata-actions'},h('button',{disabled:busy||!current||jobActive,onClick:()=>perform('setup',{id:draft.id})},t('Install engine runtime')),h('button',{disabled:busy||!current||jobActive,onClick:()=>perform('import',{id:draft.id})},t('Import saved model files')),!true&&h('button',{disabled:busy||!current||jobActive,onClick:()=>perform('calibrate',{id:draft.id})},t('Calibrate GPU'))),h('p',{className:'dsh-strata-small'},t('Save first. Runtime installation and import use the saved profile. Model files stay in their current location.'))),
-      h('details',null,h('summary',null,t('All engine CLI options')),h('p',{className:'dsh-strata-small'},t('Blank means engine default. An active stock tuning preset may override these values; turn off Apply saved preset to use only manual settings. Repeated flags accept a JSON array.')),h('input',{'aria-label':t('Search options'),placeholder:t('Search options'),value:filter,onChange:e=>setFilter(e.target.value)}),h('div',{className:'dsh-strata-grid'},catalog.filter(o=>`${o.flag} ${o.help}`.toLowerCase().includes(filter.toLowerCase())).map(o=>h('label',{className:'dsh-strata-field',key:o.flag},h('span',{title:o.help},o.flag),o.kind==='boolean'?h('select',{value:draft.options[o.flag]===undefined?'':String(draft.options[o.flag]),onChange:e=>option(o.flag,e.target.value===''?null:e.target.value==='true')},h('option',{value:''},t('Default')),h('option',{value:'true'},t('On')),h('option',{value:'false'},t('Omit flag'))):h('input',{value:draft.options[o.flag]??'',placeholder:o.metavar||t('Default'),onChange:e=>option(o.flag,e.target.value),title:o.help}),h('span',{className:'dsh-strata-small'},o.help),true&&lockControl('options.'+o.flag)))),h(JsonField,{label:t('Complete CLI options (JSON)'),value:draft.options,onChange:value=>setDraft(p=>({...p,options:value,locks:[...new Set([...p.locks,...Object.keys(value).map(k=>'options.'+k)])]}))})),
-      h('details',null,h('summary',null,t('Server, environment and advanced arguments')),h(JsonField,{label:t('Environment variables'),value:draft.environment,onChange:v=>edit('environment',v)}),true&&h(JsonField,{label:t('Complete Strata server configuration'),value:draft.serverConfig,onChange:v=>edit('serverConfig',v)}),true&&h('details',null,h('summary',null,t('Strata server CLI options')),h('div',{className:'dsh-strata-grid'},(data.serverOptions||[]).map(o=>h('label',{key:o.flag,className:'dsh-strata-field'},h('span',{title:o.help},o.flag),h('input',{value:draft.serverOptions[o.flag]===true?'true':draft.serverOptions[o.flag]??'',placeholder:t('Default'),onChange:e=>edit('serverOptions',{...draft.serverOptions,[o.flag]:e.target.value==='true'?true:e.target.value||null})})))),h(JsonField,{label:t('Server CLI values (JSON)'),value:draft.serverOptions,onChange:v=>edit('serverOptions',v)})),h(JsonField,{label:t('Additional argv (JSON array; no shell expansion)'),value:draft.extraArgs,onChange:v=>edit('extraArgs',v)}),current&&h('button',{disabled:busy,onClick:async()=>{try{setRawHelp((await action('help',{id:draft.id})).text);}catch{}}},t('Read installed engine help')),rawHelp&&h('pre',null,rawHelp)),
-      true&&h('details',{open:true},h('summary',null,t('Memory and throughput')),h('div',{className:'dsh-strata-grid'},[draft.architecture==='qwen35moe'?['--expert-slots','GPU expert slots per layer']:['--expert-cache','GPU resident experts'],['--prefill','Prefill batch size'],['--batch','Concurrent decode slots'],['--pool-workers','CPU expert workers'],draft.architecture==='qwen35moe'?['--expert-vram','Expert VRAM budget (GiB)']:['--vram-reserve-mib','VRAM reserve (MiB)']].map(([flag,label])=>h('label',{key:flag,className:'dsh-strata-field'},h('span',null,t(label)),h('input',{value:draft.options[flag]??'',placeholder:t('Default'),onChange:e=>option(flag,e.target.value)}),lockControl('options.'+flag))))),
-      !draft.nativeServer&&h('details',{open:true},h('summary',null,t('Automatic tuning')),
-       h('p',null,t('Uses stock Strata auto-tune. Speed seeks measured throughput; room leaves more GPU memory available. Quick can take about 20 minutes; thorough can take about two hours. Save first, unload models, then tune.')),
-       h('label',null,h('input',{type:'checkbox',checked:tune.enabled!==false,onChange:e=>editTune('enabled',e.target.checked)}),t('Apply saved preset on launch')),
-       h('div',{className:'dsh-strata-grid'},[['mode','Tuning depth',['quick','thorough']],['goal','Tuning goal',['speed','room']],['use','Workload',['chat','coding']]].map(([key,label,values])=>h('label',{key,className:'dsh-strata-field'},h('span',null,t(label)),h('select',{value:tune[key],onChange:e=>editTune(key,e.target.value)},values.map(v=>h('option',{key:v,value:v},t(v)))))),h('label',{className:'dsh-strata-field'},h('span',null,t('Leave system RAM (%)')),h('input',{type:'number',min:0,max:50,value:tune.leaveRam??0,onChange:e=>editTune('leaveRam',Number(e.target.value))}))),
-       [['allowSmallDifferences','Allow small answer differences'],['allowNotRepeatable','Allow non-repeatable results']].map(([key,label])=>h('label',{key,style:{display:'block'}},h('input',{type:'checkbox',checked:!!tune[key],onChange:e=>editTune(key,e.target.checked)}),t(label))),
-       h('button',{disabled:busy||!current||jobActive,onClick:()=>perform('tune',{id:draft.id})},t('Tune saved profile')),draft.tuneReport&&h('pre',null,JSON.stringify(draft.tuneReport,null,2))),
-      !draft.nativeServer&&h('details',null,h('summary',null,t('Optional engine extensions')),
-       h('p',null,t('All off uses the official stock engine. Each checkbox enables one capability; enabled patches build in a separate directory. Save, then build or load. Building requires a CUDA toolkit, C++ compiler and CMake. NVFP4 is already part of stock Strata.')),
-       (data.features||[]).filter(f=>draft.architecture==='qwen35moe'?['qwenInt8Kv','externalMtp'].includes(f.id):f.id.startsWith('kv')).map(f=>h('div',{key:f.id},h('label',null,h('input',{type:'checkbox',checked:!!ext[f.id],onChange:e=>edit('extensions',{...ext,[f.id]:e.target.checked},false)}),t(f.label)),h('p',{className:'dsh-strata-small'},t(f.help)))),
-       h('p',{className:'dsh-strata-small'},t('Mixed Q6/Q5/FP16-Q8 modes require disk checkpoints, parked conversation cache and elastic KV growth to be disabled. Select a stock KV format before disabling its extension.')),
-       h('button',{disabled:busy||!current||jobActive,onClick:()=>perform('extensions',{id:draft.id})},t('Build / apply saved extensions')),draft.extensionBuild&&h('p',null,t('Installed extension build')+': '+draft.extensionBuild.key)),
-      draft.migrationNotes&&h('p',{className:'dsh-strata-small'},draft.migrationNotes.join(' ')),
-      draft.provenance&&h('details',null,h('summary',null,t('Reference provenance')),h('pre',null,JSON.stringify(draft.provenance,null,2))),
-      h('div',{className:'dsh-strata-actions',style:{marginTop:16}},footer,current&&h('button',{disabled:busy||jobActive,onClick:async()=>{if(window.confirm(t('Remove this saved profile? Model files will be kept.'))){try{await action('remove',{id:draft.id});setDraft(null);}catch{}}}},t('Remove profile')))
-     ),
-     data?.jobs.slice(-6).map(job=>h('div',{key:job.id},h('p',{role:'status'},`${job.kind}: ${job.progress}`),job.status==='running'&&h('button',{onClick:()=>perform('cancel',{id:job.id})},t('Cancel operation')),job.error&&h('p',{className:'dsh-strata-error'},job.error),job.log&&h('details',null,h('summary',null,t('Operation log')),h('pre',null,job.log)),job.result?.tuned&&h('pre',null,JSON.stringify(job.result.tuned,null,2))))
-    );
-   }
-   ctx.slots.inject('settings.models.footer',()=>ctx.slots.register({name:'settings.models.footer',id:'dsh-strata',order:true?10:20},Card));
-  }};
- }
+// client/main.jsx
+var main_exports = {};
+__export(main_exports, {
+  apply: () => apply,
+  inject: () => inject
 });
+module.exports = __toCommonJS(main_exports);
+var import_react5 = __toESM(require("react"), 1);
+
+// client/api.js
+async function request(action, payload = {}) {
+  const connection = window.__DSH_STRATA__;
+  if (!connection)
+    throw new Error("Restart DSH and reload this page to connect Strata");
+  const readingFiles = ["browse", "projector", "capabilities"].includes(action);
+  let response;
+  try {
+    response = await fetch(connection.path, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + connection.token
+      },
+      body: JSON.stringify({ action, payload }),
+      signal: readingFiles ? AbortSignal.timeout(3e4) : void 0
+    });
+  } catch (error) {
+    if (error.name === "TimeoutError")
+      throw new Error(
+        "DSH took too long to read that folder or file. Try another folder or check the model drive."
+      );
+    throw error;
+  }
+  const data = await response.json();
+  if (!response.ok || data.error)
+    throw new Error(data.error || response.statusText);
+  return data.result;
+}
+var size = (bytes) => bytes >= 1073741824 ? (bytes / 1073741824).toFixed(2) + " GiB" : (bytes / 1048576).toFixed(1) + " MiB";
+
+// client/Inventory.jsx
+var import_react = __toESM(require("react"), 1);
+var explanations = {
+  Model: "Main model layers and projections",
+  Experts: "Routed mixture-of-experts weights",
+  Embeddings: "Token input embeddings",
+  Engram: "Per-layer / n-gram embedding memory",
+  MTP: "Multi-token prediction weights",
+  Draft: "Speculative draft weights",
+  DFlash: "DFlash speculative draft model",
+  Vision: "Image encoder / vision projector"
+};
+function Files({ model }) {
+  return /* @__PURE__ */ import_react.default.createElement("details", { className: "strata-files" }, /* @__PURE__ */ import_react.default.createElement("summary", null, model.files.length, " file", model.files.length === 1 ? "" : "s", " \xB7", " ", size(model.bytes)), model.warnings?.map((warning) => /* @__PURE__ */ import_react.default.createElement("p", { key: warning }, warning)), /* @__PURE__ */ import_react.default.createElement("div", { className: "strata-scroll" }, /* @__PURE__ */ import_react.default.createElement("table", null, /* @__PURE__ */ import_react.default.createElement("thead", null, /* @__PURE__ */ import_react.default.createElement("tr", null, /* @__PURE__ */ import_react.default.createElement("th", null, "File"), /* @__PURE__ */ import_react.default.createElement("th", null, "Shard"), /* @__PURE__ */ import_react.default.createElement("th", null, "Role / contents"), /* @__PURE__ */ import_react.default.createElement("th", null, "Size"))), /* @__PURE__ */ import_react.default.createElement("tbody", null, model.files.map((file) => /* @__PURE__ */ import_react.default.createElement("tr", { key: file.path }, /* @__PURE__ */ import_react.default.createElement("td", null, /* @__PURE__ */ import_react.default.createElement("strong", null, file.name), /* @__PURE__ */ import_react.default.createElement("small", null, file.path)), /* @__PURE__ */ import_react.default.createElement("td", null, file.index, " / ", file.count), /* @__PURE__ */ import_react.default.createElement("td", null, /* @__PURE__ */ import_react.default.createElement("strong", null, file.role), Object.keys(file.tensors).length ? Object.entries(file.tensors).map(([role, count]) => /* @__PURE__ */ import_react.default.createElement("div", { key: role, title: explanations[role] }, role, ": ", count, " tensor", count === 1 ? "" : "s")) : /* @__PURE__ */ import_react.default.createElement("span", null, file.role, " \xB7 metadata only"), /* @__PURE__ */ import_react.default.createElement("small", null, file.roleEvidence)), /* @__PURE__ */ import_react.default.createElement("td", null, size(file.bytes))))))));
+}
+function ModelsTable({ models, selected, setSelected, incomplete = false }) {
+  return /* @__PURE__ */ import_react.default.createElement("div", { className: "strata-scroll" }, /* @__PURE__ */ import_react.default.createElement("table", null, /* @__PURE__ */ import_react.default.createElement("thead", null, /* @__PURE__ */ import_react.default.createElement("tr", null, !incomplete && /* @__PURE__ */ import_react.default.createElement("th", null, "Select"), /* @__PURE__ */ import_react.default.createElement("th", null, "Model"), /* @__PURE__ */ import_react.default.createElement("th", null, "Architecture"), /* @__PURE__ */ import_react.default.createElement("th", null, "Status"))), /* @__PURE__ */ import_react.default.createElement("tbody", null, models.map((model) => /* @__PURE__ */ import_react.default.createElement(import_react.default.Fragment, { key: model.id }, /* @__PURE__ */ import_react.default.createElement("tr", null, !incomplete && /* @__PURE__ */ import_react.default.createElement("td", { className: "strata-select" }, /* @__PURE__ */ import_react.default.createElement(
+    "input",
+    {
+      type: "checkbox",
+      "aria-label": "Select " + model.name,
+      checked: selected.includes(model.id),
+      onChange: (event) => setSelected(
+        event.target.checked ? [...selected, model.id] : selected.filter((id) => id !== model.id)
+      )
+    }
+  )), /* @__PURE__ */ import_react.default.createElement("td", null, /* @__PURE__ */ import_react.default.createElement("strong", null, model.name), /* @__PURE__ */ import_react.default.createElement("small", null, model.files[0]?.path.split("/").slice(0, -1).join("/"))), /* @__PURE__ */ import_react.default.createElement("td", null, model.architecture || "Unknown; metadata shard may be missing", model.setupIssue && /* @__PURE__ */ import_react.default.createElement("small", null, model.setupIssue)), /* @__PURE__ */ import_react.default.createElement("td", null, model.missing.length ? "Missing shards: " + model.missing.join(", ") : model.duplicates.length ? "Review conflicting shards: " + model.duplicates.join(", ") : "All " + model.expected + " shards present")), /* @__PURE__ */ import_react.default.createElement("tr", null, /* @__PURE__ */ import_react.default.createElement("td", { colSpan: incomplete ? 3 : 4 }, /* @__PURE__ */ import_react.default.createElement(Files, { model }))))), !models.length && /* @__PURE__ */ import_react.default.createElement("tr", null, /* @__PURE__ */ import_react.default.createElement("td", { colSpan: 4 }, "None")))));
+}
+function Inventory({ inventory, selected, setSelected, add, disabled }) {
+  const [query, setQuery] = (0, import_react.useState)("");
+  if (!inventory)
+    return /* @__PURE__ */ import_react.default.createElement("p", { className: "strata-muted" }, "Choose a folder to discover your local models and their components.");
+  const matches = (model) => (model.name + " " + model.files.map((file) => file.path).join(" ")).toLowerCase().includes(query.toLowerCase());
+  const complete = inventory.models.filter(
+    (model) => model.status === "complete" && matches(model)
+  );
+  const incomplete = inventory.models.filter(
+    (model) => model.status !== "complete" && matches(model)
+  );
+  return /* @__PURE__ */ import_react.default.createElement("section", { "aria-label": "Folder scan results" }, /* @__PURE__ */ import_react.default.createElement("label", null, "Find models and components", /* @__PURE__ */ import_react.default.createElement(
+    "input",
+    {
+      "aria-label": "Filter models and components",
+      value: query,
+      onChange: (event) => setQuery(event.target.value),
+      placeholder: "Model name or folder"
+    }
+  )), /* @__PURE__ */ import_react.default.createElement("p", null, inventory.filesScanned, " GGUF files scanned in", " ", /* @__PURE__ */ import_react.default.createElement("code", null, inventory.root)), /* @__PURE__ */ import_react.default.createElement("h4", null, "Complete models ", /* @__PURE__ */ import_react.default.createElement("span", null, complete.length)), /* @__PURE__ */ import_react.default.createElement(
+    ModelsTable,
+    {
+      models: complete,
+      selected,
+      setSelected
+    }
+  ), /* @__PURE__ */ import_react.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: disabled || !selected.length,
+      onClick: add
+    },
+    "Add selected models (",
+    selected.length,
+    ")"
+  ), /* @__PURE__ */ import_react.default.createElement("small", null, "Complete means the shard set is present. Strata checks engine compatibility during preparation.")), /* @__PURE__ */ import_react.default.createElement("h4", null, "Models missing shards or needing review ", /* @__PURE__ */ import_react.default.createElement("span", null, incomplete.length)), /* @__PURE__ */ import_react.default.createElement(ModelsTable, { models: incomplete, incomplete: true }), /* @__PURE__ */ import_react.default.createElement("details", null, /* @__PURE__ */ import_react.default.createElement("summary", null, "Engram, MTP, DFlash, vision and other components (", inventory.components.length, ")"), /* @__PURE__ */ import_react.default.createElement("div", { className: "strata-scroll" }, /* @__PURE__ */ import_react.default.createElement("table", null, /* @__PURE__ */ import_react.default.createElement("thead", null, /* @__PURE__ */ import_react.default.createElement("tr", null, /* @__PURE__ */ import_react.default.createElement("th", null, "Component"), /* @__PURE__ */ import_react.default.createElement("th", null, "Role"), /* @__PURE__ */ import_react.default.createElement("th", null, "Purpose"), /* @__PURE__ */ import_react.default.createElement("th", null, "Files"), /* @__PURE__ */ import_react.default.createElement("th", null, "Status"))), /* @__PURE__ */ import_react.default.createElement("tbody", null, inventory.components.filter(matches).map((component) => /* @__PURE__ */ import_react.default.createElement("tr", { key: component.id }, /* @__PURE__ */ import_react.default.createElement("td", null, component.name), /* @__PURE__ */ import_react.default.createElement("td", null, component.role), /* @__PURE__ */ import_react.default.createElement("td", null, explanations[component.role] || "Additional model component"), /* @__PURE__ */ import_react.default.createElement("td", null, /* @__PURE__ */ import_react.default.createElement(Files, { model: component })), /* @__PURE__ */ import_react.default.createElement("td", null, component.status === "complete" ? "All shards present" : "Missing: " + component.missing.join(", "))))))), /* @__PURE__ */ import_react.default.createElement("p", { className: "strata-muted" }, "Component detection does not establish compatibility. DFlash is inventoried; this stock Strata importer does not attach it.")), inventory.errors.length > 0 && /* @__PURE__ */ import_react.default.createElement("details", null, /* @__PURE__ */ import_react.default.createElement("summary", null, "Files or folders that could not be inspected (", inventory.errors.length, ")"), inventory.errors.map((error, index) => /* @__PURE__ */ import_react.default.createElement("p", { key: index }, /* @__PURE__ */ import_react.default.createElement("code", null, error.path), ": ", error.error))));
+}
+
+// client/FilePicker.jsx
+var import_react2 = __toESM(require("react"), 1);
+function FilePicker({
+  initialPath,
+  projector = false,
+  onSelect,
+  onCancel
+}) {
+  const [path, setPath] = (0, import_react2.useState)(initialPath || "/");
+  const [listing, setListing] = (0, import_react2.useState)(null);
+  const [selected, setSelected] = (0, import_react2.useState)([]);
+  const [error, setError] = (0, import_react2.useState)("");
+  const [loading, setLoading] = (0, import_react2.useState)(true);
+  (0, import_react2.useEffect)(() => {
+    let live = true;
+    request("browse", { path: initialPath || void 0 }).then((value) => {
+      if (live) {
+        setListing(value);
+        setPath(value.path);
+      }
+    }).catch((error2) => {
+      if (live) setError(error2.message);
+    }).finally(() => {
+      if (live) setLoading(false);
+    });
+    return () => {
+      live = false;
+    };
+  }, [initialPath]);
+  async function browse(folder) {
+    setLoading(true);
+    setError("");
+    setSelected([]);
+    try {
+      const value = await request("browse", { path: folder });
+      setListing(value);
+      setPath(value.path);
+    } catch (error2) {
+      setListing(null);
+      setError(error2.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+  async function choose(value) {
+    setError("");
+    try {
+      await onSelect(value);
+    } catch (error2) {
+      setError(error2.message);
+    }
+  }
+  const child = (name) => listing.path.replace(/\/$/, "") + "/" + name;
+  return /* @__PURE__ */ import_react2.default.createElement(
+    "section",
+    {
+      className: "strata-panel",
+      "aria-label": projector ? "Select vision projector" : "Import model files"
+    },
+    /* @__PURE__ */ import_react2.default.createElement("h4", null, projector ? "Select vision projector (mmproj)" : "Import model files"),
+    /* @__PURE__ */ import_react2.default.createElement("p", null, projector ? "Choose the model's mmproj GGUF file." : "Choose any model shard. Its other shards and nearby vision files are found automatically. You can also import a whole folder, including subfolders."),
+    /* @__PURE__ */ import_react2.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react2.default.createElement(
+      "input",
+      {
+        "aria-label": "Folder path",
+        value: path,
+        onChange: (event) => setPath(event.target.value),
+        onKeyDown: (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            browse(path);
+          }
+        }
+      }
+    ), /* @__PURE__ */ import_react2.default.createElement("button", { type: "button", disabled: loading, onClick: () => browse(path) }, "Open folder")),
+    loading && /* @__PURE__ */ import_react2.default.createElement("p", { role: "status" }, "Loading files\u2026"),
+    error && /* @__PURE__ */ import_react2.default.createElement("p", { role: "alert" }, error),
+    listing && !loading && /* @__PURE__ */ import_react2.default.createElement("div", { className: "strata-folders" }, /* @__PURE__ */ import_react2.default.createElement("button", { type: "button", onClick: () => browse(listing.parent) }, "\u2191 Parent folder"), listing.directories.map((name) => /* @__PURE__ */ import_react2.default.createElement(
+      "button",
+      {
+        type: "button",
+        key: name,
+        onClick: () => browse(child(name))
+      },
+      name,
+      "/"
+    )), listing.files.map((name) => /* @__PURE__ */ import_react2.default.createElement("label", { className: "strata-check", key: name }, /* @__PURE__ */ import_react2.default.createElement(
+      "input",
+      {
+        type: projector ? "radio" : "checkbox",
+        name: "strata-file",
+        checked: selected.includes(child(name)),
+        onChange: (event) => setSelected(
+          projector ? [child(name)] : event.target.checked ? [...selected, child(name)] : selected.filter((value) => value !== child(name))
+        )
+      }
+    ), name)), !listing.files.length && /* @__PURE__ */ import_react2.default.createElement("p", null, "No GGUF files in this folder. Open a subfolder", projector ? "." : " or import this folder to search all subfolders.")),
+    /* @__PURE__ */ import_react2.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react2.default.createElement("button", { type: "button", onClick: onCancel }, "Cancel"), !projector && /* @__PURE__ */ import_react2.default.createElement(
+      "button",
+      {
+        type: "button",
+        disabled: loading || !listing,
+        onClick: () => choose({ path: listing.path })
+      },
+      "Import this folder"
+    ), /* @__PURE__ */ import_react2.default.createElement(
+      "button",
+      {
+        type: "button",
+        disabled: loading || !selected.length,
+        onClick: () => choose(
+          projector ? selected[0] : { path: listing.path, files: selected }
+        )
+      },
+      projector ? "Use projector" : `Import selected files (${selected.length})`
+    ))
+  );
+}
+
+// client/ProfileEditor.jsx
+var import_react3 = __toESM(require("react"), 1);
+
+// lib/choices.js
+var kvChoices = Object.freeze([
+  "FP16/FP16",
+  "FP16/Q8",
+  "Q8/Q8",
+  "Q8/Q5",
+  "Q5/Q5",
+  "Q5/Q4",
+  "Q4/Q4"
+]);
+var contextStep = 32768;
+function kvLabel(value) {
+  return { fp16: "FP16/FP16", int8: "Q8/Q8", q4_0: "Q4/Q4", k8v4: "Q8/Q4" }[value] || value;
+}
+function contextChoices(profile) {
+  const metadata = profile.model?.files?.find((file) => file.index === 1)?.metadata || {};
+  const trained = Number(metadata[profile.model?.architecture + ".context_length"]) || contextStep;
+  const limit = Math.min(4194304, Math.max(4096, trained));
+  if (limit < contextStep) return [limit];
+  return Array.from(
+    { length: Math.floor(limit / contextStep) },
+    (_, index) => (index + 1) * contextStep
+  );
+}
+
+// client/ProfileEditor.jsx
+function ProfileEditor({ profile, busy, save, run, close }) {
+  const [draft, setDraft] = (0, import_react3.useState)(() => ({
+    ...structuredClone(profile),
+    kv: kvLabel(profile.kv)
+  }));
+  const [error, setError] = (0, import_react3.useState)("");
+  const [picking, setPicking] = (0, import_react3.useState)(false);
+  const [capabilities, setCapabilities] = (0, import_react3.useState)(null);
+  const edit = (key, value) => setDraft((previous) => ({ ...previous, [key]: value }));
+  (0, import_react3.useEffect)(() => {
+    let live = true;
+    request("capabilities", { id: profile.id }).then((value) => {
+      if (live) setCapabilities(value);
+    }).catch((error2) => {
+      if (live) setError(error2.message);
+    });
+    return () => {
+      live = false;
+    };
+  }, [profile.id]);
+  async function commit(tuning = false) {
+    setError("");
+    try {
+      await save({
+        ...draft,
+        extraArgs: [],
+        environment: {},
+        applyPreset: true
+      });
+      if (tuning) await run("tune", { id: draft.id });
+    } catch (error2) {
+      setError(error2.message);
+    }
+  }
+  const contexts = contextChoices(draft);
+  return /* @__PURE__ */ import_react3.default.createElement("section", { className: "strata-panel", "aria-label": "Model settings" }, /* @__PURE__ */ import_react3.default.createElement("h4", null, draft.name), error && /* @__PURE__ */ import_react3.default.createElement("p", { role: "alert" }, error), /* @__PURE__ */ import_react3.default.createElement("div", { className: "strata-grid" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "KV precision (K / V)", /* @__PURE__ */ import_react3.default.createElement(
+    "select",
+    {
+      value: draft.kv,
+      onChange: (event) => edit("kv", event.target.value)
+    },
+    !kvChoices.includes(draft.kv) && /* @__PURE__ */ import_react3.default.createElement("option", { value: draft.kv }, draft.kv, " (saved)"),
+    kvChoices.map((value) => /* @__PURE__ */ import_react3.default.createElement(
+      "option",
+      {
+        key: value,
+        value,
+        disabled: capabilities?.kv && !capabilities.kv.includes(value)
+      },
+      value,
+      capabilities?.kv && !capabilities.kv.includes(value) ? " \u2014 unavailable in this engine" : ""
+    ))
+  )), /* @__PURE__ */ import_react3.default.createElement("label", null, "Context", /* @__PURE__ */ import_react3.default.createElement(
+    "select",
+    {
+      value: draft.context,
+      onChange: (event) => edit("context", Number(event.target.value))
+    },
+    !contexts.includes(draft.context) && /* @__PURE__ */ import_react3.default.createElement("option", { value: draft.context }, draft.context.toLocaleString(), " tokens (saved)"),
+    contexts.map((value) => /* @__PURE__ */ import_react3.default.createElement("option", { key: value, value }, value.toLocaleString(), " tokens"))
+  ))), /* @__PURE__ */ import_react3.default.createElement("div", null, /* @__PURE__ */ import_react3.default.createElement("strong", null, "Vision projector"), draft.projector ? /* @__PURE__ */ import_react3.default.createElement("p", { title: draft.projector }, draft.projector.split("/").pop()) : /* @__PURE__ */ import_react3.default.createElement("p", null, draft.projectorChoice === "none" ? "Text only." : "No matching mmproj found. Select a projector for images, or continue without vision."), /* @__PURE__ */ import_react3.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react3.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy,
+      onClick: () => setPicking(true)
+    },
+    draft.projector ? "Change projector" : "Select mmproj file"
+  ), /* @__PURE__ */ import_react3.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy,
+      onClick: () => setDraft((previous) => ({
+        ...previous,
+        projector: "",
+        projectorChoice: "none"
+      }))
+    },
+    "Continue without vision"
+  ))), picking && /* @__PURE__ */ import_react3.default.createElement(
+    FilePicker,
+    {
+      projector: true,
+      initialPath: (draft.projector || draft.model?.files?.[0]?.path || "").split("/").slice(0, -1).join("/") || void 0,
+      onCancel: () => setPicking(false),
+      onSelect: async (path) => {
+        await request("projector", { path });
+        setDraft((previous) => ({
+          ...previous,
+          projector: path,
+          projectorChoice: "selected"
+        }));
+        setPicking(false);
+      }
+    }
+  ), /* @__PURE__ */ import_react3.default.createElement("p", null, "Strata's Thorough tuner measures settings for your chosen KV precision and context."), /* @__PURE__ */ import_react3.default.createElement("details", null, /* @__PURE__ */ import_react3.default.createElement("summary", null, "Runtime compatibility"), /* @__PURE__ */ import_react3.default.createElement("p", null, "Use the installed Strata runtime, or supply a compatible fork for this model."), /* @__PURE__ */ import_react3.default.createElement("div", { className: "strata-grid" }, [
+    ["controlDir", "Control directory"],
+    ["python", "Python executable"],
+    ["executable", "Engine executable"]
+  ].map(([key, label]) => /* @__PURE__ */ import_react3.default.createElement("label", { key }, label, /* @__PURE__ */ import_react3.default.createElement(
+    "input",
+    {
+      value: draft.runtime?.[key] || "",
+      placeholder: "Use installed runtime",
+      onChange: (event) => edit("runtime", {
+        ...draft.runtime,
+        [key]: event.target.value
+      })
+    }
+  )))), /* @__PURE__ */ import_react3.default.createElement("label", { className: "strata-check" }, /* @__PURE__ */ import_react3.default.createElement(
+    "input",
+    {
+      type: "checkbox",
+      checked: draft.runtime?.tqp || false,
+      onChange: (event) => edit("runtime", { ...draft.runtime, tqp: event.target.checked })
+    }
+  ), "This fork supports Gyro L (TQP5/6/7)")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react3.default.createElement("button", { type: "button", onClick: close }, "Close"), /* @__PURE__ */ import_react3.default.createElement("button", { type: "button", disabled: busy, onClick: () => commit() }, "Save"), /* @__PURE__ */ import_react3.default.createElement("button", { type: "button", disabled: busy, onClick: () => commit(true) }, "Save and auto-tune")));
+}
+
+// client/Download.jsx
+var import_react4 = __toESM(require("react"), 1);
+function Download({ busy, run, close }) {
+  const [catalog, setCatalog] = (0, import_react4.useState)([]), [choice, setChoice] = (0, import_react4.useState)(""), [error, setError] = (0, import_react4.useState)(""), [tune, setTune] = (0, import_react4.useState)(true);
+  (0, import_react4.useEffect)(() => {
+    let live = true;
+    request("catalog").then((values) => {
+      if (live) {
+        setCatalog(values);
+        setChoice("0");
+      }
+    }).catch((error2) => {
+      if (live) setError(error2.message);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
+  return /* @__PURE__ */ import_react4.default.createElement("section", { className: "strata-panel", "aria-label": "Download a model" }, /* @__PURE__ */ import_react4.default.createElement("h4", null, "Download a model"), /* @__PURE__ */ import_react4.default.createElement("p", null, "Selections come from the installed Strata catalog. Strata downloads, verifies, prepares and configures the model."), error && /* @__PURE__ */ import_react4.default.createElement("p", { role: "alert" }, error), /* @__PURE__ */ import_react4.default.createElement("label", null, "Model", /* @__PURE__ */ import_react4.default.createElement("select", { value: choice, onChange: (e) => setChoice(e.target.value) }, catalog.map((item, index) => /* @__PURE__ */ import_react4.default.createElement("option", { value: index, key: item.family + item.model }, item.title, " \xB7 ", item.model, item.downloadGB ? " \xB7 " + item.downloadGB + " GB download" : "")))), catalog[Number(choice)] && /* @__PURE__ */ import_react4.default.createElement("p", null, catalog[Number(choice)].about), /* @__PURE__ */ import_react4.default.createElement("label", { className: "strata-check" }, /* @__PURE__ */ import_react4.default.createElement(
+    "input",
+    {
+      type: "checkbox",
+      checked: tune,
+      onChange: (e) => setTune(e.target.checked)
+    }
+  ), "Run Thorough auto-tuning after installation"), /* @__PURE__ */ import_react4.default.createElement("p", { className: "strata-muted" }, "Files are stored in the plugin data directory. Downloads can be large; tuning starts GPU work."), /* @__PURE__ */ import_react4.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react4.default.createElement("button", { type: "button", onClick: close }, "Cancel"), /* @__PURE__ */ import_react4.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy || !catalog.length,
+      onClick: async () => {
+        await run("download", { selection: catalog[Number(choice)], tune });
+        close();
+      }
+    },
+    "Download and install"
+  )));
+}
+
+// client/styles.css
+var styles_default = '.strata-card {\n  margin-top: 20px;\n  padding: 18px;\n  border: 1px solid var(--dsw-alias-border-l3);\n  border-radius: 12px;\n  color: var(--dsw-alias-label-primary);\n  font-size: 14px;\n}\n.strata-card * {\n  box-sizing: border-box;\n}\n.strata-card header,\n.strata-actions {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n  flex-wrap: wrap;\n}\n.strata-card header {\n  justify-content: space-between;\n}\n.strata-card h3 {\n  margin: 0;\n  font-size: 18px;\n}\n.strata-card h4 {\n  margin: 18px 0 10px;\n  font-size: 15px;\n}\n.strata-card h4 span {\n  font-size: 12px;\n  opacity: 0.65;\n  margin-left: 6px;\n}\n.strata-card p,\n.strata-muted,\n.strata-card small {\n  color: var(--dsw-alias-label-secondary);\n  line-height: 1.5;\n}\n.strata-card small {\n  display: block;\n  font-size: 12px;\n  overflow-wrap: anywhere;\n}\n.strata-card button,\n.strata-card input,\n.strata-card select,\n.strata-card textarea {\n  font: inherit;\n  color: inherit;\n  border: 1px solid var(--dsw-alias-border-l3);\n  border-radius: 6px;\n  background: var(--dsw-alias-bg-layer-1);\n  padding: 7px 9px;\n}\n.strata-card button {\n  cursor: pointer;\n}\n.strata-card button:disabled {\n  opacity: 0.45;\n  cursor: default;\n}\n.strata-card input:not([type="checkbox"]),\n.strata-card select,\n.strata-card textarea {\n  width: 100%;\n  min-width: 0;\n}\n.strata-card .strata-actions > input {\n  flex: 1;\n  min-width: 180px;\n}\n.strata-card input[type="checkbox"] {\n  margin: 0;\n}\n.strata-card label {\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n}\n.strata-card .strata-check {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  gap: 8px;\n  margin: 10px 0;\n}\n.strata-card details {\n  margin: 12px 0;\n}\n.strata-card summary {\n  cursor: pointer;\n  font-weight: 500;\n}\n.strata-panel {\n  padding: 14px;\n  margin: 16px 0;\n  border: 1px solid var(--dsw-alias-border-l3);\n  border-radius: 8px;\n}\n.strata-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));\n  gap: 12px;\n  margin: 12px 0;\n}\n.strata-scroll {\n  width: 100%;\n  overflow-x: auto;\n}\n.strata-card table {\n  width: 100%;\n  border-collapse: collapse;\n  text-align: left;\n  font-size: 12px;\n}\n.strata-card td,\n.strata-card th {\n  vertical-align: top;\n  padding: 10px 7px;\n  border-bottom: 1px solid var(--dsw-alias-border-l3);\n  overflow-wrap: anywhere;\n}\n.strata-card td {\n  min-width: 80px;\n  max-width: 360px;\n}\n.strata-card td:first-child {\n  min-width: 0;\n}\n.strata-files {\n  min-width: 150px;\n}\n.strata-card pre,\n.strata-card textarea {\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  font-family: monospace;\n  font-size: 12px;\n  max-height: 320px;\n  overflow: auto;\n}\n.strata-card textarea {\n  min-height: 110px;\n}\n.strata-card fieldset {\n  border: 1px solid var(--dsw-alias-border-l3);\n  border-radius: 8px;\n  margin: 16px 0;\n  padding: 12px;\n}\n.strata-saved,\n.strata-job {\n  padding: 12px 0;\n  border-bottom: 1px solid var(--dsw-alias-border-l3);\n}\n.strata-job > span {\n  display: block;\n  margin: 5px 0;\n}\n.strata-folders {\n  max-height: 220px;\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n  margin: 10px 0;\n}\n.strata-folders button {\n  text-align: left;\n}\n.strata-card .strata-error,\n.strata-card [role="alert"] {\n  color: var(--dsw-alias-danger-primary, #df665e);\n}\n@media (max-width: 600px) {\n  .strata-card {\n    padding: 12px;\n  }\n  .strata-grid {\n    grid-template-columns: 1fr;\n  }\n}\n\n/* Expanded shard tables span the model row, so filenames retain usable width. */\n.strata-scroll > table {\n  min-width: 560px;\n}\n.strata-card th {\n  white-space: nowrap;\n  overflow-wrap: normal;\n}\n.strata-card .strata-select {\n  width: 42px;\n  min-width: 42px;\n}\n.strata-files table td:first-child {\n  min-width: 240px;\n}\n.strata-files table td:nth-child(2),\n.strata-files table td:last-child {\n  white-space: nowrap;\n}\n.strata-files strong {\n  display: block;\n}\n';
+
+// client/main.jsx
+function RuntimeSettings({ settings, busy, run }) {
+  const [draft, setDraft] = (0, import_react5.useState)(settings);
+  (0, import_react5.useEffect)(() => setDraft(settings), [JSON.stringify(settings)]);
+  return /* @__PURE__ */ import_react5.default.createElement("details", null, /* @__PURE__ */ import_react5.default.createElement("summary", null, "Strata runtime"), /* @__PURE__ */ import_react5.default.createElement("p", null, "Install the official runtime, or select existing compatible runtime paths."), /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-grid" }, [
+    ["controlDir", "Control directory"],
+    ["python", "Python executable"],
+    ["executable", "Engine executable"]
+  ].map(([key, label]) => /* @__PURE__ */ import_react5.default.createElement("label", { key }, label, /* @__PURE__ */ import_react5.default.createElement(
+    "input",
+    {
+      value: draft[key],
+      onChange: (e) => setDraft((p) => ({ ...p, [key]: e.target.value }))
+    }
+  )))), /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react5.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy,
+      onClick: () => run("settings", { settings: draft })
+    },
+    "Save runtime paths"
+  ), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", disabled: busy, onClick: () => run("install") }, "Install / update official Strata")));
+}
+function StrataCard() {
+  const [state, setState] = (0, import_react5.useState)(null), [error, setError] = (0, import_react5.useState)(""), [view, setView] = (0, import_react5.useState)(""), [selected, setSelected] = (0, import_react5.useState)([]), [tuneIds, setTuneIds] = (0, import_react5.useState)([]), [help, setHelp] = (0, import_react5.useState)(""), [pending, setPending] = (0, import_react5.useState)(false), [importJob, setImportJob] = (0, import_react5.useState)("");
+  const refresh = (0, import_react5.useCallback)(async () => {
+    setState(await request("state"));
+  }, []);
+  (0, import_react5.useEffect)(() => {
+    let live = true;
+    const update = () => request("state").then((value) => {
+      if (live) setState(value);
+    }).catch((error2) => {
+      if (live) setError(error2.message);
+    });
+    update();
+    const timer = setInterval(update, 2e3);
+    return () => {
+      live = false;
+      clearInterval(timer);
+    };
+  }, []);
+  (0, import_react5.useEffect)(() => {
+    const job = state?.jobs.find((job2) => job2.id === importJob);
+    if (job?.status === "complete") {
+      setImportJob("");
+      if (job.result.ids?.length) setView(job.result.ids[0]);
+    }
+  }, [state, importJob]);
+  async function run(action, payload = {}) {
+    setPending(true);
+    setError("");
+    try {
+      const value = await request(action, payload);
+      if (action === "help") setHelp(value);
+      await refresh();
+      return value;
+    } catch (error2) {
+      setError(error2.message);
+      throw error2;
+    } finally {
+      setPending(false);
+    }
+  }
+  const act = (action, payload) => run(action, payload).catch(() => {
+  });
+  const busy = pending || state?.jobs.some((job) => ["queued", "running"].includes(job.status));
+  const profile = state?.profiles.find((profile2) => profile2.id === view);
+  return /* @__PURE__ */ import_react5.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react5.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react5.default.createElement("header", null, /* @__PURE__ */ import_react5.default.createElement("div", null, /* @__PURE__ */ import_react5.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react5.default.createElement("small", null, "0.4.0")), /* @__PURE__ */ import_react5.default.createElement("p", null, "Local models")), /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react5.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy,
+      onClick: () => setView("download")
+    },
+    "Download a model"
+  ), /* @__PURE__ */ import_react5.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy || !state,
+      onClick: () => setView("scan")
+    },
+    "Import files"
+  ))), error && /* @__PURE__ */ import_react5.default.createElement("p", { role: "alert", className: "strata-error" }, error), !state ? /* @__PURE__ */ import_react5.default.createElement("p", null, "Connecting to Strata\u2026") : /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement(RuntimeSettings, { settings: state.settings, busy, run: act }), view === "scan" && /* @__PURE__ */ import_react5.default.createElement(
+    FilePicker,
+    {
+      initialPath: state.inventory?.root,
+      onCancel: () => setView(""),
+      onSelect: async (selection) => {
+        const job = await run("import", selection);
+        setImportJob(job.id);
+        setSelected([]);
+        setView("");
+      }
+    }
+  ), view === "download" && /* @__PURE__ */ import_react5.default.createElement(Download, { busy, run: act, close: () => setView("") }), profile && /* @__PURE__ */ import_react5.default.createElement(
+    ProfileEditor,
+    {
+      key: profile.id,
+      profile,
+      inventory: state.inventory,
+      busy,
+      save: async (p) => {
+        await run("save", { profile: p });
+        setView("");
+      },
+      run: act,
+      close: () => setView("")
+    }
+  ), /* @__PURE__ */ import_react5.default.createElement("section", { "aria-label": "Saved Strata models" }, /* @__PURE__ */ import_react5.default.createElement("h4", null, "Saved models"), !state.profiles.length && /* @__PURE__ */ import_react5.default.createElement("p", { className: "strata-muted" }, "Choose Import files to add your models."), state.profiles.map((profile2) => /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-saved", key: profile2.id }, /* @__PURE__ */ import_react5.default.createElement("label", { className: "strata-check" }, /* @__PURE__ */ import_react5.default.createElement(
+    "input",
+    {
+      type: "checkbox",
+      "aria-label": "Queue tuning for " + profile2.name,
+      checked: tuneIds.includes(profile2.id),
+      onChange: (e) => setTuneIds(
+        e.target.checked ? [...tuneIds, profile2.id] : tuneIds.filter((id) => id !== profile2.id)
+      )
+    }
+  ), /* @__PURE__ */ import_react5.default.createElement("strong", null, profile2.name)), /* @__PURE__ */ import_react5.default.createElement("small", null, profile2.status, " \xB7 ", profile2.context.toLocaleString(), " context \xB7 ", profile2.config ? "prepared" : "not prepared"), /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react5.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy,
+      onClick: () => setView(profile2.id)
+    },
+    "Settings"
+  ), /* @__PURE__ */ import_react5.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy,
+      onClick: () => act(profile2.status === "running" ? "stop" : "start", {
+        id: profile2.id
+      })
+    },
+    profile2.status === "running" ? "Unload" : "Load"
+  ), /* @__PURE__ */ import_react5.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy,
+      onClick: () => act("remove", { id: profile2.id })
+    },
+    "Remove profile"
+  )))), !!state.profiles.length && /* @__PURE__ */ import_react5.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy || !tuneIds.length,
+      onClick: () => act("tune", { ids: tuneIds })
+    },
+    "Auto-tune selected models (",
+    tuneIds.length,
+    ")"
+  )), /* @__PURE__ */ import_react5.default.createElement(
+    "details",
+    {
+      open: state.inventory?.models.some(
+        (model) => model.status !== "complete"
+      ) || void 0
+    },
+    /* @__PURE__ */ import_react5.default.createElement("summary", null, "Files and shards"),
+    /* @__PURE__ */ import_react5.default.createElement(
+      Inventory,
+      {
+        inventory: state.inventory,
+        selected,
+        setSelected,
+        disabled: busy,
+        add: async () => {
+          const ids = await run("add", { ids: selected });
+          setSelected([]);
+          if (ids.length) setView(ids[0]);
+        }
+      }
+    )
+  ), /* @__PURE__ */ import_react5.default.createElement("section", { "aria-label": "Strata operations" }, state.jobs.slice(-6).map((job) => /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-job", key: job.id }, /* @__PURE__ */ import_react5.default.createElement("strong", null, job.kind), /* @__PURE__ */ import_react5.default.createElement("span", null, job.status, ": ", job.progress), ["queued", "running"].includes(job.status) && /* @__PURE__ */ import_react5.default.createElement(
+    "button",
+    {
+      type: "button",
+      onClick: () => act("cancel", { id: job.id })
+    },
+    "Cancel"
+  ), job.log && /* @__PURE__ */ import_react5.default.createElement("details", null, /* @__PURE__ */ import_react5.default.createElement("summary", null, "Operation log"), /* @__PURE__ */ import_react5.default.createElement("pre", null, job.log))))), help && /* @__PURE__ */ import_react5.default.createElement("details", { open: true }, /* @__PURE__ */ import_react5.default.createElement("summary", null, "Installed engine options"), /* @__PURE__ */ import_react5.default.createElement("pre", null, help), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", onClick: () => setHelp("") }, "Close options"))));
+}
+var inject = ["slots"];
+function apply(ctx) {
+  ctx.slots.inject(
+    "settings.models.footer",
+    () => ctx.slots.register(
+      { name: "settings.models.footer", id: "dsh-strata", order: 10 },
+      StrataCard
+    )
+  );
+}
+
+return module.exports;
+}});

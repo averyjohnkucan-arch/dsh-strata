@@ -1,0 +1,207 @@
+.strata-card {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid var(--dsw-alias-border-l3);
+  border-radius: 12px;
+  color: var(--dsw-alias-label-primary);
+  font-size: 14px;
+}
+.strata-card * {
+  box-sizing: border-box;
+}
+.strata-card header,
+.strata-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.strata-card header {
+  justify-content: space-between;
+}
+.strata-card h3 {
+  margin: 0;
+  font-size: 18px;
+}
+.strata-card h4 {
+  margin: 18px 0 10px;
+  font-size: 15px;
+}
+.strata-card h4 span {
+  font-size: 12px;
+  opacity: 0.65;
+  margin-left: 6px;
+}
+.strata-card p,
+.strata-muted,
+.strata-card small {
+  color: var(--dsw-alias-label-secondary);
+  line-height: 1.5;
+}
+.strata-card small {
+  display: block;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.strata-card button,
+.strata-card input,
+.strata-card select,
+.strata-card textarea {
+  font: inherit;
+  color: inherit;
+  border: 1px solid var(--dsw-alias-border-l3);
+  border-radius: 6px;
+  background: var(--dsw-alias-bg-layer-1);
+  padding: 7px 9px;
+}
+.strata-card button {
+  cursor: pointer;
+}
+.strata-card button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.strata-card input:not([type="checkbox"]),
+.strata-card select,
+.strata-card textarea {
+  width: 100%;
+  min-width: 0;
+}
+.strata-card .strata-actions > input {
+  flex: 1;
+  min-width: 180px;
+}
+.strata-card input[type="checkbox"] {
+  margin: 0;
+}
+.strata-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.strata-card .strata-check {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+.strata-card details {
+  margin: 12px 0;
+}
+.strata-card summary {
+  cursor: pointer;
+  font-weight: 500;
+}
+.strata-panel {
+  padding: 14px;
+  margin: 16px 0;
+  border: 1px solid var(--dsw-alias-border-l3);
+  border-radius: 8px;
+}
+.strata-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin: 12px 0;
+}
+.strata-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+.strata-card table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+.strata-card td,
+.strata-card th {
+  vertical-align: top;
+  padding: 10px 7px;
+  border-bottom: 1px solid var(--dsw-alias-border-l3);
+  overflow-wrap: anywhere;
+}
+.strata-card td {
+  min-width: 80px;
+  max-width: 360px;
+}
+.strata-card td:first-child {
+  min-width: 0;
+}
+.strata-files {
+  min-width: 150px;
+}
+.strata-card pre,
+.strata-card textarea {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: monospace;
+  font-size: 12px;
+  max-height: 320px;
+  overflow: auto;
+}
+.strata-card textarea {
+  min-height: 110px;
+}
+.strata-card fieldset {
+  border: 1px solid var(--dsw-alias-border-l3);
+  border-radius: 8px;
+  margin: 16px 0;
+  padding: 12px;
+}
+.strata-saved,
+.strata-job {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--dsw-alias-border-l3);
+}
+.strata-job > span {
+  display: block;
+  margin: 5px 0;
+}
+.strata-folders {
+  max-height: 220px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 10px 0;
+}
+.strata-folders button {
+  text-align: left;
+}
+.strata-card .strata-error,
+.strata-card [role="alert"] {
+  color: var(--dsw-alias-danger-primary, #df665e);
+}
+@media (max-width: 600px) {
+  .strata-card {
+    padding: 12px;
+  }
+  .strata-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Expanded shard tables span the model row, so filenames retain usable width. */
+.strata-scroll > table {
+  min-width: 560px;
+}
+.strata-card th {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+.strata-card .strata-select {
+  width: 42px;
+  min-width: 42px;
+}
+.strata-files table td:first-child {
+  min-width: 240px;
+}
+.strata-files table td:nth-child(2),
+.strata-files table td:last-child {
+  white-space: nowrap;
+}
+.strata-files strong {
+  display: block;
+}

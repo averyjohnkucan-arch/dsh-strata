@@ -1,7 +1,6 @@
 node_modules/
-.engine/
-.runtime/
-*.tgz
-.env
 __pycache__/
 *.pyc
+.ruff_cache/
+*.tgz
+.env

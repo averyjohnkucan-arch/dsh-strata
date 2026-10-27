@@ -1,0 +1,22 @@
+{
+  "release": "v0.2.7",
+  "controlVersion": "0.1.52",
+  "engineVersion": "0.1.52",
+  "assets": [
+    {
+      "name": "strata-control-0.1.52-linux-x86_64.tar.gz",
+      "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.7/strata-control-0.1.52-linux-x86_64.tar.gz",
+      "sha256": "399fcc8f2d232b2f7ab7df82d863874a4b815019ced877a24f68a47ffc8110a0"
+    },
+    {
+      "name": "strata-engine-0.1.52-linux-x86_64-cuda-cuda12.tar.gz",
+      "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.7/strata-engine-0.1.52-linux-x86_64-cuda-cuda12.tar.gz",
+      "sha256": "f08895a927c05664a70b1397ba9f7888ca1cf328140fa056c9e2ce9d0f15de30"
+    },
+    {
+      "name": "strata-engine-0.1.52-linux-x86_64-cuda-cuda13.tar.gz",
+      "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.7/strata-engine-0.1.52-linux-x86_64-cuda-cuda13.tar.gz",
+      "sha256": "4177c1a8ffc59bf66074093b22ac55ed477bcbe84f8bd12e378b0f1236da55c7"
+    }
+  ]
+}

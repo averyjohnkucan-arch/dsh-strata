@@ -1,0 +1,195 @@
+[
+  {
+    "family": "qwen",
+    "model": "Q2_0",
+    "title": "Qwen3.8-Flash-Next",
+    "about": "2-bit, the fastest",
+    "downloadGB": 66.4,
+    "ramGB": 48
+  },
+  {
+    "family": "qwen",
+    "model": "IQ2_XS",
+    "title": "Qwen3.8-Flash-Next",
+    "about": "2-bit i-quant, a little better quality, close in speed",
+    "downloadGB": 68.0,
+    "ramGB": 48
+  },
+  {
+    "family": "qwen",
+    "model": "IQ3_XXS",
+    "title": "Qwen3.8-Flash-Next",
+    "about": "3-bit i-quant, better quality, slower (more CPU work per token)",
+    "downloadGB": 75.8,
+    "ramGB": 60
+  },
+  {
+    "family": "qwen",
+    "model": "IQ3_S",
+    "title": "Qwen3.8-Flash-Next",
+    "about": "3.5-bit i-quant, the best quality (matches the full model), the slowest; needs a 64 GB PC with little else running",
+    "downloadGB": 83.6,
+    "ramGB": 62
+  },
+  {
+    "family": "swift",
+    "model": "IQ2_XS",
+    "title": "Swift 1.5",
+    "about": "2-bit i-quant, a little better quality, close in speed",
+    "downloadGB": 68.0,
+    "ramGB": 48
+  },
+  {
+    "family": "swift",
+    "model": "IQ3_XXS",
+    "title": "Swift 1.5",
+    "about": "3-bit i-quant, better quality, slower (more CPU work per token)",
+    "downloadGB": 75.8,
+    "ramGB": 60
+  },
+  {
+    "family": "swift",
+    "model": "IQ3_S",
+    "title": "Swift 1.5",
+    "about": "3.5-bit i-quant, the best quality (matches the full model), the slowest; needs a 64 GB PC with little else running",
+    "downloadGB": 83.6,
+    "ramGB": 62
+  },
+  {
+    "family": "coder",
+    "model": "IQ1_M",
+    "title": "Qwen3.8-Flash-Next Coder",
+    "about": "the Coder's only size: half the experts, stored like IQ3_S (3.5 bits)",
+    "downloadGB": 58.4,
+    "ramGB": 32
+  },
+  {
+    "family": "unsloth",
+    "model": "UD-IQ4_XS",
+    "title": "Qwen3.8-Flash-Next (Unsloth)",
+    "about": "~4-bit i-quant (Unsloth Dynamic), between IQ3_S and UD-Q4_K_XL in quality; on a PC with less than ~80 GB of RAM part of its experts are read from the SSD",
+    "downloadGB": 93.7,
+    "ramGB": 48
+  },
+  {
+    "family": "unsloth",
+    "model": "UD-Q4_K_XL",
+    "title": "Qwen3.8-Flash-Next (Unsloth)",
+    "about": "4-bit (Unsloth Dynamic): K-quant experts, between UD-IQ4_XS and UD-Q5_K_XL in quality",
+    "downloadGB": 111.3,
+    "ramGB": 48
+  },
+  {
+    "family": "unsloth",
+    "model": "UD-Q5_K_XL",
+    "title": "Qwen3.8-Flash-Next (Unsloth)",
+    "about": "5-bit (Unsloth Dynamic): Q5_K experts with Q8_0 downs, close to Q8_0 in quality",
+    "downloadGB": 158.3,
+    "ramGB": 108
+  },
+  {
+    "family": "unsloth",
+    "model": "UD-Q6_K_XL",
+    "title": "Qwen3.8-Flash-Next (Unsloth)",
+    "about": "6-bit (Unsloth Dynamic): Q6_K experts with Q8_0 downs",
+    "downloadGB": 169.2,
+    "ramGB": 118
+  },
+  {
+    "family": "unsloth",
+    "model": "Q8_0",
+    "title": "Qwen3.8-Flash-Next (Unsloth)",
+    "about": "8-bit, the reference quality (every expert Q8_0); for a 192 GB PC",
+    "downloadGB": 188.2,
+    "ramGB": 136
+  },
+  {
+    "family": "gyro",
+    "model": "Gyro-S",
+    "title": "Qwen3.8-Flash-Next (Gyro)",
+    "about": "the smallest option, for PCs with little memory (27.6 GB of VRAM + RAM together); lower quality than the 2-3-bit sizes, and the 2-bit Q2_0 decodes faster",
+    "downloadGB": 58.5,
+    "ramGB": 27.6
+  },
+  {
+    "family": "gyro",
+    "model": "Gyro-M",
+    "title": "Qwen3.8-Flash-Next (Gyro)",
+    "about": "about IQ3_XXS quality with about 20% less GPU memory (35 GB of VRAM + RAM together); decodes about 16-21% slower than Q2_0 on 12 GB cards",
+    "downloadGB": 92.0,
+    "ramGB": 35.0
+  },
+  {
+    "family": "nvfp4",
+    "model": "NVFP4",
+    "title": "Qwen3.8-Flash-Next (NVFP4)",
+    "about": "best quality of the NVFP4 versions (GPTQ, sergqwer's strata-nvfp4 pack); RTX 50 has FP4 tensor cores, other NVIDIA cards run it at 8-bit precision",
+    "downloadGB": 128.0,
+    "ramGB": 80
+  },
+  {
+    "family": "nvfp4",
+    "model": "NVFP4-NVIDIA",
+    "title": "Qwen3.8-Flash-Next (NVFP4)",
+    "about": "NVIDIA's own NVFP4 checkpoint (plain rounding), converted by sergqwer; the same size and speed as NVFP4",
+    "downloadGB": 128.0,
+    "ramGB": 80
+  },
+  {
+    "family": "nvfp4",
+    "model": "NVFP4-QAD",
+    "title": "Qwen3.8-Flash-Next (NVFP4)",
+    "about": "NVIDIA's FP4, trained for FP4 (NVIDIA's Qwen3.8-Flash-Next-FP4-Local) - slightly faster on short prompts; a 102 GB download that this PC turns into a Strata pack once (about 20-40 minutes, 110 GB more disk); RTX 50 cards have FP4 tensor cores, other NVIDIA cards run it at 8-bit precision. It reads pictures (the shared Qwen3.8-Flash-Next encoder)",
+    "downloadGB": 102.2,
+    "ramGB": 80
+  },
+  {
+    "family": "qwen36",
+    "model": "UD-Q4_K_XL",
+    "title": "Qwen3.6-35B-A3B",
+    "about": "4-bit (Unsloth Dynamic), the smallest",
+    "ramGB": 32
+  },
+  {
+    "family": "qwen36",
+    "model": "UD-Q6_K_XL",
+    "title": "Qwen3.6-35B-A3B",
+    "about": "6-bit (Unsloth Dynamic), closer to the full model",
+    "ramGB": 44
+  },
+  {
+    "family": "qwen36",
+    "model": "Q8_0",
+    "title": "Qwen3.6-35B-A3B",
+    "about": "8-bit, the closest to the full model",
+    "ramGB": 52
+  },
+  {
+    "family": "deepseek41",
+    "model": "IST-DAS-2.00bpw",
+    "title": "DeepSeek-V4.1-Flash",
+    "about": "the smaller official version: 138 GB of model + 111 GB n-gram table + 8 GB drafter (257 GB of disk). Runs on a PC with a 12 GB card and 40-64 GB of RAM at about 5-7 tokens a second; quality about 15.5% above the original model's perplexity (code and agent work 5-9%)",
+    "ramGB": 40
+  },
+  {
+    "family": "deepseek41",
+    "model": "IST-DAS-2.25bpw",
+    "title": "DeepSeek-V4.1-Flash",
+    "about": "the better official version: 155 GB of model + 111 GB n-gram table + 8 GB drafter (274 GB of disk, 17 GB more than 2.00). About the same speed; quality about 7.3% above the original model's perplexity (code and agent work 2-3%)",
+    "ramGB": 44
+  },
+  {
+    "family": "deepseek41",
+    "model": "IST-DAS-1.75bpw",
+    "title": "DeepSeek-V4.1-Flash",
+    "about": "the smallest official version: 121 GB of model + 111 GB n-gram table + 8 GB drafter (239 GB of disk, 18 GB less than 2.00). Runs where 2.00 is tight (a 12 GB card and 32-40 GB of RAM). Smallest: fine for code and agent work, noticeably weaker on plain prose; pick 2.00 if it fits",
+    "ramGB": 34
+  },
+  {
+    "family": "deepseek41",
+    "model": "UD-Q8_K_XL",
+    "title": "DeepSeek-V4.1-Flash",
+    "about": "Unsloth Dynamic 8-bit: the experts in MXFP4 as DeepSeek made them, the rest in BF16 (the checkpoint's own precision); 508 GB, for machines with hundreds of GB of RAM or several cards",
+    "ramGB": 306
+  }
+]
