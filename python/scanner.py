@@ -20,7 +20,7 @@ def compatibility(model):
         known = set(range(43)) | {143, 144, 145, 146}
         unsupported = sorted({int(code) for file in model['files'] for code in file.get('encodings', {})} - known)
         if unsupported and set(unsupported) <= {147, 148, 149}:
-            return 'Gyro L requires a TQP5/6/7 Strata fork. Choose it under Runtime for this model.'
+            return 'Gyro L requires a TQP5/6/7 Strata fork. Choose it under Runtime compatibility.'
         if unsupported:
             return 'Stock Strata v0.2.6 does not support tensor encoding(s): ' + ', '.join(map(str, unsupported))
         return None
