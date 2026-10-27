@@ -1,0 +1,10 @@
+{
+  "upstream": "https://github.com/Niko1221/Strata",
+  "commit": "5e8a4cca7d690ac60ca37eb09e7d0e010099ad6d",
+  "patches": [
+    "optional-mtp-checkpoints.patch"
+  ],
+  "toolchain": "CUDA 13.1, GNU C++",
+  "target": "Linux x86-64, sm_120",
+  "note": "Native session serialization fixes for an absent MTP draft. Tensor math and tuning defaults unchanged by this fix."
+}

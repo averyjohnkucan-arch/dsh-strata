@@ -1,0 +1,5 @@
+{
+  "upstream": "https://github.com/averyjohnkucan-arch/StrataUnleashed",
+  "commit": "34ceb4839d131d321164366e58782540afcbacd0",
+  "note": "Control/CLI/helper sources for the retained TQP engine. No portable Python duplicated here."
+}

@@ -47,6 +47,8 @@ test("DSH adapter streams text and usage, preserves the prompt, and releases GPU
     profiles: [profile],
     profile: () => profile,
     shutdown: new AbortController(),
+    restoreCheckpoint: async () => {},
+    saveCheckpoint: async () => {},
     acquire: async () => ({
       state: { active: 1 },
       release() {

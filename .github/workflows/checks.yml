@@ -16,3 +16,45 @@ jobs:
       - run: git diff --exit-code -- client.js
       - run: pnpm run check
       - run: pnpm test
+  package:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '11.25.0'
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm run build
+      - name: Keep published releases immutable
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v$(node -p 'JSON.parse(require("fs").readFileSync("package.json", "utf8")).version')"
+          draft=$(gh release view "$tag" --json isDraft --jq .isDraft 2>/dev/null || true)
+          echo "build=$([ "$draft" = false ] && echo false || echo true)" >> "$GITHUB_OUTPUT"
+      - name: Acquire verified upstream runtime for packaging
+        if: steps.release.outputs.build == 'true'
+        run: python3 packaging/fetch-upstream.py "$RUNNER_TEMP/strata-runtime"
+      - name: Build the self-contained plugin
+        if: steps.release.outputs.build == 'true'
+        run: python3 packaging/build-bundle.py --runtime-root "$RUNNER_TEMP/strata-runtime" --output dist
+      - name: Publish the tested package in this repository
+        if: steps.release.outputs.build == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -p 'JSON.parse(require("fs").readFileSync("package.json", "utf8")).version')
+          tag="v$version"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" --target "$GITHUB_SHA" --title "Strata plugin $version" --notes-file packaging/RELEASE.md --draft
+          fi
+          gh release upload "$tag" dist/*.tgz dist/*.sha256 --clobber
+          gh release edit "$tag" --draft=false

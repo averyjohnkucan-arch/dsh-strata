@@ -1,0 +1,8 @@
+{
+  "upstream": "https://github.com/Niko1221/Strata",
+  "release": "v0.2.7",
+  "control": "0.1.52",
+  "commit": "a42cc3d7df70d1940de82cd0882f03e1f5dfc741",
+  "archive_sha256": "399fcc8f2d232b2f7ab7df82d863874a4b815019ced877a24f68a47ffc8110a0",
+  "note": "Unmodified official Control sources. Portable Python and engine binaries are included in the self-contained release package."
+}

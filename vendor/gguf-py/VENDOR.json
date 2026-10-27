@@ -1,0 +1,5 @@
+{
+  "upstream": "https://github.com/ggml-org/llama.cpp",
+  "commit": "3cf03257f219afbe7334045ff7c6a06ac68c627d",
+  "note": "Pinned gguf-py helper used by official Strata Control 0.1.52."
+}

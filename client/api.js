@@ -1,15 +1,14 @@
+import { actionPath } from "../lib/http.js";
+
 export async function request(action, payload = {}) {
-  const connection = window.__DSH_STRATA__;
-  if (!connection)
-    throw new Error("Restart DSH and reload this page to connect Strata");
   const readingFiles = ["browse", "projector", "capabilities"].includes(action);
   let response;
   try {
-    response = await fetch(connection.path, {
+    response = await fetch(actionPath, {
+      credentials: "same-origin",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + connection.token,
       },
       body: JSON.stringify({ action, payload }),
       signal: readingFiles ? AbortSignal.timeout(30000) : undefined,
@@ -21,6 +20,10 @@ export async function request(action, payload = {}) {
       );
     throw error;
   }
+  if (response.status === 401 || response.status === 403)
+    throw new Error(
+      "DSH needs its owner session. Reopen DSH using its launch link, then reload this page.",
+    );
   const data = await response.json();
   if (!response.ok || data.error)
     throw new Error(data.error || response.statusText);

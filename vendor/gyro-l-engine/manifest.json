@@ -1,0 +1,63 @@
+{
+  "format": 1,
+  "platform": "linux",
+  "arch": "x64",
+  "cuda": "13",
+  "cudaArchitectures": [
+    "120"
+  ],
+  "engineSha256": "35bee447f597fdc41b2c6ccc2048a225d17bc2b7f5b9f126a4cef3fc078aabfe",
+  "archiveSha256": "0038d2d224c895d0f98e7122e524e2ebf0e784ccfc163c8714c12a6d8a69ff8c",
+  "parts": [
+    {
+      "path": "parts/engine.gz.000",
+      "sha256": "42f46112d1987fae1e59b5664f22ff92fbe767dded65efca1e9b9dde20133464",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.001",
+      "sha256": "cbff1490fc7008c1491fd60cae93528e3664d0e6d5f36325dc685eef415bea48",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.002",
+      "sha256": "8c382f85d22f75d3849745498d9ff9b860fdbfa2461f9f9289ae40ee03f77d84",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.003",
+      "sha256": "e1f0d44f42a6b1863f315882d346502588242b7073602269b9cddb7770f5778b",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.004",
+      "sha256": "2844cd332062bf701c19cc4eb09999bb71a479099b3afd9cd64862e67bc01e24",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.005",
+      "sha256": "ff14601afed67391b0635c940eb3f82ddb4aa8323c12c48f29eb8b342d0a4acd",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.006",
+      "sha256": "1e7cc9f7fddbb86fba6fc2573f14bdb875250426b40fbb6f562488505acadb5a",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.007",
+      "sha256": "eb550b9cb7e8f71e9c7861228632e4d501a10726764ee0629eed061037129c38",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.008",
+      "sha256": "6ccfbef6f3dade54caa4789dd7dcaedf55b93abbaf4340141ddf773bcadad364",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.009",
+      "sha256": "13a72e135f29cf1a740b6920a309e0ce027ca2c83e82abd867e452a19a004c2b",
+      "bytes": 2776375
+    }
+  ]
+}

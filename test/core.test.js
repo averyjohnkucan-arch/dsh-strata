@@ -210,27 +210,32 @@ test("native tuning success saves a real preset and uses actual Thorough argumen
   assert.ok(!baseline.args.includes("--prefill"));
 });
 
-test("GPU admission reserves the active answer before another model can load", async (t) => {
+test("GPU requests wait for the active answer before switching models", async (t) => {
   const root = await directory(t),
     service = new StrataService({ dataDir: root });
   await service.init();
   t.after(() => service.dispose());
-  const active = { active: 0, ready: true };
+  const state = { active: 0, ready: true };
+  let loadedOther = false;
   service.startServer = async (id) => {
-    if (id === "other" && active.active)
-      throw new Error("Another model is answering");
-    return active;
+    if (id === "other") {
+      assert.equal(state.active, 0);
+      loadedOther = true;
+    }
+    return state;
   };
-  const first = service.acquire("one");
+  const first = await service.acquire("one");
   const second = service.acquire("other");
-  const lease = await first;
-  await assert.rejects(() => second, /answering/);
-  assert.equal(active.active, 1);
-  lease.release();
-  lease.release();
-  assert.equal(active.active, 0);
-  const next = await service.acquire("other");
+  await new Promise((resolve) => setTimeout(resolve, 20));
+  assert.equal(loadedOther, false);
+  assert.equal(state.active, 1);
+  first.release();
+  first.release();
+  const next = await second;
+  assert.equal(loadedOther, true);
+  assert.equal(state.active, 1);
   next.release();
+  assert.equal(service.answering, 0);
 });
 
 test("a mixed complete/incomplete selection adds nothing", async (t) => {

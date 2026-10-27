@@ -53,3 +53,26 @@ test("enabling Gyro L requires explicit fork paths", () => {
     true,
   );
 });
+
+test("bundled runtimes select the TQP fork by tensor encodings without replacing stock", () => {
+  const settings = {
+    ...stock,
+    fork: {
+      controlDir: "/bundled/fork",
+      executable: "/bundled/gyro-l/strata",
+      python: "/python",
+      tqp: true,
+    },
+  };
+  const selected = modelRuntime(settings, {
+    model,
+    runtime: { tqp: false, controlDir: "", executable: "", python: "" },
+  });
+  assert.equal(selected.executable, "/bundled/gyro-l/strata");
+  assert.equal(selected.tqp, true);
+  assert.equal(
+    modelRuntime(settings, { model: { files: [{ encodings: { 143: 1 } }] } })
+      .executable,
+    stock.executable,
+  );
+});

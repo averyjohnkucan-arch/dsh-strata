@@ -147,6 +147,17 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
         Strata's Thorough tuner measures settings for your chosen KV precision
         and context.
       </p>
+      <p>
+        Conversation checkpoints use up to 16 GiB of SSD space per model. Oldest
+        last-used checkpoints are removed first. Strata manages RAM caching
+        automatically.
+      </p>
+      {!["FP16/FP16", "Q8/Q8", "Q4/Q4", "Q8/Q4"].includes(draft.kv) && (
+        <p role="status">
+          This engine does not support SSD checkpoints for this KV pair.
+          Switching models starts a fresh cache.
+        </p>
+      )}
       <details>
         <summary>Runtime compatibility</summary>
         <p>

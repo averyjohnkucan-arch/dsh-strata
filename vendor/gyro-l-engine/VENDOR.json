@@ -1,0 +1,11 @@
+{
+  "upstream": "https://github.com/averyjohnkucan-arch/StrataUnleashed",
+  "commit": "34ceb4839d131d321164366e58782540afcbacd0",
+  "patches": [
+    "optional-mtp-checkpoints.patch",
+    "tqp-avx2.patch"
+  ],
+  "toolchain": "CUDA 13.1, GNU C++",
+  "target": "Linux x86-64, sm_120",
+  "note": "Native session serialization fixes for an absent MTP draft. Tensor math and tuning defaults unchanged by this fix."
+}

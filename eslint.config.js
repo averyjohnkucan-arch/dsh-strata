@@ -1,5 +1,5 @@
 export default [
-  { ignores: ["client.js", "node_modules/**"] },
+  { ignores: ["client.js", "node_modules/**", "vendor/**", "runtime/**"] },
   {
     files: ["**/*.js", "**/*.mjs", "**/*.jsx"],
     languageOptions: {
@@ -20,6 +20,8 @@ export default [
           "clearInterval",
           "window",
           "URL",
+          "Response",
+          "TextEncoder",
         ].map((name) => [name, "readonly"]),
       ),
     },

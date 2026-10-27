@@ -6,52 +6,10 @@ import { ProfileEditor } from "./ProfileEditor.jsx";
 import { Download } from "./Download.jsx";
 import css from "./styles.css";
 
-function RuntimeSettings({ settings, busy, run }) {
-  const [draft, setDraft] = useState(settings);
-  useEffect(() => setDraft(settings), [JSON.stringify(settings)]);
-  return (
-    <details>
-      <summary>Strata runtime</summary>
-      <p>
-        Install the official runtime, or select existing compatible runtime
-        paths.
-      </p>
-      <div className="strata-grid">
-        {[
-          ["controlDir", "Control directory"],
-          ["python", "Python executable"],
-          ["executable", "Engine executable"],
-        ].map(([key, label]) => (
-          <label key={key}>
-            {label}
-            <input
-              value={draft[key]}
-              onChange={(e) =>
-                setDraft((p) => ({ ...p, [key]: e.target.value }))
-              }
-            />
-          </label>
-        ))}
-      </div>
-      <div className="strata-actions">
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => run("settings", { settings: draft })}
-        >
-          Save runtime paths
-        </button>
-        <button type="button" disabled={busy} onClick={() => run("install")}>
-          Install / update official Strata
-        </button>
-      </div>
-    </details>
-  );
-}
-
 function StrataCard() {
   const [state, setState] = useState(null),
     [error, setError] = useState(""),
+    [connectionError, setConnectionError] = useState(""),
     [view, setView] = useState(""),
     [selected, setSelected] = useState([]),
     [tuneIds, setTuneIds] = useState([]),
@@ -66,10 +24,13 @@ function StrataCard() {
     const update = () =>
       request("state")
         .then((value) => {
-          if (live) setState(value);
+          if (live) {
+            setState(value);
+            setConnectionError("");
+          }
         })
         .catch((error) => {
-          if (live) setError(error.message);
+          if (live) setConnectionError(error.message);
         });
     update();
     const timer = setInterval(update, 2000);
@@ -112,11 +73,18 @@ function StrataCard() {
       <header>
         <div>
           <h3>
-            Strata <small>0.4.0</small>
+            Strata <small>0.5.0</small>
           </h3>
           <p>Local models</p>
         </div>
         <div className="strata-actions">
+          <button
+            type="button"
+            disabled={busy || !state}
+            onClick={() => act("purge-cache")}
+          >
+            Purge all cache
+          </button>
           <button
             type="button"
             disabled={busy}
@@ -133,16 +101,21 @@ function StrataCard() {
           </button>
         </div>
       </header>
-      {error && (
+      {(error || connectionError) && (
         <p role="alert" className="strata-error">
-          {error}
+          {error || connectionError}
         </p>
       )}
       {!state ? (
         <p>Connecting to Strata…</p>
       ) : (
         <>
-          <RuntimeSettings settings={state.settings} busy={busy} run={act} />
+          <small>
+            Strata 0.2.7 ·{" "}
+            {state.settings.bundledVersion
+              ? "Included runtime"
+              : "Runtime available from this plugin’s release package"}
+          </small>
           {view === "scan" && (
             <FilePicker
               initialPath={state.inventory?.root}
@@ -259,6 +232,13 @@ function StrataCard() {
               }}
             />
           </details>
+          <small>
+            SSD checkpoints: 16 GiB per model · least recently used removed
+            first · survive restarts
+          </small>
+          {state.cache?.notice && (
+            <small role="status">{state.cache.notice}</small>
+          )}
           <section aria-label="Strata operations">
             {state.jobs.slice(-6).map((job) => (
               <div className="strata-job" key={job.id}>

@@ -1,66 +1,45 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { Readable } from "node:stream";
 import { execute, receipt } from "../lib/process.js";
-import { handler } from "../lib/http.js";
+import { actionPath, handler } from "../lib/http.js";
 
+// Authentication is supplied by DSH's exact Connection route, never a plugin-global token.
 async function call({
-  token = "owner",
-  origin,
-  body = { action: "echo", payload: { name: "模型🌍" } },
-  split = true,
   method = "POST",
   contentType = "application/json",
+  body = JSON.stringify({ action: "echo", payload: { name: "模型🌍" } }),
 } = {}) {
-  const bytes = Buffer.from(JSON.stringify(body));
-  const req = Readable.from(
-    split ? [...bytes].map((value) => Buffer.from([value])) : [bytes],
+  let calls = 0;
+  const response = await handler({
+    action: async (_action, payload) => {
+      calls++;
+      return payload;
+    },
+  })(
+    new Request("http://localhost" + actionPath, {
+      method,
+      headers: { "content-type": contentType },
+      ...(method === "GET" ? {} : { body }),
+    }),
   );
-  req.method = method;
-  req.headers = {
-    authorization: "Bearer " + token,
-    origin,
-    "content-type": contentType,
-  };
-  let status,
-    response,
-    calls = 0;
-  const res = {
-    setHeader() {},
-    writeHead(value) {
-      status = value;
-    },
-    end(value) {
-      response = JSON.parse(value);
-    },
-  };
-  await handler(
-    {
-      action: async (_action, payload) => {
-        calls++;
-        return payload;
-      },
-    },
-    "owner",
-    () => "http://localhost:3000",
-  )(req, res);
-  return { status, response, calls };
+  return { status: response.status, response: await response.json(), calls };
 }
-test("owner route preserves UTF-8 split across network chunks", async () => {
-  const r = await call();
-  assert.equal(r.status, 200);
-  assert.equal(r.response.result.name, "模型🌍");
+test("the owner-authenticated Connection route preserves UTF-8 JSON", async () => {
+  const result = await call();
+  assert.equal(result.status, 200);
+  assert.equal(result.response.result.name, "模型🌍");
+  assert.ok(actionPath.startsWith("/api/"));
 });
-test("unauthorized or cross-origin requests never invoke host operations", async () => {
+test("invalid methods, bodies and content types never invoke host operations", async () => {
   for (const options of [
-    { token: "wrong" },
-    { origin: "http://other" },
     { method: "GET" },
     { contentType: "application/json-attacker" },
+    { body: "broken json" },
+    { body: "x".repeat(4 * 1024 * 1024 + 1) },
   ]) {
-    const r = await call(options);
-    assert.notEqual(r.status, 200);
-    assert.equal(r.calls, 0);
+    const result = await call(options);
+    assert.notEqual(result.status, 200);
+    assert.equal(result.calls, 0);
   }
 });
 test("subprocess runner preserves argv literally and decodes UTF-8", async () => {

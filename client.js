@@ -38,19 +38,19 @@ __export(main_exports, {
 module.exports = __toCommonJS(main_exports);
 var import_react5 = __toESM(require("react"), 1);
 
+// lib/http.js
+var actionPath = "/api/dsh-strata";
+
 // client/api.js
 async function request(action, payload = {}) {
-  const connection = window.__DSH_STRATA__;
-  if (!connection)
-    throw new Error("Restart DSH and reload this page to connect Strata");
   const readingFiles = ["browse", "projector", "capabilities"].includes(action);
   let response;
   try {
-    response = await fetch(connection.path, {
+    response = await fetch(actionPath, {
+      credentials: "same-origin",
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + connection.token
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({ action, payload }),
       signal: readingFiles ? AbortSignal.timeout(3e4) : void 0
@@ -62,6 +62,10 @@ async function request(action, payload = {}) {
       );
     throw error;
   }
+  if (response.status === 401 || response.status === 403)
+    throw new Error(
+      "DSH needs its owner session. Reopen DSH using its launch link, then reload this page."
+    );
   const data = await response.json();
   if (!response.ok || data.error)
     throw new Error(data.error || response.statusText);
@@ -380,7 +384,7 @@ function ProfileEditor({ profile, busy, save, run, close }) {
         setPicking(false);
       }
     }
-  ), /* @__PURE__ */ import_react3.default.createElement("p", null, "Strata's Thorough tuner measures settings for your chosen KV precision and context."), /* @__PURE__ */ import_react3.default.createElement("details", null, /* @__PURE__ */ import_react3.default.createElement("summary", null, "Runtime compatibility"), /* @__PURE__ */ import_react3.default.createElement("p", null, "Use the installed Strata runtime, or supply a compatible fork for this model."), /* @__PURE__ */ import_react3.default.createElement("div", { className: "strata-grid" }, [
+  ), /* @__PURE__ */ import_react3.default.createElement("p", null, "Strata's Thorough tuner measures settings for your chosen KV precision and context."), /* @__PURE__ */ import_react3.default.createElement("p", null, "Conversation checkpoints use up to 16 GiB of SSD space per model. Oldest last-used checkpoints are removed first. Strata manages RAM caching automatically."), !["FP16/FP16", "Q8/Q8", "Q4/Q4", "Q8/Q4"].includes(draft.kv) && /* @__PURE__ */ import_react3.default.createElement("p", { role: "status" }, "This engine does not support SSD checkpoints for this KV pair. Switching models starts a fresh cache."), /* @__PURE__ */ import_react3.default.createElement("details", null, /* @__PURE__ */ import_react3.default.createElement("summary", null, "Runtime compatibility"), /* @__PURE__ */ import_react3.default.createElement("p", null, "Use the installed Strata runtime, or supply a compatible fork for this model."), /* @__PURE__ */ import_react3.default.createElement("div", { className: "strata-grid" }, [
     ["controlDir", "Control directory"],
     ["python", "Python executable"],
     ["executable", "Engine executable"]
@@ -447,40 +451,20 @@ function Download({ busy, run, close }) {
 var styles_default = '.strata-card {\n  margin-top: 20px;\n  padding: 18px;\n  border: 1px solid var(--dsw-alias-border-l3);\n  border-radius: 12px;\n  color: var(--dsw-alias-label-primary);\n  font-size: 14px;\n}\n.strata-card * {\n  box-sizing: border-box;\n}\n.strata-card header,\n.strata-actions {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n  flex-wrap: wrap;\n}\n.strata-card header {\n  justify-content: space-between;\n}\n.strata-card h3 {\n  margin: 0;\n  font-size: 18px;\n}\n.strata-card h4 {\n  margin: 18px 0 10px;\n  font-size: 15px;\n}\n.strata-card h4 span {\n  font-size: 12px;\n  opacity: 0.65;\n  margin-left: 6px;\n}\n.strata-card p,\n.strata-muted,\n.strata-card small {\n  color: var(--dsw-alias-label-secondary);\n  line-height: 1.5;\n}\n.strata-card small {\n  display: block;\n  font-size: 12px;\n  overflow-wrap: anywhere;\n}\n.strata-card button,\n.strata-card input,\n.strata-card select,\n.strata-card textarea {\n  font: inherit;\n  color: inherit;\n  border: 1px solid var(--dsw-alias-border-l3);\n  border-radius: 6px;\n  background: var(--dsw-alias-bg-layer-1);\n  padding: 7px 9px;\n}\n.strata-card button {\n  cursor: pointer;\n}\n.strata-card button:disabled {\n  opacity: 0.45;\n  cursor: default;\n}\n.strata-card input:not([type="checkbox"]),\n.strata-card select,\n.strata-card textarea {\n  width: 100%;\n  min-width: 0;\n}\n.strata-card .strata-actions > input {\n  flex: 1;\n  min-width: 180px;\n}\n.strata-card input[type="checkbox"] {\n  margin: 0;\n}\n.strata-card label {\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n}\n.strata-card .strata-check {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  gap: 8px;\n  margin: 10px 0;\n}\n.strata-card details {\n  margin: 12px 0;\n}\n.strata-card summary {\n  cursor: pointer;\n  font-weight: 500;\n}\n.strata-panel {\n  padding: 14px;\n  margin: 16px 0;\n  border: 1px solid var(--dsw-alias-border-l3);\n  border-radius: 8px;\n}\n.strata-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));\n  gap: 12px;\n  margin: 12px 0;\n}\n.strata-scroll {\n  width: 100%;\n  overflow-x: auto;\n}\n.strata-card table {\n  width: 100%;\n  border-collapse: collapse;\n  text-align: left;\n  font-size: 12px;\n}\n.strata-card td,\n.strata-card th {\n  vertical-align: top;\n  padding: 10px 7px;\n  border-bottom: 1px solid var(--dsw-alias-border-l3);\n  overflow-wrap: anywhere;\n}\n.strata-card td {\n  min-width: 80px;\n  max-width: 360px;\n}\n.strata-card td:first-child {\n  min-width: 0;\n}\n.strata-files {\n  min-width: 150px;\n}\n.strata-card pre,\n.strata-card textarea {\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  font-family: monospace;\n  font-size: 12px;\n  max-height: 320px;\n  overflow: auto;\n}\n.strata-card textarea {\n  min-height: 110px;\n}\n.strata-card fieldset {\n  border: 1px solid var(--dsw-alias-border-l3);\n  border-radius: 8px;\n  margin: 16px 0;\n  padding: 12px;\n}\n.strata-saved,\n.strata-job {\n  padding: 12px 0;\n  border-bottom: 1px solid var(--dsw-alias-border-l3);\n}\n.strata-job > span {\n  display: block;\n  margin: 5px 0;\n}\n.strata-folders {\n  max-height: 220px;\n  overflow: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n  margin: 10px 0;\n}\n.strata-folders button {\n  text-align: left;\n}\n.strata-card .strata-error,\n.strata-card [role="alert"] {\n  color: var(--dsw-alias-danger-primary, #df665e);\n}\n@media (max-width: 600px) {\n  .strata-card {\n    padding: 12px;\n  }\n  .strata-grid {\n    grid-template-columns: 1fr;\n  }\n}\n\n/* Expanded shard tables span the model row, so filenames retain usable width. */\n.strata-scroll > table {\n  min-width: 560px;\n}\n.strata-card th {\n  white-space: nowrap;\n  overflow-wrap: normal;\n}\n.strata-card .strata-select {\n  width: 42px;\n  min-width: 42px;\n}\n.strata-files table td:first-child {\n  min-width: 240px;\n}\n.strata-files table td:nth-child(2),\n.strata-files table td:last-child {\n  white-space: nowrap;\n}\n.strata-files strong {\n  display: block;\n}\n';
 
 // client/main.jsx
-function RuntimeSettings({ settings, busy, run }) {
-  const [draft, setDraft] = (0, import_react5.useState)(settings);
-  (0, import_react5.useEffect)(() => setDraft(settings), [JSON.stringify(settings)]);
-  return /* @__PURE__ */ import_react5.default.createElement("details", null, /* @__PURE__ */ import_react5.default.createElement("summary", null, "Strata runtime"), /* @__PURE__ */ import_react5.default.createElement("p", null, "Install the official runtime, or select existing compatible runtime paths."), /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-grid" }, [
-    ["controlDir", "Control directory"],
-    ["python", "Python executable"],
-    ["executable", "Engine executable"]
-  ].map(([key, label]) => /* @__PURE__ */ import_react5.default.createElement("label", { key }, label, /* @__PURE__ */ import_react5.default.createElement(
-    "input",
-    {
-      value: draft[key],
-      onChange: (e) => setDraft((p) => ({ ...p, [key]: e.target.value }))
-    }
-  )))), /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react5.default.createElement(
-    "button",
-    {
-      type: "button",
-      disabled: busy,
-      onClick: () => run("settings", { settings: draft })
-    },
-    "Save runtime paths"
-  ), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", disabled: busy, onClick: () => run("install") }, "Install / update official Strata")));
-}
 function StrataCard() {
-  const [state, setState] = (0, import_react5.useState)(null), [error, setError] = (0, import_react5.useState)(""), [view, setView] = (0, import_react5.useState)(""), [selected, setSelected] = (0, import_react5.useState)([]), [tuneIds, setTuneIds] = (0, import_react5.useState)([]), [help, setHelp] = (0, import_react5.useState)(""), [pending, setPending] = (0, import_react5.useState)(false), [importJob, setImportJob] = (0, import_react5.useState)("");
+  const [state, setState] = (0, import_react5.useState)(null), [error, setError] = (0, import_react5.useState)(""), [connectionError, setConnectionError] = (0, import_react5.useState)(""), [view, setView] = (0, import_react5.useState)(""), [selected, setSelected] = (0, import_react5.useState)([]), [tuneIds, setTuneIds] = (0, import_react5.useState)([]), [help, setHelp] = (0, import_react5.useState)(""), [pending, setPending] = (0, import_react5.useState)(false), [importJob, setImportJob] = (0, import_react5.useState)("");
   const refresh = (0, import_react5.useCallback)(async () => {
     setState(await request("state"));
   }, []);
   (0, import_react5.useEffect)(() => {
     let live = true;
     const update = () => request("state").then((value) => {
-      if (live) setState(value);
+      if (live) {
+        setState(value);
+        setConnectionError("");
+      }
     }).catch((error2) => {
-      if (live) setError(error2.message);
+      if (live) setConnectionError(error2.message);
     });
     update();
     const timer = setInterval(update, 2e3);
@@ -515,7 +499,15 @@ function StrataCard() {
   });
   const busy = pending || state?.jobs.some((job) => ["queued", "running"].includes(job.status));
   const profile = state?.profiles.find((profile2) => profile2.id === view);
-  return /* @__PURE__ */ import_react5.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react5.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react5.default.createElement("header", null, /* @__PURE__ */ import_react5.default.createElement("div", null, /* @__PURE__ */ import_react5.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react5.default.createElement("small", null, "0.4.0")), /* @__PURE__ */ import_react5.default.createElement("p", null, "Local models")), /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react5.default.createElement(
+  return /* @__PURE__ */ import_react5.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react5.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react5.default.createElement("header", null, /* @__PURE__ */ import_react5.default.createElement("div", null, /* @__PURE__ */ import_react5.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react5.default.createElement("small", null, "0.5.0")), /* @__PURE__ */ import_react5.default.createElement("p", null, "Local models")), /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react5.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy || !state,
+      onClick: () => act("purge-cache")
+    },
+    "Purge all cache"
+  ), /* @__PURE__ */ import_react5.default.createElement(
     "button",
     {
       type: "button",
@@ -531,7 +523,7 @@ function StrataCard() {
       onClick: () => setView("scan")
     },
     "Import files"
-  ))), error && /* @__PURE__ */ import_react5.default.createElement("p", { role: "alert", className: "strata-error" }, error), !state ? /* @__PURE__ */ import_react5.default.createElement("p", null, "Connecting to Strata\u2026") : /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement(RuntimeSettings, { settings: state.settings, busy, run: act }), view === "scan" && /* @__PURE__ */ import_react5.default.createElement(
+  ))), (error || connectionError) && /* @__PURE__ */ import_react5.default.createElement("p", { role: "alert", className: "strata-error" }, error || connectionError), !state ? /* @__PURE__ */ import_react5.default.createElement("p", null, "Connecting to Strata\u2026") : /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement("small", null, "Strata 0.2.7 \xB7", " ", state.settings.bundledVersion ? "Included runtime" : "Runtime available from this plugin\u2019s release package"), view === "scan" && /* @__PURE__ */ import_react5.default.createElement(
     FilePicker,
     {
       initialPath: state.inventory?.root,
@@ -625,7 +617,7 @@ function StrataCard() {
         }
       }
     )
-  ), /* @__PURE__ */ import_react5.default.createElement("section", { "aria-label": "Strata operations" }, state.jobs.slice(-6).map((job) => /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-job", key: job.id }, /* @__PURE__ */ import_react5.default.createElement("strong", null, job.kind), /* @__PURE__ */ import_react5.default.createElement("span", null, job.status, ": ", job.progress), ["queued", "running"].includes(job.status) && /* @__PURE__ */ import_react5.default.createElement(
+  ), /* @__PURE__ */ import_react5.default.createElement("small", null, "SSD checkpoints: 16 GiB per model \xB7 least recently used removed first \xB7 survive restarts"), state.cache?.notice && /* @__PURE__ */ import_react5.default.createElement("small", { role: "status" }, state.cache.notice), /* @__PURE__ */ import_react5.default.createElement("section", { "aria-label": "Strata operations" }, state.jobs.slice(-6).map((job) => /* @__PURE__ */ import_react5.default.createElement("div", { className: "strata-job", key: job.id }, /* @__PURE__ */ import_react5.default.createElement("strong", null, job.kind), /* @__PURE__ */ import_react5.default.createElement("span", null, job.status, ": ", job.progress), ["queued", "running"].includes(job.status) && /* @__PURE__ */ import_react5.default.createElement(
     "button",
     {
       type: "button",

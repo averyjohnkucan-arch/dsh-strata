@@ -1,0 +1,83 @@
+{
+  "format": 1,
+  "platform": "linux",
+  "arch": "x64",
+  "cuda": "13",
+  "cudaArchitectures": [
+    "120"
+  ],
+  "engineSha256": "cee93d26f710d3685ccf3541a95054dc193e63b239650a9d7122b4b938ad9193",
+  "archiveSha256": "96e3ec383f8738a2fd6d7f2b0b06a6122e9924fb70bfad9757da641c6fec3ffa",
+  "parts": [
+    {
+      "path": "parts/engine.gz.000",
+      "sha256": "e07d3b09aa20ef7902961c1e1eceb19f19c08ea17e737c89723bb6aab0e068cb",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.001",
+      "sha256": "e0fd03b1bb9cdf5fcebe68811428ae64bd3962e638bd1249b5d8f8009183c40d",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.002",
+      "sha256": "38532fb9c28942dfea9dc2abbef22785548899a389142fca7941d09f575e4dab",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.003",
+      "sha256": "2cae312b567326f073967f2473b10b2f08a9a797dd24b25c94c2ba318a8b7429",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.004",
+      "sha256": "f801128450283ea35294ec61160ac72cd41a49477673fb6d210f8dbc6d85e0fe",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.005",
+      "sha256": "0328c4e538db10a3f8da4e9a50270e247e32fc10620dee2e5a870543306b0d14",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.006",
+      "sha256": "465d51bda9359acf6314b5904702b500abf312f4e0c41cfa48da90b0aa14b883",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.007",
+      "sha256": "beede228fa2a7e226193e0b020b7e305c6290a8e4b679a9cc9c39a8cf89a21a4",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.008",
+      "sha256": "22c196c77208dde7bfd93e35e021e18d82a2501753df5a41deaa215e581febff",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.009",
+      "sha256": "8dc3e5189e729313eb57436d5227e2749694f70c099017be67df90e9f36e7b09",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.010",
+      "sha256": "7cf0a0bdec75a85ecf987ba9ff9839f9aece8976fa556604261087edd89b8eab",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.011",
+      "sha256": "92d718d96bd7c3c614b548dd2aeb8faa15c93eb8a4614cc06e179740e3502d90",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.012",
+      "sha256": "888902041ecf79afe87b22fe02da7d08b555e8df3c615c4d89724b8df4e12771",
+      "bytes": 4194304
+    },
+    {
+      "path": "parts/engine.gz.013",
+      "sha256": "03d5ef32c702d173e10daa077942fa7def250f0e909f9179d94c7c4f350af0e4",
+      "bytes": 1656293
+    }
+  ]
+}

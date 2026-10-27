@@ -1,0 +1,116 @@
+diff --git a/src/core/conversation_snapshot_test.cpp b/src/core/conversation_snapshot_test.cpp
+index 074a3ae9..7aab60c1 100644
+--- a/src/core/conversation_snapshot_test.cpp
++++ b/src/core/conversation_snapshot_test.cpp
+@@ -174,6 +174,30 @@ void full_session(int fmt, int mode, int experts) {
+               x.checkpoints.size()==y.checkpoints.size() && equal(x.kv[0],y.kv[0]) && equal(x.kv.back(),y.kv.back()),
+               "streamed file equals captured file");
+         check(slurp(p1)==slurp(p2),"streamed file is byte-identical to the captured file");
++        {
++            // A text-only engine has no allocated MTP state. It still saves and restores
++            // every main-model K/V layer using the same session file protocol.
++            const QsaState no_draft{};
++            SavedConversation captured, streamed_meta, decoded;
++            std::vector<SessionKvSource> main_sources;
++            check(conversation_snapshot_save(captured,view,ss,g,no_draft,err),"capture without MTP");
++            check(captured.kv.size()+1==b.kv.size(),"only allocated K/V layers captured");
++            check(conversation_snapshot_sources(streamed_meta,main_sources,view,ss,g,no_draft,err),"stream sources without MTP");
++            check(main_sources.size()==captured.kv.size(),"no phantom draft source");
++            SessionReadLimits limits;
++            check(conversation_session_read_limits(limits,ss,g,no_draft,ids.size(),checkpoints.size(),err),"read bounds without MTP");
++            check(limits.max_kv_layers==captured.kv.size(),"no phantom draft read bound");
++            const std::string p3=(dir/"without-mtp.bin").string();
++            size_t n3=0;
++            check(session_file_write(p3,streamed_meta,main_sources,id,n3,err),"write without MTP");
++            check(session_file_read(p3,id,decoded,n3,err,limits),"read without MTP");
++            check(conversation_snapshot_validate(decoded,ss,g,no_draft,err),"validate without MTP");
++            check(conversation_snapshot_restore(decoded,ss,g,no_draft,err)==ConversationRestore::restored,"restore without MTP");
++            SavedConversation roundtrip;
++            check(conversation_snapshot_save(roundtrip,view,ss,g,no_draft,err),"recapture without MTP");
++            check(roundtrip.live.gdn==captured.live.gdn && roundtrip.live.dead==captured.live.dead &&
++                  roundtrip.kv.size()==captured.kv.size() && equal(roundtrip.kv[0],captured.kv[0]),"no-MTP roundtrip is exact");
++        }
+         std::error_code ec;
+         fs::remove_all(dir,ec);
+         auto empty_ids=std::vector<int32_t>{};
+diff --git a/src/core/conversation_state.cpp b/src/core/conversation_state.cpp
+index c64e09d9..b1396ac2 100644
+--- a/src/core/conversation_state.cpp
++++ b/src/core/conversation_state.cpp
+@@ -339,10 +339,12 @@ bool conversation_snapshot_sources(SavedConversation& meta, std::vector<SessionK
+     if (!conversation_checkpoint_save(captured.live, ss, g, error)) return false;
+     const int64_t upto = (int64_t) view.ids.size();
+     const size_t layers = owned_qsa(ss);
+-    std::vector<SessionKvSource> out(layers + 1);
++    // MTP is optional: an unallocated draft has no K/V to serialize.
++    const bool has_draft = draft.max_cells > 0;
++    std::vector<SessionKvSource> out(layers + (has_draft ? 1 : 0));
+     for (size_t j = 0; j < layers; ++j)
+         if (!conversation_kv_source(out[j], owned(ss, j), g, upto, true, error)) return false;
+-    if (!conversation_kv_source(out.back(), draft, g, upto, false, error)) return false;
++    if (has_draft && !conversation_kv_source(out.back(), draft, g, upto, false, error)) return false;
+     meta = std::move(captured);
+     sources = std::move(out);
+     return true;
+@@ -363,18 +365,19 @@ bool conversation_session_read_limits(SessionReadLimits& limits, const SessionSt
+     SessionReadLimits l = limits;   // keeps the caller's admit / progress / max_file_bytes
+     l.max_tokens = tokens;
+     l.max_checkpoints = max_checkpoints;
+-    l.max_kv_layers = layers + 1;
++    const bool has_draft = draft.max_cells > 0;
++    l.max_kv_layers = layers + (has_draft ? 1 : 0);
+     l.geometry = geometry_key(g);
+     l.layer_range = std::make_pair(ss.layer_lo, ss.layer_hi);
+     l.max_state_bytes = {z.gdn, ss.ple_hist ? z.ple : 0, tails, dead, block_pos};
+-    l.max_kv_bytes.assign(layers + 1, {});
++    l.max_kv_bytes.assign(layers + (has_draft ? 1 : 0), {});
+     for (size_t j = 0; j < layers; ++j) {
+         const auto& st = owned(ss, j);
+         const int64_t upto = (int64_t) std::min<uint64_t>(tokens, (uint64_t) std::max<int64_t>(st.max_cells, 0));
+         if (!conversation_kv_part_sizes(st, g, upto, true, l.max_kv_bytes[j], error)) return false;
+     }
+     const int64_t dupto = (int64_t) std::min<uint64_t>(tokens, (uint64_t) std::max<int64_t>(draft.max_cells, 0));
+-    if (!conversation_kv_part_sizes(draft, g, dupto, false, l.max_kv_bytes.back(), error)) return false;
++    if (has_draft && !conversation_kv_part_sizes(draft, g, dupto, false, l.max_kv_bytes.back(), error)) return false;
+     limits = std::move(l);
+     return true;
+ }
+@@ -413,32 +416,32 @@ ConversationRestore conversation_snapshot_restore(const SavedConversation& image
+ // the draft layer's K/V included (the stage that owns the draft head, or no layer split)
+ bool conversation_snapshot_bytes(const ConversationView& view, const SessionState& ss, const ModelGeometry& g,
+                                  const QsaState& draft, size_t& bytes, std::string& error) {
+-    return conversation_snapshot_bytes(view, ss, g, &draft, bytes, error);
++    return conversation_snapshot_bytes(view, ss, g, draft.max_cells > 0 ? &draft : nullptr, bytes, error);
+ }
+ bool conversation_snapshot_capture_bytes(const ConversationKvReuse& reuse, const ConversationView& view,
+                                          const SessionState& ss, const ModelGeometry& g, const QsaState& draft,
+                                          size_t& bytes, std::string& error) {
+-    return conversation_snapshot_capture_bytes(reuse, view, ss, g, &draft, bytes, error);
++    return conversation_snapshot_capture_bytes(reuse, view, ss, g, draft.max_cells > 0 ? &draft : nullptr, bytes, error);
+ }
+ bool conversation_snapshot_save(SavedConversation& image, const ConversationView& view, const SessionState& ss,
+                                 const ModelGeometry& g, const QsaState& draft, std::string& error,
+                                 ConversationKvReuse reuse, size_t* reused_bytes) {
+-    return conversation_snapshot_save(image, view, ss, g, &draft, error, std::move(reuse), reused_bytes);
++    return conversation_snapshot_save(image, view, ss, g, draft.max_cells > 0 ? &draft : nullptr, error, std::move(reuse), reused_bytes);
+ }
+ bool conversation_snapshot_validate(const SavedConversation& image, const SessionState& ss, const ModelGeometry& g,
+                                     const QsaState& draft, std::string& error) {
+     // the whole-session form: a layer split's image (stage images) is restored stage by stage, never through here
+     if (!image.stage_images.empty()) return fail(error, "a layer split's image restored as a single session");
+-    return conversation_snapshot_validate(image, ss, g, &draft, error);
++    return conversation_snapshot_validate(image, ss, g, draft.max_cells > 0 ? &draft : nullptr, error);
+ }
+ ConversationRestore conversation_snapshot_restore(const SavedConversation& image, SessionState& ss,
+                                                    const ModelGeometry& g, const QsaState& draft, std::string& error) {
+-    return conversation_snapshot_restore(image, ss, g, &draft, error);
++    return conversation_snapshot_restore(image, ss, g, draft.max_cells > 0 ? &draft : nullptr, error);
+ }
+ ConversationRestore conversation_snapshot_restore_prefix(const SavedConversation& image, int64_t upto,
+                                                           SessionState& ss, const ModelGeometry& g,
+                                                           const QsaState& draft, std::string& error) {
+-    return conversation_snapshot_restore_prefix(image, upto, ss, g, &draft, error);
++    return conversation_snapshot_restore_prefix(image, upto, ss, g, draft.max_cells > 0 ? &draft : nullptr, error);
+ }
+ ConversationRestore conversation_snapshot_restore_prefix(const SavedConversation& image, int64_t upto,
+                                                           SessionState& ss, const ModelGeometry& g,
