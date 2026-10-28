@@ -1,6 +1,6 @@
 # Strata for DSH
 
-A local model provider for DeepSeek Harness. **0.5.11** identifies built-in MTP and supports selecting or automatically preparing a separate Flash-Next MTP runtime. It automatically downloads the verified Strata runtime after a GitHub installation. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata supports native SSD checkpoints and a top-level Purge all cache button.
+A local model provider for DeepSeek Harness. **0.5.12** identifies built-in MTP and supports selecting or automatically preparing a separate Flash-Next MTP runtime. It automatically downloads the verified Strata runtime after a GitHub installation. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata supports native SSD checkpoints and a top-level Purge all cache button.
 
 ## Install
 
@@ -30,7 +30,7 @@ Control-vector GGUFs appear under **Files → Components**, never as loadable mo
 
 ## Thinking presets
 
-The conversation selector offers **Low**, **Medium**, **High** and, for compatible original Flash-Next models, **Uncensored**. The native requests are `low`, `medium`, `xhigh`, and `xhigh` with the bundled experimental refusal-direction projection enabled. Ordinary choices explicitly disable projection. The vector loads once with the model; switching presets applies to the next request without a model reload. Native KV state is separated by projection mode, and SSD checkpoint names are partitioned by it.
+The conversation selector offers **Low**, **Medium**, **High** and, for compatible original Flash-Next models, **Uncensored**. The native requests are `low`, `medium`, `xhigh`, and `xhigh` with the bundled experimental refusal-direction projection enabled. Ordinary choices explicitly disable projection. The vector loads once with the model; switching presets applies to the next request without a model reload. Each compatible request includes a current-mode runtime notice, so the assistant can distinguish the new setting from earlier replies. Changing projection also changes this prompt suffix; the prior conversation text remains available. Native KV state is separated by projection mode, and SSD checkpoint names are partitioned by it.
 
 The projection came unchanged from upstream Strata, not from this plugin's author. It is a model-specific experiment, not a guarantee that every refusal disappears. Disabling it does not undo changes already baked into an abliterated model. See [projection provenance and behavior](docs/PROJECTION.md).
 

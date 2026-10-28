@@ -89,9 +89,25 @@ test("DSH adapter streams text and usage, preserves the prompt, and releases GPU
     call.model.reasoning.efforts.map((x) => x.name),
     ["Low", "Medium", "High", "Uncensored"],
   );
+  const conversation = [
+    { role: "user", content: [{ type: "text", text: "Say OK" }] },
+    {
+      role: "assistant",
+      source: { provider: "strata", model: profile.id },
+      content: [{ type: "text", text: "Earlier reply" }],
+    },
+    {
+      role: "user",
+      content: [{ type: "text", text: "What is the current mode?" }],
+    },
+  ];
+  const original = structuredClone(conversation);
+  const modePrompts = new Map();
   for (const [choice, wire, projection] of [
     ["low", "low", false],
     ["medium", "medium", false],
+    ["high", "xhigh", false],
+    ["uncensored", "xhigh", true],
     ["high", "xhigh", false],
     ["uncensored", "xhigh", true],
   ]) {
@@ -99,11 +115,26 @@ test("DSH adapter streams text and usage, preserves the prompt, and releases GPU
       provider: "strata",
       model: profile.id,
       reasoningEffort: choice,
-      messages: [{ role: "user", content: [{ type: "text", text: "Say OK" }] }],
+      system: "Original instructions",
+      messages: conversation,
       maxTokens: 8,
     }))
       void chunk;
     assert.equal(captured.reasoning_effort, wire);
     assert.equal(captured.experimental_speed_projection, projection);
+    const system = JSON.stringify(
+      captured.messages.filter((m) => m.role === "system"),
+    );
+    assert.ok(system.includes("Original instructions"));
+    assert.ok(
+      system.includes(
+        `projection is ${projection ? "enabled" : "disabled"} for this request`,
+      ),
+    );
+    assert.equal((system.match(/Strata runtime:/g) || []).length, 1);
+    if (modePrompts.has(projection))
+      assert.equal(system, modePrompts.get(projection));
+    else modePrompts.set(projection, system);
+    assert.deepEqual(conversation, original);
   }
 });
