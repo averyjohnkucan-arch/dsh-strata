@@ -77,7 +77,7 @@ export function FilePicker({
       </h4>
       <p>
         {folder
-          ? "Open the prepared MTP folder, then select it."
+          ? "Enter the full path, select Open folder, then select Use this folder. Choose the folder that directly contains the MTP files."
           : projector
             ? "Choose the model's mmproj GGUF file."
             : "Choose any model shard. Its other shards and nearby vision files are found automatically. You can also import a whole folder, including subfolders."}
@@ -100,6 +100,9 @@ export function FilePicker({
       </div>
       {loading && <p role="status">Loading files…</p>}
       {error && <p role="alert">{error}</p>}
+      {folder && listing && path !== listing.path && (
+        <p>Press Open folder to open the path you entered.</p>
+      )}
       {listing && !loading && (
         <div className="strata-folders">
           <button type="button" onClick={() => browse(listing.parent)}>
@@ -151,7 +154,7 @@ export function FilePicker({
         {folder ? (
           <button
             type="button"
-            disabled={loading || !listing}
+            disabled={loading || !listing || path !== listing.path}
             onClick={() => choose(listing.path)}
           >
             Use this folder

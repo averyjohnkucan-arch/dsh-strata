@@ -45,7 +45,22 @@ test("a single prepared Flash-Next MTP runtime is attached during import", async
   };
   await service.addModels(["one"]);
   assert.equal(service.profiles[0].mtp, root);
+  const id = service.profiles[0].id;
+  assert.deepEqual(await service.mtpStatus(id), {
+    kind: "selected",
+    path: root,
+  });
+  service.profiles[0].mtp = "auto";
+  assert.deepEqual(await service.mtpStatus(id), {
+    kind: "download",
+    candidates: [root],
+  });
+  service.profiles[0].mtp = root;
   await rm(join(root, "dense.txt"));
+  assert.deepEqual(await service.mtpStatus(id), {
+    kind: "missing",
+    path: root,
+  });
   await assert.rejects(
     () => inspectMtpRuntime(root),
     /prepared Flash-Next MTP folder/,

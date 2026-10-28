@@ -22,6 +22,7 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
   const [picking, setPicking] = useState(false);
   const [pickingMtp, setPickingMtp] = useState(false);
   const [capabilities, setCapabilities] = useState(null);
+  const [mtpStatus, setMtpStatus] = useState(null);
   const edit = (key, value) =>
     setDraft((previous) => ({ ...previous, [key]: value }));
   useEffect(() => {
@@ -33,6 +34,21 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
       .catch((error) => {
         if (live) setError(error.message);
       });
+    return () => {
+      live = false;
+    };
+  }, [profile.id]);
+  useEffect(() => {
+    let live = true;
+    if (supportsFlashMtp(profile.model)) {
+      request("mtp-status", { id: profile.id })
+        .then((status) => {
+          if (live) setMtpStatus(status);
+        })
+        .catch((error) => {
+          if (live) setError(error.message);
+        });
+    }
     return () => {
       live = false;
     };
@@ -175,10 +191,38 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
         {supportsFlashMtp(draft.model) ? (
           <>
             <p>
-              {draft.mtp && draft.mtp !== "auto"
-                ? "Separate MTP enabled: " + draft.mtp
-                : "Separate MTP: Strata will download and prepare it (about 5 GB). You can select an existing prepared folder instead."}
+              {draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0)
+                ? "MTP tensors were detected in the model. Strata uses a separate MTP runtime for this model."
+                : "No built-in MTP detected. Strata uses a separate MTP runtime for this model."}
             </p>
+            <p>
+              {!mtpStatus
+                ? "Checking MTP files…"
+                : mtpStatus.kind === "selected"
+                  ? "Ready: a separate MTP folder is selected. Save your settings, then load or tune the model."
+                  : mtpStatus.kind === "automatic-ready"
+                    ? "Ready: the automatically prepared MTP files are already installed. They will be used when you load or tune this model."
+                    : mtpStatus.kind === "missing"
+                      ? "The selected MTP folder is missing or incomplete. Choose another folder."
+                      : "Not installed for this model yet. Strata will download and prepare MTP (about 5 GB) when you load or tune it."}
+            </p>
+            {mtpStatus?.path && <p className="strata-path">{mtpStatus.path}</p>}
+            {mtpStatus?.kind === "download" &&
+              mtpStatus.candidates?.map((path) => (
+                <div key={path}>
+                  <p>Found a prepared MTP folder: {path}</p>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => {
+                      edit("mtp", path);
+                      setMtpStatus({ kind: "selected", path });
+                    }}
+                  >
+                    Use this MTP folder
+                  </button>
+                </div>
+              ))}
             <button
               type="button"
               disabled={busy}
@@ -216,6 +260,7 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
           onSelect={async (path) => {
             await request("mtp-runtime", { path });
             edit("mtp", path);
+            setMtpStatus({ kind: "selected", path });
             setPickingMtp(false);
           }}
         />

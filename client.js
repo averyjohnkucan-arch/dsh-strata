@@ -202,7 +202,7 @@ function FilePicker({
       "aria-label": folder ? "Select MTP runtime" : projector ? "Select vision projector" : "Import model files"
     },
     /* @__PURE__ */ import_react2.default.createElement("h4", null, folder ? "Select MTP runtime folder" : projector ? "Select vision projector (mmproj)" : "Import model files"),
-    /* @__PURE__ */ import_react2.default.createElement("p", null, folder ? "Open the prepared MTP folder, then select it." : projector ? "Choose the model's mmproj GGUF file." : "Choose any model shard. Its other shards and nearby vision files are found automatically. You can also import a whole folder, including subfolders."),
+    /* @__PURE__ */ import_react2.default.createElement("p", null, folder ? "Enter the full path, select Open folder, then select Use this folder. Choose the folder that directly contains the MTP files." : projector ? "Choose the model's mmproj GGUF file." : "Choose any model shard. Its other shards and nearby vision files are found automatically. You can also import a whole folder, including subfolders."),
     /* @__PURE__ */ import_react2.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react2.default.createElement(
       "input",
       {
@@ -219,6 +219,7 @@ function FilePicker({
     ), /* @__PURE__ */ import_react2.default.createElement("button", { type: "button", disabled: loading, onClick: () => browse(path) }, "Open folder")),
     loading && /* @__PURE__ */ import_react2.default.createElement("p", { role: "status" }, "Loading files\u2026"),
     error && /* @__PURE__ */ import_react2.default.createElement("p", { role: "alert" }, error),
+    folder && listing && path !== listing.path && /* @__PURE__ */ import_react2.default.createElement("p", null, "Press Open folder to open the path you entered."),
     listing && !loading && /* @__PURE__ */ import_react2.default.createElement("div", { className: "strata-folders" }, /* @__PURE__ */ import_react2.default.createElement("button", { type: "button", onClick: () => browse(listing.parent) }, "\u2191 Parent folder"), listing.directories.map((name) => /* @__PURE__ */ import_react2.default.createElement(
       "button",
       {
@@ -243,7 +244,7 @@ function FilePicker({
       "button",
       {
         type: "button",
-        disabled: loading || !listing,
+        disabled: loading || !listing || path !== listing.path,
         onClick: () => choose(listing.path)
       },
       "Use this folder"
@@ -322,6 +323,7 @@ function ProfileEditor({ profile, busy, save, run, close }) {
   const [picking, setPicking] = (0, import_react3.useState)(false);
   const [pickingMtp, setPickingMtp] = (0, import_react3.useState)(false);
   const [capabilities, setCapabilities] = (0, import_react3.useState)(null);
+  const [mtpStatus, setMtpStatus] = (0, import_react3.useState)(null);
   const edit = (key, value) => setDraft((previous) => ({ ...previous, [key]: value }));
   (0, import_react3.useEffect)(() => {
     let live = true;
@@ -330,6 +332,19 @@ function ProfileEditor({ profile, busy, save, run, close }) {
     }).catch((error2) => {
       if (live) setError(error2.message);
     });
+    return () => {
+      live = false;
+    };
+  }, [profile.id]);
+  (0, import_react3.useEffect)(() => {
+    let live = true;
+    if (supportsFlashMtp(profile.model)) {
+      request("mtp-status", { id: profile.id }).then((status) => {
+        if (live) setMtpStatus(status);
+      }).catch((error2) => {
+        if (live) setError(error2.message);
+      });
+    }
     return () => {
       live = false;
     };
@@ -412,7 +427,18 @@ function ProfileEditor({ profile, busy, save, run, close }) {
         setPicking(false);
       }
     }
-  ), /* @__PURE__ */ import_react3.default.createElement("div", null, /* @__PURE__ */ import_react3.default.createElement("strong", null, "MTP"), supportsFlashMtp(draft.model) ? /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("p", null, draft.mtp && draft.mtp !== "auto" ? "Separate MTP enabled: " + draft.mtp : "Separate MTP: Strata will download and prepare it (about 5 GB). You can select an existing prepared folder instead."), /* @__PURE__ */ import_react3.default.createElement(
+  ), /* @__PURE__ */ import_react3.default.createElement("div", null, /* @__PURE__ */ import_react3.default.createElement("strong", null, "MTP"), supportsFlashMtp(draft.model) ? /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("p", null, draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0) ? "MTP tensors were detected in the model. Strata uses a separate MTP runtime for this model." : "No built-in MTP detected. Strata uses a separate MTP runtime for this model."), /* @__PURE__ */ import_react3.default.createElement("p", null, !mtpStatus ? "Checking MTP files\u2026" : mtpStatus.kind === "selected" ? "Ready: a separate MTP folder is selected. Save your settings, then load or tune the model." : mtpStatus.kind === "automatic-ready" ? "Ready: the automatically prepared MTP files are already installed. They will be used when you load or tune this model." : mtpStatus.kind === "missing" ? "The selected MTP folder is missing or incomplete. Choose another folder." : "Not installed for this model yet. Strata will download and prepare MTP (about 5 GB) when you load or tune it."), mtpStatus?.path && /* @__PURE__ */ import_react3.default.createElement("p", { className: "strata-path" }, mtpStatus.path), mtpStatus?.kind === "download" && mtpStatus.candidates?.map((path) => /* @__PURE__ */ import_react3.default.createElement("div", { key: path }, /* @__PURE__ */ import_react3.default.createElement("p", null, "Found a prepared MTP folder: ", path), /* @__PURE__ */ import_react3.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy,
+      onClick: () => {
+        edit("mtp", path);
+        setMtpStatus({ kind: "selected", path });
+      }
+    },
+    "Use this MTP folder"
+  ))), /* @__PURE__ */ import_react3.default.createElement(
     "button",
     {
       type: "button",
@@ -429,6 +455,7 @@ function ProfileEditor({ profile, busy, save, run, close }) {
       onSelect: async (path) => {
         await request("mtp-runtime", { path });
         edit("mtp", path);
+        setMtpStatus({ kind: "selected", path });
         setPickingMtp(false);
       }
     }
@@ -669,7 +696,7 @@ function StrataCard() {
   const profile = state?.profiles.find((profile2) => profile2.id === view);
   const primary = ["models", "files", "activity"].includes(view);
   const missing = state?.inventory?.models.filter((model) => model.status !== "complete").length || 0;
-  return /* @__PURE__ */ import_react7.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react7.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react7.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react7.default.createElement("span", { className: "strata-version" }, "0.5.9")), /* @__PURE__ */ import_react7.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider")), /* @__PURE__ */ import_react7.default.createElement(
+  return /* @__PURE__ */ import_react7.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react7.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react7.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react7.default.createElement("span", { className: "strata-version" }, "0.5.10")), /* @__PURE__ */ import_react7.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider")), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       type: "button",
