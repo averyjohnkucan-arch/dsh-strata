@@ -62,26 +62,32 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
       <div className="strata-grid">
         <label>
           KV precision (K / V)
-          <select
-            value={draft.kv}
-            onChange={(event) => edit("kv", event.target.value)}
-          >
-            {!kvChoices.includes(draft.kv) && (
-              <option value={draft.kv}>{draft.kv} (saved)</option>
-            )}
-            {kvChoices.map((value) => (
-              <option
-                key={value}
-                value={value}
-                disabled={capabilities?.kv && !capabilities.kv.includes(value)}
-              >
-                {value}
-                {capabilities?.kv && !capabilities.kv.includes(value)
-                  ? " — unavailable in this engine"
-                  : ""}
-              </option>
-            ))}
-          </select>
+          {draft.model?.architecture === "qwen35moe" ? (
+            <span>FP32 / FP32 (native engine)</span>
+          ) : (
+            <select
+              value={draft.kv}
+              onChange={(event) => edit("kv", event.target.value)}
+            >
+              {!kvChoices.includes(draft.kv) && (
+                <option value={draft.kv}>{draft.kv} (saved)</option>
+              )}
+              {kvChoices.map((value) => (
+                <option
+                  key={value}
+                  value={value}
+                  disabled={
+                    capabilities?.kv && !capabilities.kv.includes(value)
+                  }
+                >
+                  {value}
+                  {capabilities?.kv && !capabilities.kv.includes(value)
+                    ? " — unavailable in this engine"
+                    : ""}
+                </option>
+              ))}
+            </select>
+          )}
         </label>
         <label>
           Context
@@ -185,7 +191,7 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
           </>
         ) : draft.model?.architecture === "qwen35moe" &&
           draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0) ? (
-          <p>Built into the model; Strata uses its native MTP support.</p>
+          <p>Built-in MTP enabled using Strata’s native setting.</p>
         ) : (
           <p>No supported built-in MTP detected.</p>
         )}

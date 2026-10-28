@@ -135,9 +135,14 @@ def prepare(source, payload):
             str(first),
             "--max-context",
             str(profile["context"]),
-            "--kv",
-            profile.get("kvArgument", "fp16"),
         ]
+        embedded = any(file.get("tensors", {}).get("MTP", 0) for file in model["files"])
+        if embedded:
+            # Use Strata's own native-family draft setting, not a plugin performance guess.
+            drafts = setup_module(source).OWN_PATH_FAMILIES["qwen36"]["mtp"]
+            if not isinstance(drafts, int) or not 1 <= drafts <= 7:
+                raise ValueError("Strata has no valid built-in MTP setting for this model")
+            args += ["--mtp", str(drafts)]
     elif arch == "qwen4exp":
         # The official portable Control package does not bundle gguf-py.
         # Let Strata acquire its own pinned helper source under our private install directory.

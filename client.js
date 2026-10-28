@@ -350,7 +350,7 @@ function ProfileEditor({ profile, busy, save, run, close }) {
   }
   const contexts = contextChoices(draft);
   const native = nativeContext(draft);
-  return /* @__PURE__ */ import_react3.default.createElement("section", { className: "strata-panel", "aria-label": "Model settings" }, /* @__PURE__ */ import_react3.default.createElement("h4", { ref: heading, tabIndex: -1 }, draft.name), error && /* @__PURE__ */ import_react3.default.createElement("p", { role: "alert" }, error), /* @__PURE__ */ import_react3.default.createElement("div", { className: "strata-grid" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "KV precision (K / V)", /* @__PURE__ */ import_react3.default.createElement(
+  return /* @__PURE__ */ import_react3.default.createElement("section", { className: "strata-panel", "aria-label": "Model settings" }, /* @__PURE__ */ import_react3.default.createElement("h4", { ref: heading, tabIndex: -1 }, draft.name), error && /* @__PURE__ */ import_react3.default.createElement("p", { role: "alert" }, error), /* @__PURE__ */ import_react3.default.createElement("div", { className: "strata-grid" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "KV precision (K / V)", draft.model?.architecture === "qwen35moe" ? /* @__PURE__ */ import_react3.default.createElement("span", null, "FP32 / FP32 (native engine)") : /* @__PURE__ */ import_react3.default.createElement(
     "select",
     {
       value: draft.kv,
@@ -420,7 +420,7 @@ function ProfileEditor({ profile, busy, save, run, close }) {
       onClick: () => setPickingMtp(true)
     },
     draft.mtp && draft.mtp !== "auto" ? "Change MTP folder" : "Use existing MTP folder"
-  )) : draft.model?.architecture === "qwen35moe" && draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0) ? /* @__PURE__ */ import_react3.default.createElement("p", null, "Built into the model; Strata uses its native MTP support.") : /* @__PURE__ */ import_react3.default.createElement("p", null, "No supported built-in MTP detected.")), pickingMtp && /* @__PURE__ */ import_react3.default.createElement(
+  )) : draft.model?.architecture === "qwen35moe" && draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0) ? /* @__PURE__ */ import_react3.default.createElement("p", null, "Built-in MTP enabled using Strata\u2019s native setting.") : /* @__PURE__ */ import_react3.default.createElement("p", null, "No supported built-in MTP detected.")), pickingMtp && /* @__PURE__ */ import_react3.default.createElement(
     FilePicker,
     {
       folder: true,
@@ -669,7 +669,7 @@ function StrataCard() {
   const profile = state?.profiles.find((profile2) => profile2.id === view);
   const primary = ["models", "files", "activity"].includes(view);
   const missing = state?.inventory?.models.filter((model) => model.status !== "complete").length || 0;
-  return /* @__PURE__ */ import_react7.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react7.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react7.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react7.default.createElement("span", { className: "strata-version" }, "0.5.7")), /* @__PURE__ */ import_react7.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider")), /* @__PURE__ */ import_react7.default.createElement(
+  return /* @__PURE__ */ import_react7.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react7.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react7.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react7.default.createElement("span", { className: "strata-version" }, "0.5.8")), /* @__PURE__ */ import_react7.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider")), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       type: "button",

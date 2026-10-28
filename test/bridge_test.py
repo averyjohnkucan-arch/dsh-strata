@@ -39,6 +39,7 @@ class BridgeTests(unittest.TestCase):
         self.temp.cleanup()
 
     def test_native_tokenizer_contract_and_architecture_are_preserved(self):
+        self.model["files"][0]["tensors"] = {}
         with patch("bridge.subprocess.run") as run:
             config = prepare(self.root / "control", self.payload)
         command = run.call_args.args[0]
@@ -46,7 +47,7 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(output, str(self.root / "prepared" / "pack"))
         self.assertEqual(config["tokenizer"], output + "/tokenizer")
         self.assertEqual(config["arch"], "qwen35moe")
-        self.assertEqual(config["args"][config["args"].index("--kv") + 1], "fp16")
+        self.assertNotIn("--kv", config["args"])
         self.assertNotIn("--spec", config["args"])
         self.assertEqual(self.file.read_bytes(), b"fixture weight bytes")
 
@@ -95,6 +96,15 @@ class BridgeTests(unittest.TestCase):
         ):
             prepare(self.root / "control", self.payload)
         run.assert_not_called()
+
+    def test_native_embedded_mtp_uses_strata_family_setting(self):
+        from unittest.mock import MagicMock
+        setup = MagicMock()
+        setup.OWN_PATH_FAMILIES = {"qwen36": {"mtp": 2}}
+        with patch("bridge.subprocess.run"), patch("bridge.setup_module", return_value=setup):
+            config = prepare(self.root / "control", self.payload)
+        args = config["args"]
+        self.assertEqual(args[args.index("--mtp") + 1], "2")
 
     def test_missing_shards_fail_before_staging(self):
         self.model["status"] = "missing"

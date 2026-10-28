@@ -113,9 +113,13 @@ def inspect(path):
                 metadata[key] = value
         roles = Counter()
         encodings = Counter()
+        blocks = set()
         offsets = []
         for _ in range(tensors):
             name = r.string()
+            block = re.match(r"^blk\.(\d+)\.", name)
+            if block:
+                blocks.add(int(block.group(1)))
             dimensions = r.number("I")
             if not 1 <= dimensions <= 8:
                 raise ValueError("Invalid tensor dimensions")
@@ -163,6 +167,10 @@ def inspect(path):
             break
     if architecture == "controlvector":
         role = "Control vector"
+    if role == "MTP" and len(blocks) > 1:
+        # A full model may advertise its embedded MTP in the filename. A draft
+        # sidecar contains one block; never hide the full model as a component.
+        role = "Model"
     if role == "Model" and roles and set(roles) <= {"MTP"}:
         role = "MTP"
     if role == "Model" and roles and set(roles) <= {"Engram"}:

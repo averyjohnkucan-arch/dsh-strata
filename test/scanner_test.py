@@ -129,6 +129,12 @@ class ScannerTests(unittest.TestCase):
             {"MTP", "Engram", "DFlash", "Vision"},
         )
 
+    def test_model_filename_can_advertise_embedded_mtp(self):
+        path=gguf(self.root / "full-model-MTP.gguf", {"general.architecture":"qwen35moe"}, ["blk.0.attn_q.weight", "blk.1.attn_q.weight", "blk.2.nextn.eh_proj.weight"])
+        result=scan(self.root)
+        self.assertEqual(result['models'][0]['files'][0]['path'],str(path))
+        self.assertEqual(result['models'][0]['files'][0]['tensors']['MTP'],1)
+
     def test_symlink_cycles_and_duplicate_files(self):
         file = gguf(self.root / "model.gguf")
         (self.root / "alias.gguf").symlink_to(file)
