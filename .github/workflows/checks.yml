@@ -40,12 +40,12 @@ jobs:
           tag="v$(node -p 'JSON.parse(require("fs").readFileSync("package.json", "utf8")).version')"
           draft=$(gh release view "$tag" --json isDraft --jq .isDraft 2>/dev/null || true)
           echo "build=$([ "$draft" = false ] && echo false || echo true)" >> "$GITHUB_OUTPUT"
-      - name: Acquire verified upstream runtime for packaging
+      - name: Acquire the pinned runtime bundle
         if: steps.release.outputs.build == 'true'
-        run: python3 packaging/fetch-upstream.py "$RUNNER_TEMP/strata-runtime"
+        run: curl --fail --location --retry 3 -o "$RUNNER_TEMP/runtime.tgz" https://github.com/averyjohnkucan-arch/dsh-strata/releases/download/v0.5.0/dsh-strata-0.5.0-linux-x64-cuda13.tgz
       - name: Build the self-contained plugin
         if: steps.release.outputs.build == 'true'
-        run: python3 packaging/build-bundle.py --runtime-root "$RUNNER_TEMP/strata-runtime" --output dist
+        run: python3 packaging/build-bundle.py --bundle "$RUNNER_TEMP/runtime.tgz" --output dist
       - name: Publish the tested package in this repository
         if: steps.release.outputs.build == 'true'
         env:

@@ -1,6 +1,6 @@
 Self-contained Strata provider for DSH 0.2.1-rc.2.
 
-0.5.3 fixes tuning/startup in installed packages by resolving the projection from runtime/control, validates the bundled asset during packaging, and surfaces native JSON tuning errors instead of an empty exit-code message.
+0.5.5 makes GitHub source installation smaller and downloads the pinned, verified Strata runtime automatically when the plugin is enabled. Progress and retry are available in the Strata card.
 
 The interface separates Models, Files and Activity. Per-model Settings opens a focused view with a Back button. Compact model rows keep Load and Settings visible; bulk tuning and logs appear only when needed. Control-vector GGUFs are classified as components, and old accidental vector profiles are archived without deleting original files.
 

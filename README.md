@@ -1,6 +1,6 @@
 # Strata for DSH
 
-A local model provider for DeepSeek Harness. **0.5.3** fixes packaged tuning asset paths and native error reporting. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata is included, with native SSD checkpoints and a top-level Purge all cache button.
+A local model provider for DeepSeek Harness. **0.5.5** automatically downloads the verified Strata runtime after a GitHub installation. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata supports native SSD checkpoints and a top-level Purge all cache button.
 
 ## Install
 
@@ -59,7 +59,7 @@ Packing and tokenizer extraction use vendored upstream tools. Shards are staged 
 - `client/`: provider card, file picker and compact settings; rebuild `client.js` after edits.
 - `lib/`: adapter, lifecycle, checkpoints and workflow.
 - `python/`: inspection, preparation and release installation.
-- `vendor/`: pinned Control/helper sources, engine parts, patches and licenses.
+- `vendor/`: pinned Control/helper sources, engine metadata, patches and licenses. Engine binaries are in the pinned release runtime.
 - `packaging/`: verified, self-contained release packaging.
 
 ```sh

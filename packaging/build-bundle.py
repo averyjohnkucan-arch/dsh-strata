@@ -92,9 +92,46 @@ def build(runtime, output):
         print(json.dumps({"artifact": str(artifact), "sha256": digest, "bytes": artifact.stat().st_size}))
 
 
+def build_from_bundle(bundle, output):
+    """Repackage the pinned runtime with the current plugin, without engine archives in Git."""
+    bundle = Path(bundle).resolve()
+    expected = json.loads((REPO / "engine.json").read_text())
+    if sha256(bundle) != expected["runtimeBundleSha256"]:
+        raise ValueError("Runtime bundle checksum mismatch")
+    output = Path(output).resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    version = json.loads((REPO / "package.json").read_text())["version"]
+    with tempfile.TemporaryDirectory() as stage:
+        stage = Path(stage)
+        result = subprocess.check_output(["npm", "pack", "--ignore-scripts", "--json", "--pack-destination", str(stage)], cwd=REPO, text=True)
+        with tarfile.open(stage / json.loads(result)[0]["filename"]) as archive:
+            archive.extractall(stage, filter="data")
+        package = stage / "package"
+        with tarfile.open(bundle) as archive:
+            archive.extractall(stage, members=[m for m in archive if m.name.startswith("package/runtime/")], filter="data")
+        manifest_path = package / "runtime/manifest.json"
+        manifest = json.loads(manifest_path.read_text())
+        if (manifest.get("runtimeVersion") or manifest.get("pluginVersion")) != expected["runtimeVersion"]:
+            raise ValueError("Runtime bundle version mismatch")
+        manifest["pluginVersion"] = version
+        manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+        name = f"dsh-strata-{version}-linux-x64-cuda13.tgz"
+        artifact = output / name
+        with tarfile.open(artifact, "w:gz", compresslevel=6) as archive:
+            archive.add(package, arcname="package", filter=lambda info: None if "__pycache__" in Path(info.name).parts or info.name.endswith(".pyc") else info)
+        digest = sha256(artifact)
+        artifact.with_name(name + ".sha256").write_text(digest + "  " + name + "\n")
+        print(json.dumps({"artifact": str(artifact), "sha256": digest, "bytes": artifact.stat().st_size}))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--runtime-root", required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--runtime-root")
+    source.add_argument("--bundle")
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
-    build(args.runtime_root, args.output)
+    if args.bundle:
+        build_from_bundle(args.bundle, args.output)
+    else:
+        build(args.runtime_root, args.output)

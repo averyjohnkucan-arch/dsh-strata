@@ -10,7 +10,8 @@ import tarfile
 import tempfile
 import urllib.request
 
-VERSION = json.loads((Path(__file__).parents[1] / "engine.json").read_text())["runtimeVersion"]
+ENGINE = json.loads((Path(__file__).parents[1] / "engine.json").read_text())
+VERSION = ENGINE["runtimeVersion"]
 NAME = f"dsh-strata-{VERSION}-linux-x64-cuda13.tgz"
 BASE = f"https://github.com/averyjohnkucan-arch/dsh-strata/releases/download/v{VERSION}"
 
@@ -25,8 +26,7 @@ def install(root):
             stage = Path(stage)
             archive = stage / NAME
             print("Acquiring the self-contained Strata package from this plugin's GitHub release", flush=True)
-            with urllib.request.urlopen(BASE + "/" + NAME + ".sha256", timeout=60) as response:
-                expected = response.read(1024).decode().split()[0]
+            expected = ENGINE["runtimeBundleSha256"]
             digest = hashlib.sha256()
             with urllib.request.urlopen(BASE + "/" + NAME, timeout=120) as response, archive.open("wb") as target:
                 received = 0

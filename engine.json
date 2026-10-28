@@ -19,5 +19,6 @@
       "sha256": "4177c1a8ffc59bf66074093b22ac55ed477bcbe84f8bd12e378b0f1236da55c7"
     }
   ],
-  "runtimeVersion": "0.5.0"
+  "runtimeVersion": "0.5.0",
+  "runtimeBundleSha256": "6604c396af15b7b2b97a09c11469b40f306b2f3694a7999519da0eef7d49d7ef"
 }
