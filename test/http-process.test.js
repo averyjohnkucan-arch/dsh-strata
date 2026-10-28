@@ -79,3 +79,19 @@ test("native completion receipts are required", () => {
   assert.equal(receipt('log\nDSH_RESULT={"ok":true}\n').ok, true);
   assert.throws(() => receipt("finished"), /receipt/);
 });
+
+test("a nonzero subprocess retains stdout JSON diagnostics", async () => {
+  await assert.rejects(
+    () =>
+      execute(process.execPath, [
+        "-e",
+        "console.log(JSON.stringify({reason:'native failure'}));process.exit(6)",
+      ]),
+    (error) => {
+      assert.equal(error.exitCode, 6);
+      assert.equal(JSON.parse(error.stdout).reason, "native failure");
+      assert.equal(error.stderr, "");
+      return true;
+    },
+  );
+});

@@ -196,6 +196,7 @@ test("native tuning success saves a real preset and uses actual Thorough argumen
   assert.equal(captured[captured.indexOf("--mode") + 1], "thorough");
   assert.equal(p.tuneReport.preset.id, "measured");
   for (const option of [
+    "--time",
     "--goal",
     "--use",
     "--leave-ram",

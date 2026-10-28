@@ -60,6 +60,9 @@ def build(runtime, output):
         bundled = package / "runtime"
         shutil.copytree(runtime / "control", bundled / "control", symlinks=True, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
         shutil.copytree(runtime / "engine", bundled / "engine", symlinks=True)
+        projection = bundled / "control/data/experimental-speed-projection/Qwen3.8-Flash-Next-experimental-speed-projection.gguf"
+        if not projection.is_file():
+            raise ValueError("The Control runtime is missing its projection asset")
         stock = unpack_engine(REPO / "vendor/strata-engine", bundled / "engine/strata")
         fork = unpack_engine(REPO / "vendor/gyro-l-engine", bundled / "gyro-l/strata")
         # Compressed source-install parts are redundant in an offline bundle with the extracted engine.
@@ -75,6 +78,7 @@ def build(runtime, output):
             "controlVersion": expected["controlVersion"],
             "engineVersion": expected["engineVersion"],
             "engineSha256": sha256(bundled / "engine/strata"),
+            "projectionSha256": sha256(projection),
             "cudaArchitectures": stock["cudaArchitectures"],
             "fork": {"engineSha256": fork["engineSha256"], "cudaArchitectures": fork["cudaArchitectures"]},
         }

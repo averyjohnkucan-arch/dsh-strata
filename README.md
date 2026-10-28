@@ -1,6 +1,6 @@
 # Strata for DSH
 
-A local model provider for DeepSeek Harness. **0.5.2** separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata is included, with native SSD checkpoints and a top-level Purge all cache button.
+A local model provider for DeepSeek Harness. **0.5.3** fixes packaged tuning asset paths and native error reporting. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata is included, with native SSD checkpoints and a top-level Purge all cache button.
 
 ## Install
 
