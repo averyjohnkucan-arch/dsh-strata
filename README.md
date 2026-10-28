@@ -1,6 +1,6 @@
 # Strata for DSH
 
-A local model provider for DeepSeek Harness. **0.5.6** identifies built-in MTP and supports selecting a prepared separate Flash-Next MTP runtime. It automatically downloads the verified Strata runtime after a GitHub installation. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata supports native SSD checkpoints and a top-level Purge all cache button.
+A local model provider for DeepSeek Harness. **0.5.7** identifies built-in MTP and supports selecting or automatically preparing a separate Flash-Next MTP runtime. It automatically downloads the verified Strata runtime after a GitHub installation. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata supports native SSD checkpoints and a top-level Purge all cache button.
 
 ## Install
 
