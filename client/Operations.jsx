@@ -1,4 +1,5 @@
 import React from "react";
+import { downloadConfig } from "./portable.js";
 
 export function Operations({ jobs, run, history = false }) {
   const active =
@@ -8,9 +9,17 @@ export function Operations({ jobs, run, history = false }) {
   if (!history && !active && latest?.status === "complete")
     return (
       <p className="strata-notice" role="status">
-        {latest.kind === "Purge all cache"
-          ? "Cache cleared"
-          : latest.kind + " complete"}
+        {latest.kind === "Export config" ? (
+          <button type="button" onClick={() => downloadConfig(latest.result)}>
+            Download config JSON
+          </button>
+        ) : (
+          <>
+            {latest.kind === "Purge all cache"
+              ? "Cache cleared"
+              : latest.kind + " complete"}
+          </>
+        )}
       </p>
     );
   const visible = history
@@ -34,6 +43,11 @@ export function Operations({ jobs, run, history = false }) {
           <p role={job.status === "failed" ? "alert" : "status"}>
             {job.progress}
           </p>
+          {job.kind === "Export config" && job.status === "complete" && (
+            <button type="button" onClick={() => downloadConfig(job.result)}>
+              Download config JSON
+            </button>
+          )}
           {["queued", "running"].includes(job.status) && (
             <button type="button" onClick={() => run("cancel", { id: job.id })}>
               Cancel

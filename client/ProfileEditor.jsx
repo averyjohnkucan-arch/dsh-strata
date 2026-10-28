@@ -79,7 +79,9 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
         <label>
           KV precision (K / V)
           {draft.model?.architecture === "qwen35moe" ? (
-            <span>FP32 / FP32 (native engine)</span>
+            <span>
+              FP32 / FP32. This Qwen 3.6 engine has no selectable KV formats.
+            </span>
           ) : (
             <select
               value={draft.kv}
@@ -241,6 +243,13 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
           </p>
         ) : (
           <p>No supported built-in MTP detected.</p>
+        )}
+        {draft.model?.architecture === "qwen35moe" && (
+          <p>
+            This engine reads MTP only when it is embedded in the model GGUF.
+            Separate MTP files or folders cannot be attached. Choose a quant
+            with built-in MTP.
+          </p>
         )}
       </div>
       {pickingMtp && (

@@ -6,6 +6,7 @@ import { ProfileEditor } from "./ProfileEditor.jsx";
 import { Download } from "./Download.jsx";
 import { ModelList } from "./ModelList.jsx";
 import { Operations } from "./Operations.jsx";
+import { ConfigImport } from "./ConfigImport.jsx";
 import css from "./styles.css";
 
 function StrataCard() {
@@ -81,7 +82,7 @@ function StrataCard() {
       <header className="strata-header">
         <div>
           <h3>
-            Strata <span className="strata-version">0.5.12</span>
+            Strata <span className="strata-version">0.6.0</span>
           </h3>
           <small>
             {state?.settings.bundledVersion
@@ -133,6 +134,13 @@ function StrataCard() {
                   ))}
                 </nav>
                 <div className="strata-actions">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => setView("config")}
+                  >
+                    Import config
+                  </button>
                   <button
                     type="button"
                     disabled={busy}
@@ -206,6 +214,16 @@ function StrataCard() {
             )}
             {view === "download" && (
               <Download busy={busy} run={act} close={() => setView("models")} />
+            )}
+            {view === "config" && (
+              <ConfigImport
+                busy={busy}
+                run={run}
+                imported={(id) => {
+                  setImportJob(id);
+                  setView("models");
+                }}
+              />
             )}
             {profile && (
               <ProfileEditor

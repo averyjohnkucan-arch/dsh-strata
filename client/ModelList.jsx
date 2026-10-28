@@ -119,6 +119,16 @@ export function ModelList({ profiles, busy, open, run }) {
                         disabled={busy}
                         onClick={(e) => {
                           e.currentTarget.closest("details").open = false;
+                          run("export-config", { id: profile.id });
+                        }}
+                      >
+                        Export config JSON
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={(e) => {
+                          e.currentTarget.closest("details").open = false;
                           run("tune", { id: profile.id });
                         }}
                       >

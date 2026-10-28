@@ -1,11 +1,5 @@
-Self-contained Strata provider for DSH 0.2.1-rc.2.
+# Strata 0.6.0
 
-0.5.12 updates the per-request prompt when the refusal-direction projection switches on or off. Low, Medium and High keep the same projection notice; thinking effort alone does not change it. It also reports built-in versus separate MTP and can find, select, or prepare the separate Flash-Next draft runtime. The GitHub source installation downloads the pinned, verified Strata runtime automatically when enabled.
+Adds portable JSON model configuration export/import. Required pieces are matched recursively by exact size and MD5, including model shards, vision projectors and separate MTP runtimes. Original weights stay in place. Selected model settings and supported tuning flags are retained.
 
-The interface separates Models, Files and Activity. Per-model Settings opens a focused view with a Back button. Compact model rows keep Load and Settings visible; bulk tuning and logs appear only when needed. Control-vector GGUFs are classified as components, and old accidental vector profiles are archived without deleting original files.
-
-Download the `.tgz` and import its local path in DSH. It includes Strata Control, portable Python, CUDA libraries, the GGUF helper and the Gyro L fork. Model weights are separate. No compiler or separate Strata installation is required.
-
-Native context defaults, Low / Medium / High / Uncensored presets, Strata's Thorough tuner and 16 GiB per-model persistent SSD checkpoints remain available. High sends xhigh; Uncensored also enables the upstream experimental projection on compatible Flash-Next models. Mixed KV disk snapshots remain unsupported by the fork.
-
-Target: Linux x86-64, NVIDIA Blackwell sm_120, CUDA 13 driver compatibility, glibc 2.43 or newer. Other GPUs and operating systems have not been validated. The compatible 0.5.0 runtime ABI and engines are unchanged. See README and docs/VALIDATION.md for test scope and limits.
+The bundled Strata engine is unchanged. Qwen 3.6 settings explain its fixed FP32 KV and embedded-MTP requirement.

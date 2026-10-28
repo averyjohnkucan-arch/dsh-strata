@@ -1,6 +1,6 @@
 # Strata for DSH
 
-A local model provider for DeepSeek Harness. **0.5.12** identifies built-in MTP and supports selecting or automatically preparing a separate Flash-Next MTP runtime. It automatically downloads the verified Strata runtime after a GitHub installation. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata supports native SSD checkpoints and a top-level Purge all cache button.
+A local model provider for DeepSeek Harness. **0.6.0** identifies built-in MTP and supports selecting or automatically preparing a separate Flash-Next MTP runtime. It automatically downloads the verified Strata runtime after a GitHub installation. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata supports native SSD checkpoints and a top-level Purge all cache button.
 
 ## Install
 
@@ -72,3 +72,11 @@ pnpm test
 ```
 
 The release workflow tests the wrapper and packages verified runtime inputs. GPU regressions and real-model validation are recorded separately in `docs/VALIDATION.md`; CI does not have a GPU. Building the browser bundle requires no access to model files.
+
+## Portable model configs
+
+Open a model’s **⋯ → Export config JSON** menu. Each model shard, selected vision projector and selected MTP runtime piece is identified by its exact byte size and full-file MD5. Hashing large weights takes time; Activity shows progress and offers **Download config JSON** when complete. Model weights are not exported.
+
+Choose **Import config**, select the JSON, and enter the folder to search. Subfolders are searched by size first, then MD5. The plugin links matching files into a private layout and creates a new model profile, so filenames and drive locations can change without copying weights. Native binaries, credentials and machine-specific runtime paths are excluded. Supported saved tuning flags are retained; run Thorough tuning again after changing hardware.
+
+The Strata engine is unchanged. Qwen 3.6 remains FP32 KV with embedded MTP only; its settings explain these native limitations.
