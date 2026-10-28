@@ -45,4 +45,5 @@ export async function apply(ctx, config) {
       fetch: handler(service),
     }),
   );
+  service.ensureRuntime();
 }

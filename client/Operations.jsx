@@ -17,7 +17,7 @@ export function Operations({ jobs, run, history = false }) {
     ? jobs.slice(-8).reverse()
     : active
       ? [active]
-      : latest?.status === "failed"
+      : ["failed", "cancelled"].includes(latest?.status)
         ? [latest]
         : [];
   return (
@@ -39,6 +39,12 @@ export function Operations({ jobs, run, history = false }) {
               Cancel
             </button>
           )}
+          {job.kind === "Install Strata" &&
+            ["failed", "cancelled"].includes(job.status) && (
+              <button type="button" onClick={() => run("install")}>
+                Retry installation
+              </button>
+            )}
           {history && job.log && (
             <details>
               <summary>View log</summary>

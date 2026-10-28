@@ -14,7 +14,7 @@ The GitHub address is also accepted by DSH:
 https://github.com/averyjohnkucan-arch/dsh-strata
 ```
 
-A source installation acquires the same verified release bundle from this repository when a runtime is first needed. Prefer the release archive for an offline installation. Updating an existing plugin requires uninstalling and reinstalling it, restarting DSH, then reloading the browser page. Profiles and original weights are retained in the plugin's data directory.
+A GitHub source installation automatically downloads and verifies the runtime from this repository when the plugin is enabled. Progress appears in the Strata card; if it fails, use Retry installation. Prefer the release archive for an offline installation. Updating an existing plugin requires uninstalling and reinstalling it, restarting DSH, then reloading the browser page. Profiles and original weights are retained in the plugin's data directory.
 
 ## Import models
 
