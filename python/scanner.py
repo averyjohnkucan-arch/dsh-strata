@@ -36,6 +36,7 @@ def scan(root, selected=None):
     if not root.is_absolute() or not root.is_dir():
         raise ValueError("Choose an existing absolute folder path")
     groups, errors, visited, physical = defaultdict(list), [], set(), set()
+    mtp_runtimes = []
     pending = [root]
     count = 0
     # Follow directory links, but visit every physical directory/file only once.
@@ -47,6 +48,15 @@ def scan(root, selected=None):
             if identity in visited:
                 continue
             visited.add(identity)
+            # A prepared Flash-Next draft is a directory, not a GGUF model.
+            try:
+                if ((directory / "experts.bin").stat().st_size == 707788800 and
+                    (directory / "dense.bin").is_file() and
+                    (directory / "draft_vocab.bin").is_file() and
+                    (directory / "dense.txt").read_text().startswith("fc_embedding.weight q8_0 2560 2560 ")):
+                    mtp_runtimes.append(str(directory))
+            except (OSError, UnicodeError):
+                pass
             with os.scandir(directory) as entries:
                 for entry in entries:
                     try:
@@ -134,6 +144,7 @@ def scan(root, selected=None):
         "filesScanned": count,
         "models": models,
         "components": components,
+        "mtpRuntimes": sorted(mtp_runtimes),
         "errors": errors,
         "limitations": [
             "GGUF headers are inspected; payload hashes and numerical compatibility are not established.",

@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).parents[1] / "python"))
-from bridge import prepare, stage_files
+from bridge import prepare, prepare_flash_mtp, stage_files
 
 
 class BridgeTests(unittest.TestCase):
@@ -64,6 +64,28 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(args[args.index("--spec") + 1], "2")
         self.assertNotIn("--pool-workers", args)
         self.assertNotIn("--pcie-frac", args)
+
+    def test_automatic_mtp_uses_strata_tools_and_reuses_completed_runtime(self):
+        from unittest.mock import MagicMock
+        setup = MagicMock()
+        def vocab(stage, _choice):
+            (stage / "draft_vocab.bin").write_bytes(b"vocab")
+        setup.refresh_draft_vocab.side_effect = vocab
+        def execute(command, **_kwargs):
+            output = Path(command[command.index("--out") + 1])
+            if command[2].endswith("mtp_pack.py"):
+                output.write_bytes(b"packed")
+            else:
+                for name in ("experts.bin", "dense.bin", "dense.txt"):
+                    (output / name).write_bytes(b"draft")
+        root = self.root / "shared-mtp"
+        with patch("bridge.setup_module", return_value=setup), patch("bridge.subprocess.run", side_effect=execute) as run:
+            runtime = prepare_flash_mtp(self.root / "control", root)
+            self.assertTrue((runtime / "draft_vocab.bin").is_file())
+            self.assertEqual(run.call_count, 2)
+            self.assertEqual(prepare_flash_mtp(self.root / "control", root), runtime)
+            self.assertEqual(run.call_count, 2)
+            setup.fetch_mtp.assert_called_once()
 
     def test_external_native_mtp_is_rejected_before_any_conversion(self):
         self.profile["mtp"] = "/unsupported-mtp.gguf"

@@ -8,6 +8,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 
 
 def setup_module(source):
@@ -67,6 +68,36 @@ def stage_files(model, folder):
     if first is None:
         raise ValueError("The first model shard is missing")
     return first
+
+
+def prepare_flash_mtp(source, root):
+    """Use Strata's verified fetch and packing tools for its Flash-Next draft."""
+    root = Path(root)
+    root.mkdir(parents=True, exist_ok=True)
+    runtime = root / "rt"
+    required = ("experts.bin", "dense.bin", "dense.txt", "draft_vocab.bin")
+    if all((runtime / name).is_file() for name in required):
+        return runtime
+    setup = setup_module(source)
+    packed = root / "mtp-q2_0.gguf"
+    if not packed.is_file():
+        print("Downloading Strata's separate MTP draft (about 5 GB)", flush=True)
+        setup.fetch_mtp(root, dict(os.environ))
+        temporary = root / "mtp-q2_0.partial.gguf"
+        subprocess.run([sys.executable, "-B", str(source / "tools/mtp_pack.py"), "--src", str(root),
+                        "--experts", "q2_0", "--out", str(temporary)], cwd=source, check=True)
+        temporary.replace(packed)
+    with tempfile.TemporaryDirectory(prefix="mtp-build-", dir=root) as stage:
+        stage = Path(stage)
+        subprocess.run([sys.executable, "-B", str(source / "tools/mtp_rt.py"), "--gguf", str(packed),
+                        "--out", str(stage)], cwd=source, check=True)
+        setup.refresh_draft_vocab(stage, "cjk")
+        if not all((stage / name).is_file() for name in required):
+            raise ValueError("Strata did not produce a complete MTP runtime")
+        if runtime.exists():
+            raise ValueError("Incomplete MTP runtime exists; preserve or remove it before retrying")
+        stage.rename(runtime)
+    return runtime
 
 
 def prepare(source, payload):
@@ -149,7 +180,8 @@ def prepare(source, payload):
             str(source / "data/expert-profile.bin"),
         ]
         if profile.get("mtp"):
-            mtp = Path(profile["mtp"])
+            mtp = (prepare_flash_mtp(source, payload["mtpRoot"])
+                   if profile["mtp"] == "auto" else Path(profile["mtp"]))
             if mtp.is_file():
                 destination = root / "mtp"
                 subprocess.run(

@@ -6,6 +6,7 @@ import {
   nativeContext,
   kvChoices,
   kvLabel,
+  supportsFlashMtp,
 } from "../lib/choices.js";
 
 export function ProfileEditor({ profile, busy, save, run, close }) {
@@ -19,6 +20,7 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
   }));
   const [error, setError] = useState("");
   const [picking, setPicking] = useState(false);
+  const [pickingMtp, setPickingMtp] = useState(false);
   const [capabilities, setCapabilities] = useState(null);
   const edit = (key, value) =>
     setDraft((previous) => ({ ...previous, [key]: value }));
@@ -159,6 +161,53 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
               projectorChoice: "selected",
             }));
             setPicking(false);
+          }}
+        />
+      )}
+      <div>
+        <strong>MTP</strong>
+        {supportsFlashMtp(draft.model) ? (
+          <>
+            <p>
+              {draft.mtp && draft.mtp !== "auto"
+                ? "Separate MTP enabled: " + draft.mtp
+                : "Separate MTP: Strata will download and prepare it (about 5 GB). You can select an existing prepared folder instead."}
+            </p>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => setPickingMtp(true)}
+            >
+              {draft.mtp && draft.mtp !== "auto"
+                ? "Change MTP folder"
+                : "Use existing MTP folder"}
+            </button>
+          </>
+        ) : draft.model?.architecture === "qwen35moe" &&
+          draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0) ? (
+          <p>Built into the model; Strata uses its native MTP support.</p>
+        ) : (
+          <p>No supported built-in MTP detected.</p>
+        )}
+      </div>
+      {pickingMtp && (
+        <FilePicker
+          folder
+          initialPath={
+            (
+              (draft.mtp !== "auto" && draft.mtp) ||
+              draft.model?.files?.[0]?.path ||
+              ""
+            )
+              .split("/")
+              .slice(0, -1)
+              .join("/") || "/"
+          }
+          onCancel={() => setPickingMtp(false)}
+          onSelect={async (path) => {
+            await request("mtp-runtime", { path });
+            edit("mtp", path);
+            setPickingMtp(false);
           }}
         />
       )}

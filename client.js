@@ -146,6 +146,7 @@ var import_react2 = __toESM(require("react"), 1);
 function FilePicker({
   initialPath,
   projector = false,
+  folder = false,
   onSelect,
   onCancel
 }) {
@@ -170,12 +171,12 @@ function FilePicker({
       live = false;
     };
   }, [initialPath]);
-  async function browse(folder) {
+  async function browse(folder2) {
     setLoading(true);
     setError("");
     setSelected([]);
     try {
-      const value = await request("browse", { path: folder });
+      const value = await request("browse", { path: folder2 });
       setListing(value);
       setPath(value.path);
     } catch (error2) {
@@ -198,10 +199,10 @@ function FilePicker({
     "section",
     {
       className: "strata-panel",
-      "aria-label": projector ? "Select vision projector" : "Import model files"
+      "aria-label": folder ? "Select MTP runtime" : projector ? "Select vision projector" : "Import model files"
     },
-    /* @__PURE__ */ import_react2.default.createElement("h4", null, projector ? "Select vision projector (mmproj)" : "Import model files"),
-    /* @__PURE__ */ import_react2.default.createElement("p", null, projector ? "Choose the model's mmproj GGUF file." : "Choose any model shard. Its other shards and nearby vision files are found automatically. You can also import a whole folder, including subfolders."),
+    /* @__PURE__ */ import_react2.default.createElement("h4", null, folder ? "Select MTP runtime folder" : projector ? "Select vision projector (mmproj)" : "Import model files"),
+    /* @__PURE__ */ import_react2.default.createElement("p", null, folder ? "Open the prepared MTP folder, then select it." : projector ? "Choose the model's mmproj GGUF file." : "Choose any model shard. Its other shards and nearby vision files are found automatically. You can also import a whole folder, including subfolders."),
     /* @__PURE__ */ import_react2.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react2.default.createElement(
       "input",
       {
@@ -227,7 +228,7 @@ function FilePicker({
       },
       name,
       "/"
-    )), listing.files.map((name) => /* @__PURE__ */ import_react2.default.createElement("label", { className: "strata-check", key: name }, /* @__PURE__ */ import_react2.default.createElement(
+    )), !folder && listing.files.map((name) => /* @__PURE__ */ import_react2.default.createElement("label", { className: "strata-check", key: name }, /* @__PURE__ */ import_react2.default.createElement(
       "input",
       {
         type: projector ? "radio" : "checkbox",
@@ -237,8 +238,16 @@ function FilePicker({
           projector ? [child(name)] : event.target.checked ? [...selected, child(name)] : selected.filter((value) => value !== child(name))
         )
       }
-    ), name)), !listing.files.length && /* @__PURE__ */ import_react2.default.createElement("p", null, "No GGUF files in this folder. Open a subfolder", projector ? "." : " or import this folder to search all subfolders.")),
-    /* @__PURE__ */ import_react2.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react2.default.createElement("button", { type: "button", onClick: onCancel }, "Cancel"), !projector && /* @__PURE__ */ import_react2.default.createElement(
+    ), name)), !folder && !listing.files.length && /* @__PURE__ */ import_react2.default.createElement("p", null, "No GGUF files in this folder. Open a subfolder", projector ? "." : " or import this folder to search all subfolders.")),
+    /* @__PURE__ */ import_react2.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react2.default.createElement("button", { type: "button", onClick: onCancel }, "Cancel"), folder ? /* @__PURE__ */ import_react2.default.createElement(
+      "button",
+      {
+        type: "button",
+        disabled: loading || !listing,
+        onClick: () => choose(listing.path)
+      },
+      "Use this folder"
+    ) : !projector && /* @__PURE__ */ import_react2.default.createElement(
       "button",
       {
         type: "button",
@@ -246,7 +255,7 @@ function FilePicker({
         onClick: () => choose({ path: listing.path })
       },
       "Import this folder"
-    ), /* @__PURE__ */ import_react2.default.createElement(
+    ), !folder && /* @__PURE__ */ import_react2.default.createElement(
       "button",
       {
         type: "button",
@@ -274,6 +283,10 @@ var kvChoices = Object.freeze([
   "Q4/Q4"
 ]);
 var contextStep = 32768;
+function supportsFlashMtp(model) {
+  const meta = model?.files?.find((file) => file.index === 1)?.metadata || model?.files?.[0]?.metadata || {};
+  return model?.architecture === "qwen4exp" && meta["qwen4exp.embedding_length"] === 2560 && meta["qwen4exp.expert_count"] === 512 && (meta["general.base_model.0.repo_url"] === "https://huggingface.co/Qwen/Qwen3.8-Flash-Next" || meta["general.basename"] === "Qwen3.8-Flash-Next");
+}
 function nativeContext(profile) {
   const model = profile.model || profile;
   const metadata = model.files?.find((file) => file.index === 1)?.metadata || {};
@@ -307,6 +320,7 @@ function ProfileEditor({ profile, busy, save, run, close }) {
   }));
   const [error, setError] = (0, import_react3.useState)("");
   const [picking, setPicking] = (0, import_react3.useState)(false);
+  const [pickingMtp, setPickingMtp] = (0, import_react3.useState)(false);
   const [capabilities, setCapabilities] = (0, import_react3.useState)(null);
   const edit = (key, value) => setDraft((previous) => ({ ...previous, [key]: value }));
   (0, import_react3.useEffect)(() => {
@@ -396,6 +410,26 @@ function ProfileEditor({ profile, busy, save, run, close }) {
           projectorChoice: "selected"
         }));
         setPicking(false);
+      }
+    }
+  ), /* @__PURE__ */ import_react3.default.createElement("div", null, /* @__PURE__ */ import_react3.default.createElement("strong", null, "MTP"), supportsFlashMtp(draft.model) ? /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("p", null, draft.mtp && draft.mtp !== "auto" ? "Separate MTP enabled: " + draft.mtp : "Separate MTP: Strata will download and prepare it (about 5 GB). You can select an existing prepared folder instead."), /* @__PURE__ */ import_react3.default.createElement(
+    "button",
+    {
+      type: "button",
+      disabled: busy,
+      onClick: () => setPickingMtp(true)
+    },
+    draft.mtp && draft.mtp !== "auto" ? "Change MTP folder" : "Use existing MTP folder"
+  )) : draft.model?.architecture === "qwen35moe" && draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0) ? /* @__PURE__ */ import_react3.default.createElement("p", null, "Built into the model; Strata uses its native MTP support.") : /* @__PURE__ */ import_react3.default.createElement("p", null, "No supported built-in MTP detected.")), pickingMtp && /* @__PURE__ */ import_react3.default.createElement(
+    FilePicker,
+    {
+      folder: true,
+      initialPath: (draft.mtp !== "auto" && draft.mtp || draft.model?.files?.[0]?.path || "").split("/").slice(0, -1).join("/") || "/",
+      onCancel: () => setPickingMtp(false),
+      onSelect: async (path) => {
+        await request("mtp-runtime", { path });
+        edit("mtp", path);
+        setPickingMtp(false);
       }
     }
   ), !["FP16/FP16", "Q8/Q8", "Q4/Q4", "Q8/Q4"].includes(draft.kv) && /* @__PURE__ */ import_react3.default.createElement("p", { role: "status" }, "This engine does not support SSD checkpoints for this KV pair. Switching models starts a fresh cache."), /* @__PURE__ */ import_react3.default.createElement("details", null, /* @__PURE__ */ import_react3.default.createElement("summary", null, "Advanced"), /* @__PURE__ */ import_react3.default.createElement("p", null, "16 GiB SSD checkpoints per model, oldest last-used removed first. Strata manages RAM caching."), /* @__PURE__ */ import_react3.default.createElement("p", null, "Use the installed Strata runtime, or supply a compatible fork for this model."), /* @__PURE__ */ import_react3.default.createElement("div", { className: "strata-grid" }, [
@@ -635,7 +669,7 @@ function StrataCard() {
   const profile = state?.profiles.find((profile2) => profile2.id === view);
   const primary = ["models", "files", "activity"].includes(view);
   const missing = state?.inventory?.models.filter((model) => model.status !== "complete").length || 0;
-  return /* @__PURE__ */ import_react7.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react7.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react7.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react7.default.createElement("span", { className: "strata-version" }, "0.5.5")), /* @__PURE__ */ import_react7.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider")), /* @__PURE__ */ import_react7.default.createElement(
+  return /* @__PURE__ */ import_react7.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react7.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react7.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react7.default.createElement("span", { className: "strata-version" }, "0.5.6")), /* @__PURE__ */ import_react7.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider")), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       type: "button",

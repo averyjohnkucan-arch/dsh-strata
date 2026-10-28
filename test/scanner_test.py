@@ -33,6 +33,18 @@ def gguf(path, metadata=None, tensors=None):
 
 
 class ScannerTests(unittest.TestCase):
+    def test_discovers_prepared_mtp_directories_without_treating_them_as_models(self):
+        mtp = self.root / "separate" / "draft"
+        mtp.mkdir(parents=True)
+        with (mtp / "experts.bin").open("wb") as file:
+            file.truncate(707788800)
+        (mtp / "dense.bin").write_bytes(b"dense")
+        (mtp / "draft_vocab.bin").write_bytes(b"vocab")
+        (mtp / "dense.txt").write_text("fc_embedding.weight q8_0 2560 2560 0 6963200\n")
+        result = scan(self.root)
+        self.assertEqual(result["mtpRuntimes"], [str(mtp)])
+        self.assertEqual(result["models"], [])
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)

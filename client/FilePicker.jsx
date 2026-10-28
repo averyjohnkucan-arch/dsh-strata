@@ -5,6 +5,7 @@ import { request } from "./api.js";
 export function FilePicker({
   initialPath,
   projector = false,
+  folder = false,
   onSelect,
   onCancel,
 }) {
@@ -59,15 +60,27 @@ export function FilePicker({
   return (
     <section
       className="strata-panel"
-      aria-label={projector ? "Select vision projector" : "Import model files"}
+      aria-label={
+        folder
+          ? "Select MTP runtime"
+          : projector
+            ? "Select vision projector"
+            : "Import model files"
+      }
     >
       <h4>
-        {projector ? "Select vision projector (mmproj)" : "Import model files"}
+        {folder
+          ? "Select MTP runtime folder"
+          : projector
+            ? "Select vision projector (mmproj)"
+            : "Import model files"}
       </h4>
       <p>
-        {projector
-          ? "Choose the model's mmproj GGUF file."
-          : "Choose any model shard. Its other shards and nearby vision files are found automatically. You can also import a whole folder, including subfolders."}
+        {folder
+          ? "Open the prepared MTP folder, then select it."
+          : projector
+            ? "Choose the model's mmproj GGUF file."
+            : "Choose any model shard. Its other shards and nearby vision files are found automatically. You can also import a whole folder, including subfolders."}
       </p>
       <div className="strata-actions">
         <input
@@ -101,26 +114,27 @@ export function FilePicker({
               {name}/
             </button>
           ))}
-          {listing.files.map((name) => (
-            <label className="strata-check" key={name}>
-              <input
-                type={projector ? "radio" : "checkbox"}
-                name="strata-file"
-                checked={selected.includes(child(name))}
-                onChange={(event) =>
-                  setSelected(
-                    projector
-                      ? [child(name)]
-                      : event.target.checked
-                        ? [...selected, child(name)]
-                        : selected.filter((value) => value !== child(name)),
-                  )
-                }
-              />
-              {name}
-            </label>
-          ))}
-          {!listing.files.length && (
+          {!folder &&
+            listing.files.map((name) => (
+              <label className="strata-check" key={name}>
+                <input
+                  type={projector ? "radio" : "checkbox"}
+                  name="strata-file"
+                  checked={selected.includes(child(name))}
+                  onChange={(event) =>
+                    setSelected(
+                      projector
+                        ? [child(name)]
+                        : event.target.checked
+                          ? [...selected, child(name)]
+                          : selected.filter((value) => value !== child(name)),
+                    )
+                  }
+                />
+                {name}
+              </label>
+            ))}
+          {!folder && !listing.files.length && (
             <p>
               No GGUF files in this folder. Open a subfolder
               {projector
@@ -134,28 +148,42 @@ export function FilePicker({
         <button type="button" onClick={onCancel}>
           Cancel
         </button>
-        {!projector && (
+        {folder ? (
           <button
             type="button"
             disabled={loading || !listing}
-            onClick={() => choose({ path: listing.path })}
+            onClick={() => choose(listing.path)}
           >
-            Import this folder
+            Use this folder
+          </button>
+        ) : (
+          !projector && (
+            <button
+              type="button"
+              disabled={loading || !listing}
+              onClick={() => choose({ path: listing.path })}
+            >
+              Import this folder
+            </button>
+          )
+        )}
+        {!folder && (
+          <button
+            type="button"
+            disabled={loading || !selected.length}
+            onClick={() =>
+              choose(
+                projector
+                  ? selected[0]
+                  : { path: listing.path, files: selected },
+              )
+            }
+          >
+            {projector
+              ? "Use projector"
+              : `Import selected files (${selected.length})`}
           </button>
         )}
-        <button
-          type="button"
-          disabled={loading || !selected.length}
-          onClick={() =>
-            choose(
-              projector ? selected[0] : { path: listing.path, files: selected },
-            )
-          }
-        >
-          {projector
-            ? "Use projector"
-            : `Import selected files (${selected.length})`}
-        </button>
       </div>
     </section>
   );
