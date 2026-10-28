@@ -157,7 +157,10 @@ function FilePicker({
   const [loading, setLoading] = (0, import_react2.useState)(true);
   (0, import_react2.useEffect)(() => {
     let live = true;
-    request("browse", { path: initialPath || void 0 }).then((value) => {
+    request("browse", {
+      path: initialPath || void 0,
+      includeMtpFiles: folder
+    }).then((value) => {
       if (live) {
         setListing(value);
         setPath(value.path);
@@ -170,13 +173,16 @@ function FilePicker({
     return () => {
       live = false;
     };
-  }, [initialPath]);
-  async function browse(folder2) {
+  }, [initialPath, folder]);
+  async function browse(target) {
     setLoading(true);
     setError("");
     setSelected([]);
     try {
-      const value = await request("browse", { path: folder2 });
+      const value = await request("browse", {
+        path: target,
+        includeMtpFiles: folder
+      });
       setListing(value);
       setPath(value.path);
     } catch (error2) {
@@ -229,7 +235,9 @@ function FilePicker({
       },
       name,
       "/"
-    )), !folder && listing.files.map((name) => /* @__PURE__ */ import_react2.default.createElement("label", { className: "strata-check", key: name }, /* @__PURE__ */ import_react2.default.createElement(
+    )), folder && listing.files.map((name) => /* @__PURE__ */ import_react2.default.createElement("p", { key: name }, name)), folder && listing.files.some(
+      (name) => name.toLowerCase().endsWith(".gguf")
+    ) && /* @__PURE__ */ import_react2.default.createElement("p", null, "GGUF draft files are shown for reference. This picker selects a prepared runtime folder, not a GGUF file."), !folder && listing.files.map((name) => /* @__PURE__ */ import_react2.default.createElement("label", { className: "strata-check", key: name }, /* @__PURE__ */ import_react2.default.createElement(
       "input",
       {
         type: projector ? "radio" : "checkbox",
@@ -696,7 +704,7 @@ function StrataCard() {
   const profile = state?.profiles.find((profile2) => profile2.id === view);
   const primary = ["models", "files", "activity"].includes(view);
   const missing = state?.inventory?.models.filter((model) => model.status !== "complete").length || 0;
-  return /* @__PURE__ */ import_react7.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react7.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react7.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react7.default.createElement("span", { className: "strata-version" }, "0.5.10")), /* @__PURE__ */ import_react7.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider")), /* @__PURE__ */ import_react7.default.createElement(
+  return /* @__PURE__ */ import_react7.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react7.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react7.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react7.default.createElement("span", { className: "strata-version" }, "0.5.11")), /* @__PURE__ */ import_react7.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider")), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       type: "button",

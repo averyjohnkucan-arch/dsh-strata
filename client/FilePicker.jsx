@@ -16,7 +16,10 @@ export function FilePicker({
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     let live = true;
-    request("browse", { path: initialPath || undefined })
+    request("browse", {
+      path: initialPath || undefined,
+      includeMtpFiles: folder,
+    })
       .then((value) => {
         if (live) {
           setListing(value);
@@ -32,13 +35,16 @@ export function FilePicker({
     return () => {
       live = false;
     };
-  }, [initialPath]);
-  async function browse(folder) {
+  }, [initialPath, folder]);
+  async function browse(target) {
     setLoading(true);
     setError("");
     setSelected([]);
     try {
-      const value = await request("browse", { path: folder });
+      const value = await request("browse", {
+        path: target,
+        includeMtpFiles: folder,
+      });
       setListing(value);
       setPath(value.path);
     } catch (error) {
@@ -117,6 +123,16 @@ export function FilePicker({
               {name}/
             </button>
           ))}
+          {folder && listing.files.map((name) => <p key={name}>{name}</p>)}
+          {folder &&
+            listing.files.some((name) =>
+              name.toLowerCase().endsWith(".gguf"),
+            ) && (
+              <p>
+                GGUF draft files are shown for reference. This picker selects a
+                prepared runtime folder, not a GGUF file.
+              </p>
+            )}
           {!folder &&
             listing.files.map((name) => (
               <label className="strata-check" key={name}>

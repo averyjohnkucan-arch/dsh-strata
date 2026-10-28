@@ -96,8 +96,14 @@ test("the host file picker lists GGUFs, opens subfolders, and surfaces invalid p
   await mkdir(join(root, "nested"));
   await writeFile(join(root, "mmproj.GGUF"), "test");
   await writeFile(join(root, "ignore.txt"), "test");
+  await writeFile(join(root, "experts.bin"), "test");
   const listing = await service.action("browse", { path: root });
   assert.deepEqual(listing.files, ["mmproj.GGUF"]);
+  assert.deepEqual(
+    (await service.action("browse", { path: root, includeMtpFiles: true }))
+      .files,
+    ["experts.bin", "mmproj.GGUF"],
+  );
   assert.ok(listing.directories.includes("nested"));
   assert.equal((await service.browse(join(root, "nested"))).parent, root);
   await assert.rejects(() => service.browse(join(root, "missing")), /ENOENT/);
