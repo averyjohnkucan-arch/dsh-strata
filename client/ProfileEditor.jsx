@@ -191,7 +191,10 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
           </>
         ) : draft.model?.architecture === "qwen35moe" &&
           draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0) ? (
-          <p>Built-in MTP enabled using Strata’s native setting.</p>
+          <p>
+            Built-in MTP is enabled. Strata drafts only for greedy requests
+            without sampling or penalties.
+          </p>
         ) : (
           <p>No supported built-in MTP detected.</p>
         )}

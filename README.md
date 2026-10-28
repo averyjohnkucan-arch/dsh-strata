@@ -1,6 +1,6 @@
 # Strata for DSH
 
-A local model provider for DeepSeek Harness. **0.5.8** identifies built-in MTP and supports selecting or automatically preparing a separate Flash-Next MTP runtime. It automatically downloads the verified Strata runtime after a GitHub installation. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata supports native SSD checkpoints and a top-level Purge all cache button.
+A local model provider for DeepSeek Harness. **0.5.9** identifies built-in MTP and supports selecting or automatically preparing a separate Flash-Next MTP runtime. It automatically downloads the verified Strata runtime after a GitHub installation. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata supports native SSD checkpoints and a top-level Purge all cache button.
 
 ## Install
 
@@ -48,7 +48,7 @@ Disk checkpoints work with **FP16/FP16, Q8/Q8 and Q4/Q4** (and legacy Q8/Q4). Th
 
 Regular Strata is based on **v0.2.7 / Control 0.1.52 / engine 0.1.52**. Both bundled engines include a small native checkpoint fix for models without an allocated MTP draft. Their source patches, upstream revisions, licenses and binary checksums are under `vendor/`. The Gyro L fork also includes its recorded TQP CPU changes. These engines were built for the tested sm_120 machine; HIP, SYCL, Windows and other CUDA architectures were not tested.
 
-Local preparation supports `qwen4exp` Flash-Next and compatible `qwen35moe` GGUFs. Complete shards establish presence, not numerical compatibility. Engram/PLE, MTP, DFlash and vision components appear in the inventory. DFlash is inventoried only. Native Qwen uses embedded MTP and the native engine's FP32 KV format; external native Qwen donors are unsupported. Existing explicit Flash-Next MTP configurations remain readable.
+Local preparation supports `qwen4exp` Flash-Next and compatible `qwen35moe` GGUFs. Complete shards establish presence, not numerical compatibility. Engram/PLE, MTP, DFlash and vision components appear in the inventory. DFlash is inventoried only. Native Qwen loads embedded MTP, but Strata's native engine drafts only for greedy requests without sampling or penalties. It uses the native engine's FP32 KV format; external native Qwen donors are unsupported. Existing explicit Flash-Next MTP configurations remain readable.
 
 Flash-Next requires a separate prepared Strata MTP directory containing `experts.bin`, `dense.bin`, `dense.txt`, and `draft_vocab.bin`. Import attaches an unambiguous discovered runtime; otherwise Strata fetches its approximately 5 GB draft from the original checkpoint and prepares a shared runtime on first use. To avoid that download, choose an existing prepared MTP folder in the model's settings. Raw MTP GGUFs from other converters are not automatically interchangeable with this runtime format. Changing MTP invalidates the previous model-specific tuning result.
 

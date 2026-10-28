@@ -1,6 +1,6 @@
 Self-contained Strata provider for DSH 0.2.1-rc.2.
 
-0.5.8 reports built-in versus separate MTP and can find, select, or prepare the separate Flash-Next draft runtime. The GitHub source installation downloads the pinned, verified Strata runtime automatically when enabled.
+0.5.9 reports built-in versus separate MTP and can find, select, or prepare the separate Flash-Next draft runtime. The GitHub source installation downloads the pinned, verified Strata runtime automatically when enabled.
 
 The interface separates Models, Files and Activity. Per-model Settings opens a focused view with a Back button. Compact model rows keep Load and Settings visible; bulk tuning and logs appear only when needed. Control-vector GGUFs are classified as components, and old accidental vector profiles are archived without deleting original files.
 
