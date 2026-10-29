@@ -11,6 +11,7 @@ import {
   tuningFailure,
   tuningSample,
   readTuningSample,
+  tuningLogSnapshot,
 } from "../lib/tuning.js";
 
 const sample = (prefill, decode, session = "") =>
@@ -48,24 +49,25 @@ test("a new tuning trial clears old rates and excludes logs from earlier runs", 
   const root = await mkdtemp(join(tmpdir(), "strata-tuning-samples-"));
   t.after(() => rm(root, { recursive: true, force: true }));
   await writeFile(join(root, "engine-99.log"), sample(9999, 999));
-  await utimes(join(root, "engine-99.log"), 1, 1);
-  const start = Date.now() - 1000;
+  const future = new Date(Date.now() + 60000);
+  await utimes(join(root, "engine-99.log"), future, future);
+  const previousLogs = await tuningLogSnapshot(root);
   await writeFile(
     join(root, "engine-1.log"),
     "x".repeat(70000) + "\n" + sample(1800, 44),
   );
   await writeFile(join(root, "worker-99.log"), sample(9999, 999));
-  assert.deepEqual(await readTuningSample(root, start), {
+  assert.deepEqual(await readTuningSample(root, previousLogs), {
     prefillTokS: 1800,
     decodeTokS: 44,
   });
   await writeFile(join(root, "engine-2.log"), "Loading the next trial\n");
-  assert.deepEqual(await readTuningSample(root, start), {
+  assert.deepEqual(await readTuningSample(root, previousLogs), {
     prefillTokS: null,
     decodeTokS: null,
   });
   await writeFile(join(root, "engine-2.log"), sample(1900, 45));
-  assert.deepEqual(await readTuningSample(root, start), {
+  assert.deepEqual(await readTuningSample(root, previousLogs), {
     prefillTokS: 1900,
     decodeTokS: 45,
   });
