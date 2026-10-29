@@ -30,6 +30,9 @@ class DeepSeekImportTests(unittest.TestCase):
         self.profile = {'id': 'deepseek', 'model': {'architecture': 'deepseek41', 'status': 'complete',
             'files': [{'path': str(self.folder/name), 'index': i+1} for i,name in enumerate(self.shards)]},
             'context': 1048576, 'gpu': 0, 'port': 8190}
+        shared = patch("deepseek_runtime.ensure", return_value={"exe": "/shared/strata-dsv41", "lib_dirs": ["/shared"]})
+        self.shared_runtime = shared.start()
+        self.addCleanup(shared.stop)
         self.payload = {'root': str(self.root/'prepared'), 'profile': self.profile,
                         'runtime': {'executable': '/qwen/strata'}}
         staged = self.root/'prepared/shards'; staged.mkdir(parents=True)
@@ -52,7 +55,7 @@ class DeepSeekImportTests(unittest.TestCase):
             self.assertIn('--gguf-dir', command)
             self.assertIn('--no-start', command)
             self.assertEqual(options['env']['STRATA_DSV41_NO_SMOKE'], '1')
-            self.assertNotIn('STRATA_DSV41_EXE', options['env'])
+            self.assertEqual(options['env']['STRATA_DSV41_EXE'], '/shared/strata-dsv41')
             self.assertTrue(options['check'])
             root=Path(options['env']['STRATA_INSTALL_DIR'])
             (root/'strata-deepseek.json').write_text(json.dumps({'arch':'deepseek41','exe':'/deepseek/strata-dsv41','args':['--pack','/pack'], 'lib_dirs':['/deepseek/private']}))
@@ -69,6 +72,16 @@ class DeepSeekImportTests(unittest.TestCase):
         with patch('bridge.setup_module',return_value=self.setup), patch('deepseek_import.prepare',return_value={'arch':'deepseek41'}) as native:
             self.assertEqual(bridge_prepare(self.root,self.payload), {'arch':'deepseek41'})
             native.assert_called_once()
+
+    def test_explicit_custom_runtime_is_not_replaced_by_shared_engine(self):
+        self.payload['runtime']['executable'] = '/custom/strata-dsv41'
+        def run(command, **options):
+            self.assertEqual(options['env']['STRATA_DSV41_EXE'], '/custom/strata-dsv41')
+            root=Path(options['env']['STRATA_INSTALL_DIR'])
+            (root/'strata-deepseek.json').write_text(json.dumps({'arch':'deepseek41','exe':'/custom/strata-dsv41'}))
+        with patch('deepseek_import.subprocess.run',side_effect=run):
+            prepare(self.root,self.payload,self.setup)
+        self.shared_runtime.assert_not_called()
 
     def test_native_failure_does_not_return_an_unprepared_configuration(self):
         with patch('deepseek_import.subprocess.run',side_effect=RuntimeError('cancelled')):

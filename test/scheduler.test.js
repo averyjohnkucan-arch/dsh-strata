@@ -9,6 +9,7 @@ function fixture() {
   const service = new StrataService();
   service.profiles = [{ id: "s", name: "Gyro S", gpu: 0 }];
   service.startServer = async () => ({ active: 0, ready: true });
+  service.prepare = async (id) => service.profile(id);
   return service;
 }
 

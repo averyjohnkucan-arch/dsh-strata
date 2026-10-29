@@ -71,8 +71,10 @@ def prepare(source, payload, setup):
         "STRATA_DSV41_NO_SMOKE": "1",
     }
     executable = payload["runtime"].get("executable", "")
-    if Path(executable).name in ("strata-dsv41", "strata-dsv41.exe"):
-        env["STRATA_DSV41_EXE"] = executable
+    if Path(executable).name not in ("strata-dsv41", "strata-dsv41.exe"):
+        from deepseek_runtime import ensure
+        executable = env.get("STRATA_DSV41_EXE") or ensure(payload)["exe"]
+    env["STRATA_DSV41_EXE"] = executable
     print("Preparing DeepSeek with Strata's native setup; existing files are verified and reused.", flush=True)
     subprocess.run(command, cwd=source, env=env, check=True)
     configs = [json.loads(path.read_text()) for path in root.glob("strata-*.json")]

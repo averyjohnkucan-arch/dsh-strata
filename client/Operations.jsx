@@ -45,33 +45,40 @@ export function Operations({ jobs, run, history = false }) {
       {visible.map((job) => (
         <div className="strata-job" key={job.id}>
           <div className="strata-list-heading">
-            <strong>{job.kind}</strong>
+            <strong>
+              {job.kind === "Tune models" && job.metrics?.phase === "preparing"
+                ? "Preparing model"
+                : job.kind === "Tune models" && job.metrics?.phase === "waiting"
+                  ? "Waiting for GPU"
+                  : job.kind}
+            </strong>
             <small>{job.status}</small>
           </div>
           <p role={job.status === "failed" ? "alert" : "status"}>
             {job.progress}
           </p>
-          {job.metrics && (
-            <div className="strata-tuning-speeds">
-              <small>
-                {job.metrics.tuner === "deepseek41"
-                  ? "DeepSeek native tuner · latest measurement"
-                  : "Latest completed measurement"}
-              </small>
-              <dl aria-label="Tuning token rates">
-                {job.metrics.tuner !== "deepseek41" && (
+          {job.metrics &&
+            !["preparing", "waiting"].includes(job.metrics.phase) && (
+              <div className="strata-tuning-speeds">
+                <small>
+                  {job.metrics.tuner === "deepseek41"
+                    ? "DeepSeek native tuner · latest measurement"
+                    : "Latest completed measurement"}
+                </small>
+                <dl aria-label="Tuning token rates">
+                  {job.metrics.tuner !== "deepseek41" && (
+                    <div>
+                      <dt>Prefill</dt>
+                      <dd>{rate(job.metrics.prefillTokS, job.status)}</dd>
+                    </div>
+                  )}
                   <div>
-                    <dt>Prefill</dt>
-                    <dd>{rate(job.metrics.prefillTokS, job.status)}</dd>
+                    <dt>Decode</dt>
+                    <dd>{rate(job.metrics.decodeTokS, job.status)}</dd>
                   </div>
-                )}
-                <div>
-                  <dt>Decode</dt>
-                  <dd>{rate(job.metrics.decodeTokS, job.status)}</dd>
-                </div>
-              </dl>
-            </div>
-          )}
+                </dl>
+              </div>
+            )}
           {job.kind === "Export config" && job.status === "complete" && (
             <button type="button" onClick={() => downloadConfig(job.result)}>
               Download config JSON

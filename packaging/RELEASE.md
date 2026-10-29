@@ -1,7 +1,5 @@
-# Strata 0.6.5
+# Strata 0.6.6
 
-Local DeepSeek 4.1 Flash imports now use Strata's unchanged native setup. Complete supported shard sets are staged without copying weights; nearby Engram, DSpark and metadata files are verified and reused. The native installer obtains the separate official DeepSeek engine, prepares its runtime pack and writes its own configuration. Engine-specific library paths are preserved.
+DeepSeek profiles now share one official engine. The plugin reuses installed signed runtimes from earlier profiles through Strata's native verified installer, preserving the originals and avoiding duplicate downloads when model files move or another profile is added. Existing managed profiles migrate on their next load or tune; explicit custom runtime overrides stay unchanged.
 
-Existing DeepSeek profiles are no longer blocked by a cached importer warning. The editor explains native KV management, DSpark and text-only local setup. Update and restart DSH, then load the existing DeepSeek profile or re-import its folder.
-
-Native engine code and binaries are not modified by this update. DeepSeek's official engine is installed through its upstream signed feed when needed.
+Model preparation now finishes before tuning requests GPU admission. Preparing, waiting and measuring are separate UI phases. A preparation job no longer pins an idle Strata GPU server or displays premature token-rate measurements. Model files and native tuning policy are unchanged.

@@ -276,7 +276,7 @@ def download(source, payload):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=["catalog", "prepare", "download", "preset"])
+    parser.add_argument("action", choices=["catalog", "prepare", "download", "preset", "deepseek-runtime"])
     parser.add_argument("--source", type=Path, required=True)
     args = parser.parse_args()
     source = args.source.resolve(strict=True)
@@ -286,6 +286,9 @@ def main():
         result = catalog(source)
     elif args.action == "prepare":
         result = prepare(source, payload)
+    elif args.action == "deepseek-runtime":
+        from deepseek_runtime import ensure
+        result = ensure(payload)
     elif args.action == "download":
         result = download(source, payload)
     else:

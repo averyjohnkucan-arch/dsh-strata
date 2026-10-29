@@ -1,0 +1,11 @@
+# Shared DeepSeek runtime validation (0.6.6)
+
+All managed profiles now use `runtime/deepseek/engine-dsv41` under the plugin data directory. New profile creation and model relocation do not select a fresh engine installation folder. Existing managed profiles migrate their executable/library paths on the next prepare, load or tune; their model pack, context and saved tuning remain unchanged. Explicit custom runtimes are preserved.
+
+Migration delegates to Strata's native `install_package`, which checks the package signature and every file before copying it. The old runtime is preserved. If no usable installation exists, the same native signed-feed downloader installs once into the shared location. A process lock serializes migration and download, and cancellation releases it while native resumable transfer state remains available.
+
+Live verification used the existing official DeepSeek 0.1.52 CUDA 13 runtime from the user's older profile. With acquisition offline and HTTP proxies pointing to an unreachable loopback port, two independent profile requests returned the same shared executable. The native installer reported a valid signature and matching files. The copied launcher checked the real DeepSeek pack and reported all six files present and long enough. No model files were copied, no engine package was downloaded, and engine code was unchanged. This check did not run another GPU benchmark or interrupt the user's active tuning process.
+
+Tuning preparation now precedes GPU admission; preparation/waiting phases show no token-rate measurements. An idle model's driver is not marked busy merely because a disk job exists, avoiding a deadlock when tuning waits for that model to unload. Active generation/checkpoint leases still block unloading. Direct model admission rejects conflicting local setup jobs.
+
+Validation: 78 JavaScript and 34 Python tests passed, plus build/lint/format checks. New tests cover two-profile reuse, concurrent installation, invalid legacy packages, retry after cancellation, custom overrides, prepared-profile migration, preparation before GPU admission and phase rendering. A separate integration check against the actual scheduler 0.2.0 confirmed an idle loaded Strata model hands over to tuning without a busy-job deadlock.

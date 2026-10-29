@@ -110,3 +110,11 @@ The first hash check can take several minutes for hundreds of GB. A failed or ca
 DeepSeek owns its KV representation and DSpark automatic policy. The editor does not show Qwen KV controls for it. This local path is text only; it does not attach Flash Next mmproj files. Its context selection is preserved and the native setup validates the supported range. File preparation skips the separate GPU smoke process so an Import/Prepare operation cannot collide with another provider; the subsequent scheduled model load validates readiness through the actual DeepSeek engine. Native auto-tuning remains available after preparation.
 
 DeepSeek uses its own persistent slot cache under `cache/deepseek/<profile-id>`, with a 16 GiB native slot budget by default. The plugin does not send Qwen's explicit SAVE/RESTORE protocol to that engine. Purge all cache covers the default DeepSeek slot directory as well.
+
+## Shared DeepSeek engine (0.6.6)
+
+Every managed DeepSeek profile uses one official runtime under `runtime/deepseek/engine-dsv41` in the plugin data directory. The first use checks existing per-profile installations and migrates a valid signed package through Strata's native installer. It copies the runtime into the shared location, preserves the original, and does not fetch it again. Only when no usable runtime exists does the native signed-feed downloader run; all profiles then share that resumable download. Installation is locked across bridge processes.
+
+Existing prepared profiles switch to the shared runtime when next loaded or tuned. Model paths, prepared packs, contexts and tuning results stay profile-specific. Explicit custom runtime overrides are preserved. Moving/copying GGUF files or adding another profile does not require downloading another engine. Changing weight files may still require native verification and packing.
+
+Tuning reports **Preparing model**, then **Waiting for GPU**, then measurement. Preparation uses CPU/disk and does not reserve the GPU. Token rates appear only when the measurement stage starts.
