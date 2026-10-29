@@ -158,6 +158,7 @@ def inspect(path):
     role = "Model"
     for label, pattern in [
         ("Vision", r"mmproj|projector|^clip$"),
+        ("DSpark", r"(?:^|[ /_.-])dspark(?:[ /_.-]|$)"),
         ("DFlash", r"dflash"),
         ("MTP", r"(?:^|[ /_.-])mtp(?:[ /_.-]|$)"),
         ("Engram", r"engram"),

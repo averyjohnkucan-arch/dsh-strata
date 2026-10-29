@@ -1,0 +1,9 @@
+# DeepSeek local import validation (0.6.5)
+
+The live check used the existing four ISTA-DASLab DeepSeek-V4.1-Flash-1017 IQ2_XXS shards, their newer chat-template header, the separate Engram IQ4_NL table, Unsloth metadata shard and DSpark Q8_0 drafter. No model weights were copied or downloaded. Native setup verified the files, installed the signed official DeepSeek 0.1.52 CUDA 13 runtime and generated its pack/configuration. Native engine sources and binaries were not patched.
+
+The plugin's actual DSH adapter loaded that prepared configuration on a 24 GB RTX PRO 5000 Blackwell Laptop GPU at the saved 1,048,576 context. The request “What is 2 + 2? Answer with just the number.” streamed the answer “4” and finished normally. Preparation, load, reasoning/text streaming and cleanup completed successfully. The test released the GPU afterwards. This is a short text inference check, not a long-context quality or throughput benchmark. Image inference and a full native Thorough tuning sweep were not run.
+
+The importer delegates supported-set recognition and component verification to native setup. It skips the separate setup smoke process because the scheduled server load performs GPU validation. DeepSeek retains its own persistent slot cache rather than receiving Qwen SAVE/RESTORE commands. Native slot caching is configured inside the plugin cache directory with a 16 GiB default budget; reboot restoration was not tested in this check.
+
+Automated validation: 74 JavaScript and 29 Python tests passed, together with client build, lint/format and package inclusion checks. New cases cover supported/legacy shard names, rejection of incomplete/mismatched sets, component reuse, retries, native-failure propagation, stale inventory restrictions, native library paths, engine-specific UI controls and the separate cache path.

@@ -45,6 +45,15 @@ class ScannerTests(unittest.TestCase):
         self.assertEqual(result["mtpRuntimes"], [str(mtp)])
         self.assertEqual(result["models"], [])
 
+    def test_dspark_is_a_deepseek_component_not_a_dflash_model(self):
+        path = gguf(self.root / "dspark-DeepSeek-Q8_0.gguf", {
+            "general.architecture": "dflash", "general.name": "DeepSeek DFlash draft"
+        })
+        self.assertEqual(inspect(path)["role"], "DSpark")
+        result = scan(self.root)
+        self.assertEqual(result["models"], [])
+        self.assertEqual(result["components"][0]["role"], "DSpark")
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)

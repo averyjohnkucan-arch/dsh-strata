@@ -84,7 +84,11 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
       <div className="strata-grid">
         <label>
           KV precision (K / V)
-          {draft.model?.architecture === "qwen35moe" ? (
+          {deepseek ? (
+            <span>
+              Managed by the DeepSeek engine. No selectable KV format.
+            </span>
+          ) : draft.model?.architecture === "qwen35moe" ? (
             <span>
               FP32 / FP32. This Qwen 3.6 engine has no selectable KV formats.
             </span>
@@ -139,41 +143,48 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
           </select>
         </label>
       </div>
-      <div>
-        <strong>Vision projector</strong>
-        {draft.projector ? (
-          <p title={draft.projector}>{draft.projector.split("/").pop()}</p>
-        ) : (
-          <p>
-            {draft.projectorChoice === "none"
-              ? "Text only."
-              : "Select an mmproj file for images."}
-          </p>
-        )}
-        <div className="strata-actions">
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => setPicking(true)}
-          >
-            {draft.projector ? "Change projector" : "Select mmproj file"}
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() =>
-              setDraft((previous) => ({
-                ...previous,
-                projector: "",
-                projectorChoice: "none",
-              }))
-            }
-          >
-            Text only
-          </button>
+      {deepseek ? (
+        <p>
+          Text only. This local DeepSeek setup does not attach a Flash Next
+          vision projector.
+        </p>
+      ) : (
+        <div>
+          <strong>Vision projector</strong>
+          {draft.projector ? (
+            <p title={draft.projector}>{draft.projector.split("/").pop()}</p>
+          ) : (
+            <p>
+              {draft.projectorChoice === "none"
+                ? "Text only."
+                : "Select an mmproj file for images."}
+            </p>
+          )}
+          <div className="strata-actions">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => setPicking(true)}
+            >
+              {draft.projector ? "Change projector" : "Select mmproj file"}
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                setDraft((previous) => ({
+                  ...previous,
+                  projector: "",
+                  projectorChoice: "none",
+                }))
+              }
+            >
+              Text only
+            </button>
+          </div>
         </div>
-      </div>
-      {picking && (
+      )}
+      {!deepseek && picking && (
         <FilePicker
           projector
           initialPath={
@@ -195,8 +206,14 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
         />
       )}
       <div>
-        <strong>MTP</strong>
-        {supportsFlashMtp(draft.model) ? (
+        <strong>{deepseek ? "DeepSeek components" : "MTP"}</strong>
+        {deepseek ? (
+          <p>
+            DeepSeek uses its own Engram table and DSpark drafter. Strata finds
+            nearby files, verifies them and prepares the model with its native
+            setup. DSpark stays on its native automatic setting.
+          </p>
+        ) : supportsFlashMtp(draft.model) ? (
           <>
             <p>
               {draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0)

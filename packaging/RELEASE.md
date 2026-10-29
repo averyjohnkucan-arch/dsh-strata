@@ -1,7 +1,7 @@
-# Strata 0.6.4
+# Strata 0.6.5
 
-Strata now cooperates with the optional dsh-model-scheduler for GPU handoff with NInfer and other registered providers. A request holds its shared lease through generation and checkpoint saving; native tuning reserves the same GPU. The settings card shows whether shared scheduling is active.
+Local DeepSeek 4.1 Flash imports now use Strata's unchanged native setup. Complete supported shard sets are staged without copying weights; nearby Engram, DSpark and metadata files are verified and reused. The native installer obtains the separate official DeepSeek engine, prepares its runtime pack and writes its own configuration. Engine-specific library paths are preserved.
 
-Native startup failures now report a concise reason and competing GPU usage, preserving full diagnostics in a private startup.log. Failed loads and cancelled queued requests release admission safely for retries. The Strata engine, native memory sizing, context and KV settings are unchanged.
+Existing DeepSeek profiles are no longer blocked by a cached importer warning. The editor explains native KV management, DSpark and text-only local setup. Update and restart DSH, then load the existing DeepSeek profile or re-import its folder.
 
-Install dsh-model-scheduler separately and restart DSH to enable shared handoff. Without it, unload another provider's model before starting Strata on the same GPU.
+Native engine code and binaries are not modified by this update. DeepSeek's official engine is installed through its upstream signed feed when needed.

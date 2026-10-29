@@ -24,6 +24,8 @@ def compatibility(model):
         if unsupported:
             return 'Stock Strata v0.2.7 does not support tensor encoding(s): ' + ', '.join(map(str, unsupported))
         return None
+    if arch == 'deepseek41':
+        return None  # Native DeepSeek setup validates the complete set and companion files.
     if arch == 'qwen35moe':
         if not any('qwen35moe.nextn_predict_layers' in file['metadata'] for file in model['files']):
             return 'Stock native Qwen requires nextn_predict_layers metadata; this model does not contain it.'

@@ -109,6 +109,9 @@ def prepare(source, payload):
         )
     first = stage_files(model, root / "shards")
     arch = model["architecture"]
+    if arch == "deepseek41":
+        from deepseek_import import prepare as prepare_deepseek
+        return prepare_deepseek(source, payload, setup_module(source))
     output = root / "pack"
     output.mkdir(parents=True, exist_ok=True)
     if arch == "qwen35moe":

@@ -9,6 +9,7 @@ const explanations = {
   MTP: "Multi-token prediction weights",
   Draft: "Speculative draft weights",
   DFlash: "DFlash speculative draft model",
+  DSpark: "DeepSeek speculative draft head",
   Vision: "Image encoder / vision projector",
   "Control vector": "Activation steering data; not a standalone model",
 };
