@@ -82,7 +82,7 @@ function StrataCard() {
       <header className="strata-header">
         <div>
           <h3>
-            Strata <span className="strata-version">0.6.1</span>
+            Strata <span className="strata-version">0.6.2</span>
           </h3>
           <small>
             {state?.settings.bundledVersion

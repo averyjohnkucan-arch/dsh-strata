@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import { nativeContext } from "../lib/choices.js";
 
-function label(profile) {
-  const match = profile.name.match(/^(.+?Flash-Next)-(.+)$/i);
-  return match
-    ? {
-        name: match[2].replace(/^Gyro-([SML])-/, "Gyro $1 · "),
-        family: match[1].replaceAll("-", " "),
-      }
-    : { name: profile.name, family: "" };
-}
+import { modelLabel as label } from "./model-label.js";
 
 export function ModelList({ profiles, busy, open, run }) {
   const [selecting, setSelecting] = useState(false),

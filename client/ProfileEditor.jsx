@@ -56,12 +56,8 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
   async function commit(tuning = false) {
     setError("");
     try {
-      await save({
-        ...draft,
-        extraArgs: [],
-        environment: {},
-        applyPreset: true,
-      });
+      // A label edit must not erase saved launch overrides or toggle the tuning preset.
+      await save(draft);
       if (tuning) await run("tune", { id: draft.id });
     } catch (error) {
       setError(error.message);
@@ -75,6 +71,13 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
         {draft.name}
       </h4>
       {error && <p role="alert">{error}</p>}
+      <label className="strata-model-name">
+        Model name
+        <input
+          value={draft.name}
+          onChange={(event) => edit("name", event.target.value)}
+        />
+      </label>
       <div className="strata-grid">
         <label>
           KV precision (K / V)

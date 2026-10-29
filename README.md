@@ -82,3 +82,5 @@ Choose **Import config**, select the JSON, and enter the folder to search. Subfo
 The Strata engine is unchanged. Qwen 3.6 remains FP32 KV with embedded MTP only; its settings explain these native limitations.
 
 During auto-tuning, the Models and Activity views show **Prefill** and **Decode** in tokens per second from the latest completed native measurement. Rates refresh as trial logs arrive; pending measurements show “Measuring…”. These are live trial samples, not the final aggregate tuning score.
+
+Rename a saved model under **Settings → Model name → Save**. The saved name appears in the model list and DSH model picker. Renaming preserves its model files, profile identity and saved tuning.

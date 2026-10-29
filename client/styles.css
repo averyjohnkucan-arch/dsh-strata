@@ -418,3 +418,9 @@
   margin: 10px 0;
   font-size: 12px;
 }
+
+.strata-model-name {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0;
+}
