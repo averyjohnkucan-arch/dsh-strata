@@ -80,3 +80,5 @@ Open a model’s **⋯ → Export config JSON** menu. Each model shard, selected
 Choose **Import config**, select the JSON, and enter the folder to search. Subfolders are searched by size first, then MD5. The plugin links matching files into a private layout and creates a new model profile, so filenames and drive locations can change without copying weights. Native binaries, credentials and machine-specific runtime paths are excluded. Supported saved tuning flags are retained; run Thorough tuning again after changing hardware.
 
 The Strata engine is unchanged. Qwen 3.6 remains FP32 KV with embedded MTP only; its settings explain these native limitations.
+
+During auto-tuning, the Models and Activity views show **Prefill** and **Decode** in tokens per second from the latest completed native measurement. Rates refresh as trial logs arrive; pending measurements show “Measuring…”. These are live trial samples, not the final aggregate tuning score.

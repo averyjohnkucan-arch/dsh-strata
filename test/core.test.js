@@ -68,6 +68,24 @@ test("synchronous failures become failed jobs and disable cancels pending work",
   await jobs.close();
   assert.throws(() => jobs.add("closed", () => {}), /disabled/);
 });
+test("live rate samples survive ordinary progress output and reset for the next model", async () => {
+  const jobs = new Jobs();
+  jobs.add("Tune models", async (_signal, report) => {
+    report("Measuring", { prefillTokS: 1800, decodeTokS: 44 });
+    report("Native progress output");
+    assert.deepEqual(jobs.list()[0].metrics, {
+      prefillTokS: 1800,
+      decodeTokS: 44,
+    });
+    report("Preparing next model", { prefillTokS: null, decodeTokS: null });
+    assert.deepEqual(jobs.list()[0].metrics, {
+      prefillTokS: null,
+      decodeTokS: null,
+    });
+  });
+  await jobs.tail;
+  assert.equal(jobs.list()[0].status, "complete");
+});
 test("registry writes are ordered atomic snapshots and survive reopening", async (t) => {
   const root = await directory(t),
     store = new Store(root);

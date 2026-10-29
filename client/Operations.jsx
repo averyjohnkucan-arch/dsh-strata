@@ -1,6 +1,14 @@
 import React from "react";
 import { downloadConfig } from "./portable.js";
 
+function rate(value, status) {
+  return Number.isFinite(value)
+    ? value.toLocaleString(undefined, { maximumFractionDigits: 1 }) + " tok/s"
+    : ["queued", "running"].includes(status)
+      ? "Measuring…"
+      : "—";
+}
+
 export function Operations({ jobs, run, history = false }) {
   const active =
     jobs.find((job) => job.status === "running") ||
@@ -43,6 +51,21 @@ export function Operations({ jobs, run, history = false }) {
           <p role={job.status === "failed" ? "alert" : "status"}>
             {job.progress}
           </p>
+          {job.metrics && (
+            <div className="strata-tuning-speeds">
+              <small>Latest completed measurement</small>
+              <dl aria-label="Tuning token rates">
+                <div>
+                  <dt>Prefill</dt>
+                  <dd>{rate(job.metrics.prefillTokS, job.status)}</dd>
+                </div>
+                <div>
+                  <dt>Decode</dt>
+                  <dd>{rate(job.metrics.decodeTokS, job.status)}</dd>
+                </div>
+              </dl>
+            </div>
+          )}
           {job.kind === "Export config" && job.status === "complete" && (
             <button type="button" onClick={() => downloadConfig(job.result)}>
               Download config JSON

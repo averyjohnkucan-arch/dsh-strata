@@ -371,6 +371,23 @@
   font-size: 12px;
   margin: 8px 0;
 }
+.strata-tuning-speeds small {
+  color: var(--dsw-alias-label-secondary);
+}
+.strata-tuning-speeds dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin: 8px 0 12px;
+}
+.strata-tuning-speeds dt {
+  font-size: 12px;
+}
+.strata-tuning-speeds dd {
+  margin: 2px 0 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
 @media (max-width: 600px) {
   .strata-model-row {
     gap: 8px;
