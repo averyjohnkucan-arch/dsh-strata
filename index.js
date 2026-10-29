@@ -1,6 +1,7 @@
 import z from "@deepseek-ai/schemastery";
 import { StrataService } from "./lib/service.js";
 import { StrataAdapter } from "./lib/adapter.js";
+import { attachScheduler } from "./lib/scheduler.js";
 import { actionPath, handler } from "./lib/http.js";
 
 export const inject = ["llm", "connection"];
@@ -45,5 +46,6 @@ export async function apply(ctx, config) {
       fetch: handler(service),
     }),
   );
+  attachScheduler(ctx, service);
   service.ensureRuntime();
 }

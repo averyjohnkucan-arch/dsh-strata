@@ -82,12 +82,15 @@ function StrataCard() {
       <header className="strata-header">
         <div>
           <h3>
-            Strata <span className="strata-version">0.6.3</span>
+            Strata <span className="strata-version">0.6.4</span>
           </h3>
           <small>
             {state?.settings.bundledVersion
               ? "Included runtime"
               : "Local model provider"}
+            {state?.sharedScheduler
+              ? " · Shared GPU scheduler"
+              : " · Independent GPU queue"}
           </small>
         </div>
         <button

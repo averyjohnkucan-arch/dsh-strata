@@ -92,3 +92,11 @@ For a prepared DeepSeek profile, choose **⋯ → Auto-tune DeepSeek** or **Sett
 The exact tuner is included at `vendor/gyro-l-control/tools/dsv41/tune.py` with its tokenizer/smoke helpers and upstream license/provenance. Its SHA-256 is `bb75873d33774cc5d27525e4af0693eb9d6cb2a72dc9d92c50426d3651b1fab0`, matching the pinned Control 0.1.52 tool. No tuner download or manual script path is needed.
 
 Successful settings and the measurement report are saved in the model profile and reused after restarting DSH. Failed/cancelled measurements preserve the last saved configuration. An exit code of zero alone is not considered a successful tune. DeepSeek saves launch arguments rather than a Qwen preset ID. Updating the plugin preserves existing profiles; the engine, vision support and model weights are unchanged. Local DeepSeek GGUF preparation remains separate from the Qwen importer; DeepSeek profiles from Strata’s download/setup flow carry the required prepared configuration.
+
+## Switching between local providers
+
+For shared GPU handoff, install [dsh-model-scheduler](https://github.com/averyjohnkucan-arch/dsh-model-scheduler) and restart DSH. Strata and NInfer register with that optional service; it queues competing requests and unloads the previous cooperating model before loading the next one. Strata holds its lease through generation and checkpoint saving, and native auto-tuning reserves the same GPU. The Strata card says **Shared GPU scheduler** when connected.
+
+Without that plugin, the card says **Independent GPU queue**. Strata serializes its own requests, but does not unload another provider's server. Finish the other answer and unload that model before loading Strata on the same GPU. Neither mode kills unknown GPU processes. Context, KV precision and native engine memory sizing remain unchanged.
+
+A failed native startup now reports a short reason and, for allocation failures, GPU usage captured before loading. Full startup output is kept privately at `models/<profile-id>/startup.log` in Strata's data directory. Failed or cancelled startup releases admission so the next request can retry.
