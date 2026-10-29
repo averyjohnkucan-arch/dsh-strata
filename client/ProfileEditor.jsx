@@ -63,6 +63,9 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
       setError(error.message);
     }
   }
+  const deepseek = [draft.model?.architecture, draft.config?.arch].some(
+    (arch) => ["deepseek4", "deepseek41"].includes(arch),
+  );
   const contexts = contextChoices(draft);
   const native = nativeContext(draft);
   return (
@@ -341,7 +344,11 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
           Save and auto-tune
         </button>
       </div>
-      <small>Auto-tune uses Strata's native Thorough tuner.</small>
+      <small>
+        {deepseek
+          ? "Auto-tune uses DeepSeek’s own Thorough tuner for DSpark and CPU threads. Your context stays unchanged."
+          : "Auto-tune uses Strata’s native Thorough tuner."}
+      </small>
     </section>
   );
 }

@@ -53,12 +53,18 @@ export function Operations({ jobs, run, history = false }) {
           </p>
           {job.metrics && (
             <div className="strata-tuning-speeds">
-              <small>Latest completed measurement</small>
+              <small>
+                {job.metrics.tuner === "deepseek41"
+                  ? "DeepSeek native tuner · latest measurement"
+                  : "Latest completed measurement"}
+              </small>
               <dl aria-label="Tuning token rates">
-                <div>
-                  <dt>Prefill</dt>
-                  <dd>{rate(job.metrics.prefillTokS, job.status)}</dd>
-                </div>
+                {job.metrics.tuner !== "deepseek41" && (
+                  <div>
+                    <dt>Prefill</dt>
+                    <dd>{rate(job.metrics.prefillTokS, job.status)}</dd>
+                  </div>
+                )}
                 <div>
                   <dt>Decode</dt>
                   <dd>{rate(job.metrics.decodeTokS, job.status)}</dd>

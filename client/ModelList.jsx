@@ -124,7 +124,14 @@ export function ModelList({ profiles, busy, open, run }) {
                           run("tune", { id: profile.id });
                         }}
                       >
-                        Auto-tune
+                        {[
+                          profile.model?.architecture,
+                          profile.config?.arch,
+                        ].some((arch) =>
+                          ["deepseek4", "deepseek41"].includes(arch),
+                        )
+                          ? "Auto-tune DeepSeek"
+                          : "Auto-tune"}
                       </button>
                       <button
                         type="button"

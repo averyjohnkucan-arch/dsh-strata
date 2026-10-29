@@ -84,3 +84,11 @@ The Strata engine is unchanged. Qwen 3.6 remains FP32 KV with embedded MTP only;
 During auto-tuning, the Models and Activity views show **Prefill** and **Decode** in tokens per second from the latest completed native measurement. Rates refresh as trial logs arrive; pending measurements show “Measuring…”. These are live trial samples, not the final aggregate tuning score.
 
 Rename a saved model under **Settings → Model name → Save**. The saved name appears in the model list and DSH model picker. Renaming preserves its model files, profile identity and saved tuning.
+
+## DeepSeek 1017 auto-tuning
+
+For a prepared DeepSeek profile, choose **⋯ → Auto-tune DeepSeek** or **Settings → Save and auto-tune**. The DeepSeek download flow exposes the same native-tuning option after setup. DeepSeek calls its own Thorough tuner, not the Qwen preset tuner. It measures DSpark and CPU-thread choices, keeps the native tuner’s greater-than-5% acceptance rule, and preserves your selected context and automatic RAM-store sizing. Activity shows its measured decode rate; this tuner does not measure prefill.
+
+The exact tuner is included at `vendor/gyro-l-control/tools/dsv41/tune.py` with its tokenizer/smoke helpers and upstream license/provenance. Its SHA-256 is `bb75873d33774cc5d27525e4af0693eb9d6cb2a72dc9d92c50426d3651b1fab0`, matching the pinned Control 0.1.52 tool. No tuner download or manual script path is needed.
+
+Successful settings and the measurement report are saved in the model profile and reused after restarting DSH. Failed/cancelled measurements preserve the last saved configuration. An exit code of zero alone is not considered a successful tune. DeepSeek saves launch arguments rather than a Qwen preset ID. Updating the plugin preserves existing profiles; the engine, vision support and model weights are unchanged. Local DeepSeek GGUF preparation remains separate from the Qwen importer; DeepSeek profiles from Strata’s download/setup flow carry the required prepared configuration.

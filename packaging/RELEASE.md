@@ -1,5 +1,5 @@
-# Strata 0.6.0
+# Strata 0.6.3
 
-Adds portable JSON model configuration export/import. Required pieces are matched recursively by exact size and MD5, including model shards, vision projectors and separate MTP runtimes. Original weights stay in place. Selected model settings and supported tuning flags are retained.
+DeepSeek profiles now expose their own native Thorough tuner through Auto-tune and Save and auto-tune. The unchanged upstream tuner and its helpers are included in the repository and plugin package. Successful DSpark/CPU-thread settings persist across restarts; failed or cancelled measurements keep the last saved settings. Activity shows native measured decode rates.
 
-The bundled Strata engine is unchanged. Qwen 3.6 settings explain its fixed FP32 KV and embedded-MTP requirement.
+Qwen keeps its existing tuner. Strata engine binaries, model weights and vision support are unchanged. Existing profiles and caches remain in the plugin data directory when updating.

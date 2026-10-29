@@ -48,7 +48,9 @@ export function Download({ busy, run, close }) {
           checked={tune}
           onChange={(e) => setTune(e.target.checked)}
         />
-        Run Thorough auto-tuning after installation
+        {catalog[Number(choice)]?.family === "deepseek41"
+          ? "Run DeepSeek’s native Thorough tuner after installation"
+          : "Run Thorough auto-tuning after installation"}
       </label>
       <p className="strata-muted">
         Files are stored in the plugin data directory. Downloads can be large;

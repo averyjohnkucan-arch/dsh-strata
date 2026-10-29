@@ -366,6 +366,9 @@ function ProfileEditor({ profile, busy, save, run, close }) {
       setError(error2.message);
     }
   }
+  const deepseek = [draft.model?.architecture, draft.config?.arch].some(
+    (arch) => ["deepseek4", "deepseek41"].includes(arch)
+  );
   const contexts = contextChoices(draft);
   const native = nativeContext(draft);
   return /* @__PURE__ */ import_react3.default.createElement("section", { className: "strata-panel", "aria-label": "Model settings" }, /* @__PURE__ */ import_react3.default.createElement("h4", { ref: heading, tabIndex: -1 }, draft.name), error && /* @__PURE__ */ import_react3.default.createElement("p", { role: "alert" }, error), /* @__PURE__ */ import_react3.default.createElement("label", { className: "strata-model-name" }, "Model name", /* @__PURE__ */ import_react3.default.createElement(
@@ -498,7 +501,7 @@ function ProfileEditor({ profile, busy, save, run, close }) {
       onClick: () => commit(true)
     },
     "Save and auto-tune"
-  )), /* @__PURE__ */ import_react3.default.createElement("small", null, "Auto-tune uses Strata's native Thorough tuner."));
+  )), /* @__PURE__ */ import_react3.default.createElement("small", null, deepseek ? "Auto-tune uses DeepSeek\u2019s own Thorough tuner for DSpark and CPU threads. Your context stays unchanged." : "Auto-tune uses Strata\u2019s native Thorough tuner."));
 }
 
 // client/Download.jsx
@@ -526,7 +529,7 @@ function Download({ busy, run, close }) {
       checked: tune,
       onChange: (e) => setTune(e.target.checked)
     }
-  ), "Run Thorough auto-tuning after installation"), /* @__PURE__ */ import_react4.default.createElement("p", { className: "strata-muted" }, "Files are stored in the plugin data directory. Downloads can be large; tuning starts GPU work."), /* @__PURE__ */ import_react4.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react4.default.createElement("button", { type: "button", onClick: close }, "Cancel"), /* @__PURE__ */ import_react4.default.createElement(
+  ), catalog[Number(choice)]?.family === "deepseek41" ? "Run DeepSeek\u2019s native Thorough tuner after installation" : "Run Thorough auto-tuning after installation"), /* @__PURE__ */ import_react4.default.createElement("p", { className: "strata-muted" }, "Files are stored in the plugin data directory. Downloads can be large; tuning starts GPU work."), /* @__PURE__ */ import_react4.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react4.default.createElement("button", { type: "button", onClick: close }, "Cancel"), /* @__PURE__ */ import_react4.default.createElement(
     "button",
     {
       type: "button",
@@ -630,7 +633,12 @@ function ModelList({ profiles, busy, open, run }) {
           run("tune", { id: profile.id });
         }
       },
-      "Auto-tune"
+      [
+        profile.model?.architecture,
+        profile.config?.arch
+      ].some(
+        (arch) => ["deepseek4", "deepseek41"].includes(arch)
+      ) ? "Auto-tune DeepSeek" : "Auto-tune"
     ), /* @__PURE__ */ import_react5.default.createElement(
       "button",
       {
@@ -679,7 +687,7 @@ function Operations({ jobs, run, history = false }) {
   if (!history && !active && latest?.status === "complete")
     return /* @__PURE__ */ import_react6.default.createElement("p", { className: "strata-notice", role: "status" }, latest.kind === "Export config" ? /* @__PURE__ */ import_react6.default.createElement("button", { type: "button", onClick: () => downloadConfig(latest.result) }, "Download config JSON") : /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, latest.kind === "Purge all cache" ? "Cache cleared" : latest.kind + " complete"));
   const visible = history ? jobs.slice(-8).reverse() : active ? [active] : ["failed", "cancelled"].includes(latest?.status) ? [latest] : [];
-  return /* @__PURE__ */ import_react6.default.createElement("section", { "aria-label": history ? "Activity history" : "Current operation" }, history && !visible.length && /* @__PURE__ */ import_react6.default.createElement("p", { className: "strata-empty" }, "No recent activity."), visible.map((job) => /* @__PURE__ */ import_react6.default.createElement("div", { className: "strata-job", key: job.id }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "strata-list-heading" }, /* @__PURE__ */ import_react6.default.createElement("strong", null, job.kind), /* @__PURE__ */ import_react6.default.createElement("small", null, job.status)), /* @__PURE__ */ import_react6.default.createElement("p", { role: job.status === "failed" ? "alert" : "status" }, job.progress), job.metrics && /* @__PURE__ */ import_react6.default.createElement("div", { className: "strata-tuning-speeds" }, /* @__PURE__ */ import_react6.default.createElement("small", null, "Latest completed measurement"), /* @__PURE__ */ import_react6.default.createElement("dl", { "aria-label": "Tuning token rates" }, /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("dt", null, "Prefill"), /* @__PURE__ */ import_react6.default.createElement("dd", null, rate(job.metrics.prefillTokS, job.status))), /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("dt", null, "Decode"), /* @__PURE__ */ import_react6.default.createElement("dd", null, rate(job.metrics.decodeTokS, job.status))))), job.kind === "Export config" && job.status === "complete" && /* @__PURE__ */ import_react6.default.createElement("button", { type: "button", onClick: () => downloadConfig(job.result) }, "Download config JSON"), ["queued", "running"].includes(job.status) && /* @__PURE__ */ import_react6.default.createElement("button", { type: "button", onClick: () => run("cancel", { id: job.id }) }, "Cancel"), job.kind === "Install Strata" && ["failed", "cancelled"].includes(job.status) && /* @__PURE__ */ import_react6.default.createElement("button", { type: "button", onClick: () => run("install") }, "Retry installation"), history && job.log && /* @__PURE__ */ import_react6.default.createElement("details", null, /* @__PURE__ */ import_react6.default.createElement("summary", null, "View log"), /* @__PURE__ */ import_react6.default.createElement("pre", null, job.log)))));
+  return /* @__PURE__ */ import_react6.default.createElement("section", { "aria-label": history ? "Activity history" : "Current operation" }, history && !visible.length && /* @__PURE__ */ import_react6.default.createElement("p", { className: "strata-empty" }, "No recent activity."), visible.map((job) => /* @__PURE__ */ import_react6.default.createElement("div", { className: "strata-job", key: job.id }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "strata-list-heading" }, /* @__PURE__ */ import_react6.default.createElement("strong", null, job.kind), /* @__PURE__ */ import_react6.default.createElement("small", null, job.status)), /* @__PURE__ */ import_react6.default.createElement("p", { role: job.status === "failed" ? "alert" : "status" }, job.progress), job.metrics && /* @__PURE__ */ import_react6.default.createElement("div", { className: "strata-tuning-speeds" }, /* @__PURE__ */ import_react6.default.createElement("small", null, job.metrics.tuner === "deepseek41" ? "DeepSeek native tuner \xB7 latest measurement" : "Latest completed measurement"), /* @__PURE__ */ import_react6.default.createElement("dl", { "aria-label": "Tuning token rates" }, job.metrics.tuner !== "deepseek41" && /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("dt", null, "Prefill"), /* @__PURE__ */ import_react6.default.createElement("dd", null, rate(job.metrics.prefillTokS, job.status))), /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("dt", null, "Decode"), /* @__PURE__ */ import_react6.default.createElement("dd", null, rate(job.metrics.decodeTokS, job.status))))), job.kind === "Export config" && job.status === "complete" && /* @__PURE__ */ import_react6.default.createElement("button", { type: "button", onClick: () => downloadConfig(job.result) }, "Download config JSON"), ["queued", "running"].includes(job.status) && /* @__PURE__ */ import_react6.default.createElement("button", { type: "button", onClick: () => run("cancel", { id: job.id }) }, "Cancel"), job.kind === "Install Strata" && ["failed", "cancelled"].includes(job.status) && /* @__PURE__ */ import_react6.default.createElement("button", { type: "button", onClick: () => run("install") }, "Retry installation"), history && job.log && /* @__PURE__ */ import_react6.default.createElement("details", null, /* @__PURE__ */ import_react6.default.createElement("summary", null, "View log"), /* @__PURE__ */ import_react6.default.createElement("pre", null, job.log)))));
 }
 
 // client/ConfigImport.jsx
@@ -791,7 +799,7 @@ function StrataCard() {
   const profile = state?.profiles.find((profile2) => profile2.id === view);
   const primary = ["models", "files", "activity"].includes(view);
   const missing = state?.inventory?.models.filter((model) => model.status !== "complete").length || 0;
-  return /* @__PURE__ */ import_react8.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react8.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react8.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "strata-version" }, "0.6.2")), /* @__PURE__ */ import_react8.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider")), /* @__PURE__ */ import_react8.default.createElement(
+  return /* @__PURE__ */ import_react8.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react8.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react8.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "strata-version" }, "0.6.3")), /* @__PURE__ */ import_react8.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider")), /* @__PURE__ */ import_react8.default.createElement(
     "button",
     {
       type: "button",
