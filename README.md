@@ -122,3 +122,5 @@ Every managed DeepSeek profile uses one official runtime under `runtime/deepseek
 Existing prepared profiles switch to the shared runtime when next loaded or tuned. Model paths, prepared packs, contexts and tuning results stay profile-specific. Explicit custom runtime overrides are preserved. Moving/copying GGUF files or adding another profile does not require downloading another engine. Changing weight files may still require native verification and packing.
 
 Tuning reports **Preparing model**, then **Waiting for GPU**, then measurement. Preparation uses CPU/disk and does not reserve the GPU. Token rates appear only when the measurement stage starts.
+
+See [COMPATIBILITY.md](COMPATIBILITY.md) for supported DSH versions and upgrade checks.
