@@ -293,9 +293,11 @@ var kvChoices = Object.freeze([
   "Q4/Q4"
 ]);
 var contextStep = 32768;
-function supportsFlashMtp(model) {
+function supportsFlashMtp(model, preparedPack = false) {
   const meta = model?.files?.find((file) => file.index === 1)?.metadata || model?.files?.[0]?.metadata || {};
-  return model?.architecture === "qwen4exp" && meta["qwen4exp.embedding_length"] === 2560 && meta["qwen4exp.expert_count"] === 512 && (meta["general.base_model.0.repo_url"] === "https://huggingface.co/Qwen/Qwen3.8-Flash-Next" || meta["general.basename"] === "Qwen3.8-Flash-Next");
+  return model?.architecture === "qwen4exp" && meta["qwen4exp.embedding_length"] === 2560 && meta["qwen4exp.expert_count"] === 512 && // A validated prepared pack already supplies its matching separate MTP.
+  // Its dense-only GGUF can omit the original checkpoint's name metadata.
+  (preparedPack || meta["general.base_model.0.repo_url"] === "https://huggingface.co/Qwen/Qwen3.8-Flash-Next" || meta["general.basename"] === "Qwen3.8-Flash-Next");
 }
 function nativeContext(profile) {
   const model = profile.model || profile;
@@ -347,7 +349,7 @@ function ProfileEditor({ profile, busy, save, run, close }) {
   }, [profile.id]);
   (0, import_react3.useEffect)(() => {
     let live = true;
-    if (supportsFlashMtp(profile.model)) {
+    if (supportsFlashMtp(profile.model, Boolean(profile.preparedPackRoot))) {
       request("mtp-status", { id: profile.id }).then((status) => {
         if (live) setMtpStatus(status);
       }).catch((error2) => {
@@ -440,7 +442,7 @@ function ProfileEditor({ profile, busy, save, run, close }) {
         setPicking(false);
       }
     }
-  ), /* @__PURE__ */ import_react3.default.createElement("div", null, /* @__PURE__ */ import_react3.default.createElement("strong", null, deepseek ? "DeepSeek components" : "MTP"), deepseek ? /* @__PURE__ */ import_react3.default.createElement("p", null, "DeepSeek uses its own Engram table and DSpark drafter. Strata finds nearby files, verifies them and prepares the model with its native setup. DSpark stays on its native automatic setting.") : supportsFlashMtp(draft.model) ? /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("p", null, draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0) ? "MTP tensors were detected in the model. Strata uses a separate MTP runtime for this model." : "No built-in MTP detected. Strata uses a separate MTP runtime for this model."), /* @__PURE__ */ import_react3.default.createElement("p", null, !mtpStatus ? "Checking MTP files\u2026" : mtpStatus.kind === "selected" ? "Ready: a separate MTP folder is selected. Save your settings, then load or tune the model." : mtpStatus.kind === "automatic-ready" ? "Ready: the automatically prepared MTP files are already installed. They will be used when you load or tune this model." : mtpStatus.kind === "missing" ? "The selected MTP folder is missing or incomplete. Choose another folder." : "Not installed for this model yet. Strata will download and prepare MTP (about 5 GB) when you load or tune it."), mtpStatus?.path && /* @__PURE__ */ import_react3.default.createElement("p", { className: "strata-path" }, mtpStatus.path), mtpStatus?.kind === "download" && mtpStatus.candidates?.map((path) => /* @__PURE__ */ import_react3.default.createElement("div", { key: path }, /* @__PURE__ */ import_react3.default.createElement("p", null, "Found a prepared MTP folder: ", path), /* @__PURE__ */ import_react3.default.createElement(
+  ), /* @__PURE__ */ import_react3.default.createElement("div", null, /* @__PURE__ */ import_react3.default.createElement("strong", null, deepseek ? "DeepSeek components" : "MTP"), deepseek ? /* @__PURE__ */ import_react3.default.createElement("p", null, "DeepSeek uses its own Engram table and DSpark drafter. Strata finds nearby files, verifies them and prepares the model with its native setup. DSpark stays on its native automatic setting.") : supportsFlashMtp(draft.model, Boolean(draft.preparedPackRoot)) ? /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("p", null, draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0) ? "MTP tensors were detected in the model. Strata uses a separate MTP runtime for this model." : "No built-in MTP detected. Strata uses a separate MTP runtime for this model."), /* @__PURE__ */ import_react3.default.createElement("p", null, !mtpStatus ? "Checking MTP files\u2026" : mtpStatus.kind === "selected" ? "Ready: a separate MTP folder is selected. Save your settings, then load or tune the model." : mtpStatus.kind === "automatic-ready" ? "Ready: the automatically prepared MTP files are already installed. They will be used when you load or tune this model." : mtpStatus.kind === "missing" ? "The selected MTP folder is missing or incomplete. Choose another folder." : "Not installed for this model yet. Strata will download and prepare MTP (about 5 GB) when you load or tune it."), mtpStatus?.path && /* @__PURE__ */ import_react3.default.createElement("p", { className: "strata-path" }, mtpStatus.path), mtpStatus?.kind === "download" && mtpStatus.candidates?.map((path) => /* @__PURE__ */ import_react3.default.createElement("div", { key: path }, /* @__PURE__ */ import_react3.default.createElement("p", null, "Found a prepared MTP folder: ", path), /* @__PURE__ */ import_react3.default.createElement(
     "button",
     {
       type: "button",
@@ -800,7 +802,7 @@ function StrataCard() {
   const profile = state?.profiles.find((profile2) => profile2.id === view);
   const primary = ["models", "files", "activity"].includes(view);
   const missing = state?.inventory?.models.filter((model) => model.status !== "complete").length || 0;
-  return /* @__PURE__ */ import_react8.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react8.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react8.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "strata-version" }, "0.6.6")), /* @__PURE__ */ import_react8.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider", state?.sharedScheduler ? " \xB7 Shared GPU scheduler" : " \xB7 Independent GPU queue")), /* @__PURE__ */ import_react8.default.createElement(
+  return /* @__PURE__ */ import_react8.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react8.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react8.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "strata-version" }, "0.7.0")), /* @__PURE__ */ import_react8.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider", state?.sharedScheduler ? " \xB7 Shared GPU scheduler" : " \xB7 Independent GPU queue")), /* @__PURE__ */ import_react8.default.createElement(
     "button",
     {
       type: "button",

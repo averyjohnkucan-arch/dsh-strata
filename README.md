@@ -79,6 +79,10 @@ Open a model’s **⋯ → Export config JSON** menu. Each model shard, selected
 
 Choose **Import config**, select the JSON, and enter the folder to search. Subfolders are searched by size first, then MD5. The plugin links matching files into a private layout and creates a new model profile, so filenames and drive locations can change without copying weights. Native binaries, credentials and machine-specific runtime paths are excluded. Supported saved tuning flags are retained; run Thorough tuning again after changing hardware.
 
+Prepared Flash-Next NVFP4 GPTQ and NVFP4/Q8 Mix configs include the expert pack, dense weights, tokenizer, PLE table, embeddings and separate MTP runtime. The importer restores the pack layout instead of trying to repack its dense GGUF as a complete model. Selected vision projectors are included in the manifest too. Imported tuning stays in effect without automatic preset replacement; an exported CPU set applies to the whole server process tree on Linux.
+
+NVFP4 weight precision is separate from KV precision. The stock Flash-Next engine supports FP16 and Q8 KV, but does not offer FP8 or NVFP4 KV. DFlash components can be inventoried; the tested stock runtime serves Flash-Next using MTP, not DFlash2.
+
 The Strata engine is unchanged. Qwen 3.6 remains FP32 KV with embedded MTP only; its settings explain these native limitations.
 
 During auto-tuning, the Models and Activity views show **Prefill** and **Decode** in tokens per second from the latest completed native measurement. Rates refresh as trial logs arrive; pending measurements show “Measuring…”. These are live trial samples, not the final aggregate tuning score.

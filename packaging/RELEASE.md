@@ -1,5 +1,7 @@
-# Strata 0.6.6
+# Strata 0.7.0
 
-DeepSeek profiles now share one official engine. The plugin reuses installed signed runtimes from earlier profiles through Strata's native verified installer, preserving the originals and avoiding duplicate downloads when model files move or another profile is added. Existing managed profiles migrate on their next load or tune; explicit custom runtime overrides stay unchanged.
+Portable configs can now import prepared Flash-Next NVFP4 GPTQ and NVFP4/Q8 Mix packs. Import finds each component by exact byte size and MD5, restores the pack layout using links, and attaches its separate MTP runtime and selected vision projector. Dense-only GGUFs are no longer treated as complete standalone models. MTP settings recognize validated prepared packs even when their GGUFs omit the original model-name metadata.
 
-Model preparation now finishes before tuning requests GPU admission. Preparing, waiting and measuring are separate UI phases. A preparation job no longer pins an idle Strata GPU server or displays premature token-rate measurements. Model files and native tuning policy are unchanged.
+Imported tuning settings remain active without automatic preset replacement. Portable CPU affinity applies to the whole server process tree on Linux. Imports of another KV variant reuse verified file identities during the plugin session; changed files are checked again.
+
+The bundled runtime is unchanged. NVFP4 describes model weights here; this release does not add NVFP4 or FP8 KV. Stock Flash-Next serving uses MTP; DFlash2 remains CLI-only in the tested engine. Model weights stay in their original folders.

@@ -40,7 +40,7 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
   }, [profile.id]);
   useEffect(() => {
     let live = true;
-    if (supportsFlashMtp(profile.model)) {
+    if (supportsFlashMtp(profile.model, Boolean(profile.preparedPackRoot))) {
       request("mtp-status", { id: profile.id })
         .then((status) => {
           if (live) setMtpStatus(status);
@@ -213,7 +213,7 @@ export function ProfileEditor({ profile, busy, save, run, close }) {
             nearby files, verifies them and prepares the model with its native
             setup. DSpark stays on its native automatic setting.
           </p>
-        ) : supportsFlashMtp(draft.model) ? (
+        ) : supportsFlashMtp(draft.model, Boolean(draft.preparedPackRoot)) ? (
           <>
             <p>
               {draft.model?.files?.some((file) => (file.tensors?.MTP || 0) > 0)
