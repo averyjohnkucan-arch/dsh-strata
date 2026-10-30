@@ -1,4 +1,6 @@
-# Strata 0.7.0
+# Strata 0.7.1
+
+Fixes the offline package's shared-runtime version marker. Both GitHub URL installation and the self-contained archive retain runtime 0.5.0 independently of the plugin version. Use this release instead of the 0.7.0 offline archive.
 
 Portable configs can now import prepared Flash-Next NVFP4 GPTQ and NVFP4/Q8 Mix packs. Import finds each component by exact byte size and MD5, restores the pack layout using links, and attaches its separate MTP runtime and selected vision projector. Dense-only GGUFs are no longer treated as complete standalone models. MTP settings recognize validated prepared packs even when their GGUFs omit the original model-name metadata.
 

@@ -113,6 +113,9 @@ def build_from_bundle(bundle, output):
         manifest = json.loads(manifest_path.read_text())
         if (manifest.get("runtimeVersion") or manifest.get("pluginVersion")) != expected["runtimeVersion"]:
             raise ValueError("Runtime bundle version mismatch")
+        # Older base bundles identify their runtime only by pluginVersion.
+        # Preserve that identity before stamping the new plugin release.
+        manifest["runtimeVersion"] = expected["runtimeVersion"]
         manifest["pluginVersion"] = version
         manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
         name = f"dsh-strata-{version}-linux-x64-cuda13.tgz"
