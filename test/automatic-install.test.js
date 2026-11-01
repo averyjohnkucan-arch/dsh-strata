@@ -28,8 +28,8 @@ test("source activation installs once, and a failed download can be retried", as
       await writeFile(
         join(runtime, "manifest.json"),
         JSON.stringify({
-          runtimeVersion: "0.5.0",
-          pluginVersion: "0.5.0",
+          runtimeVersion: "0.8.0",
+          pluginVersion: "0.8.0",
           platform: process.platform,
           arch: process.arch,
         }),

@@ -89,3 +89,20 @@ test("the native vector is loaded with ordinary requests off, and disk caches ar
     ),
   );
 });
+
+test("DeepSeek exposes its native efforts without sending Qwen-only medium/xhigh values", () => {
+  const p = { model: { architecture: "deepseek41" } };
+  assert.deepEqual(
+    thinkingInfo(p).efforts.map((x) => x.id),
+    ["none", "low", "high", "max"],
+  );
+  for (const level of ["none", "low", "high", "max"])
+    assert.deepEqual(thinkingPreset(p, level), {
+      effort: level,
+      projection: false,
+    });
+  assert.equal(thinkingPreset(p).effort, "high");
+  assert.equal(thinkingPreset(p, "medium").effort, "high");
+  assert.equal(thinkingPreset(p, "xhigh").effort, "max");
+  assert.throws(() => thinkingPreset(p, "uncensored"), /Unsupported/);
+});

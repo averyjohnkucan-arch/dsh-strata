@@ -21,10 +21,10 @@ test("an offline package resolves its Python, engine, helper and fork from insid
   await writeFile(
     join(runtime, "manifest.json"),
     JSON.stringify({
-      pluginVersion: "0.5.0",
+      pluginVersion: "0.8.0",
       platform: process.platform,
       arch: process.arch,
-      strataRelease: "v0.2.7",
+      strataRelease: "v0.2.9",
       fork: { cudaArchitectures: ["120"] },
     }),
   );
@@ -37,7 +37,7 @@ test("an offline package resolves its Python, engine, helper and fork from insid
   await writeFile(
     join(runtime, "manifest.json"),
     JSON.stringify({
-      pluginVersion: "0.5.0",
+      pluginVersion: "0.8.0",
       platform: "wrong",
       arch: process.arch,
     }),

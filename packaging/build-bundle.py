@@ -63,11 +63,16 @@ def build(runtime, output):
         projection = bundled / "control/data/experimental-speed-projection/Qwen3.8-Flash-Next-experimental-speed-projection.gguf"
         if not projection.is_file():
             raise ValueError("The Control runtime is missing its projection asset")
-        stock = unpack_engine(REPO / "vendor/strata-engine", bundled / "engine/strata")
-        fork = unpack_engine(REPO / "vendor/gyro-l-engine", bundled / "gyro-l/strata")
+        stock = {"cudaArchitectures": ["120"]}  # Preserve the verified upstream engine archive.
+        fork = json.loads((runtime / "manifest.json").read_text())["fork"]
+        fork_target = bundled / "gyro-l/strata"
+        fork_target.parent.mkdir(parents=True)
+        shutil.copy2(runtime / "gyro-l/strata", fork_target)
+        if sha256(fork_target) != fork["engineSha256"]:
+            raise ValueError("Legacy fork checksum mismatch")
         # Compressed source-install parts are redundant in an offline bundle with the extracted engine.
-        shutil.rmtree(package / "vendor/gyro-l-engine/parts")
-        shutil.rmtree(package / "vendor/strata-engine/parts")
+        shutil.rmtree(package / "vendor/gyro-l-engine/parts", ignore_errors=True)
+        shutil.rmtree(package / "vendor/strata-engine/parts", ignore_errors=True)
         manifest = {
             "pluginVersion": version,
             "runtimeVersion": expected["runtimeVersion"],
@@ -96,7 +101,7 @@ def build_from_bundle(bundle, output):
     """Repackage the pinned runtime with the current plugin, without engine archives in Git."""
     bundle = Path(bundle).resolve()
     expected = json.loads((REPO / "engine.json").read_text())
-    if sha256(bundle) != expected["runtimeBundleSha256"]:
+    if sha256(bundle) != expected.get("runtimeBundleSha256"):
         raise ValueError("Runtime bundle checksum mismatch")
     output = Path(output).resolve()
     output.mkdir(parents=True, exist_ok=True)

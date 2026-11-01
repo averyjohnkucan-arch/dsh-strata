@@ -1,7 +1,7 @@
 {
  "schema_version": 1,
  "component": "strata-control",
- "version": "0.1.52",
+ "version": "0.1.55",
  "target": "linux-x86_64",
  "python": {
   "version": "3.12.15",
@@ -40,9 +40,9 @@
   "urllib3": "2.8.0"
  },
  "archive": {
-  "name": "strata-terminal-0.1.52-linux-x86_64.tar.gz",
-  "sha256": "d93e368183e48d8b6490abbd437ab25a64bbe4bb00ff0b4c8325d96dffc8cd07",
-  "bytes": 99749479
+  "name": "strata-terminal-0.1.55-linux-x86_64.tar.gz",
+  "sha256": "c3ca9dbb78bb6ff78a2455b6bbb4d46bcf4237295a61e302fdc125c562e118ca",
+  "bytes": 99817710
  },
  "acquires_at_runtime": false,
  "installer": {
@@ -78,7 +78,7 @@
    "tools/strata_tokenizer.py"
   ],
   "data": "data",
-  "setup_sha256": "4a786bb8df66e77356d889acfa82c8df12197c324dc98a59b352b172b0c280e1",
+  "setup_sha256": "ae8c7cda7e5968c78822d76f91476fe81d1d803d54e35364041af8f8f6f8f980",
   "mode": "STRATA_CONTROL_INSTALL=1: downloads the chosen model, prepares it, installs no package and no engine"
  }
 }

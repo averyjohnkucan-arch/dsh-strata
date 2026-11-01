@@ -45,8 +45,11 @@ def ensure(payload, engine=None):
     root = Path(payload["deepseekRuntimeRoot"])
     destination = root / "engine-dsv41"
     legacy = Path(payload["legacyModelsRoot"])
+    minimum = tuple(map(int, payload.get("minimumEngineVersion", "0").split(".")))
     with install_lock(root):
         executable = engine.find(destination)
+        if executable and engine.version_key(executable.parent.name) < minimum:
+            executable = None
         if executable:
             print("Reusing the shared DeepSeek engine.", flush=True)
         else:
@@ -54,6 +57,8 @@ def ensure(payload, engine=None):
             candidates = sorted((path for path in candidates if path),
                                 key=lambda path: engine.version_key(path.parent.name), reverse=True)
             for candidate in candidates:
+                if engine.version_key(candidate.parent.name) < minimum:
+                    continue
                 print("Checking an already installed DeepSeek engine for shared reuse.", flush=True)
                 # Native installation verifies the package signature and every file
                 # before copying it. The old profile's runtime stays untouched.
@@ -63,6 +68,8 @@ def ensure(payload, engine=None):
                     break
             if not executable:
                 executable = download_engine(engine, destination)
+            if executable and engine.version_key(Path(executable).parent.name) < minimum:
+                raise ValueError("Downloaded DeepSeek engine is older than the pinned release")
             if not executable:
                 raise ValueError("The shared DeepSeek runtime could not be installed; see the native installer log and retry.")
         return {"exe": str(executable), "lib_dirs": engine.lib_dirs(executable)}

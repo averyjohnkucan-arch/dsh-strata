@@ -122,3 +122,25 @@ Every managed DeepSeek profile uses one official runtime under `runtime/deepseek
 Existing prepared profiles switch to the shared runtime when next loaded or tuned. Model paths, prepared packs, contexts and tuning results stay profile-specific. Explicit custom runtime overrides are preserved. Moving/copying GGUF files or adding another profile does not require downloading another engine. Changing weight files may still require native verification and packing.
 
 Tuning reports **Preparing model**, then **Waiting for GPU**, then measurement. Preparation uses CPU/disk and does not reserve the GPU. Token rates appear only when the measurement stage starts.
+
+### Upstream runtime update (0.8.0)
+
+This plugin pins Strata **0.2.9**, Control **0.1.55**, and the upstream Linux
+CUDA 13 engine **0.1.55**. Installation downloads checksum-verified upstream
+archives into a new versioned runtime directory. Existing runtimes remain intact;
+previous benchmark receipts still refer to their original engine. The separately
+pinned Gyro L fork remains available and is not described as an upstream 0.1.55
+binary. A fresh installation acquires that legacy fork from this repository's
+verified 0.5.0 release package; an update can reuse its verified local copy.
+
+DeepSeek exposes its own **Off / Low (50) / High (75) / Max (100)** reasoning
+settings. Old Medium selections resolve to High, and old xhigh selections to Max.
+Changing effort still changes the native template's leading instruction and may
+require prefilling again. Runtime migration preserves model files, tuning flags,
+and saved configuration such as `repeat_stop_tokens`.
+
+Upstream Qwen supports shared-model parallel requests through `--parallel` or
+`--batch`. This plugin's current request admission remains serial; updating the
+runtime alone does not enable simultaneous DSH generations. The upstream
+DeepSeek CLI still processes one request at a time and ignores `--parallel > 1`.
+See the [upstream release](https://github.com/Niko1221/Strata/releases/tag/v0.2.9).

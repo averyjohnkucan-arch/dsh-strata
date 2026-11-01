@@ -1,0 +1,10 @@
+{
+  "release": "v0.2.9",
+  "commit": "c62d5e3a15b40ea51c96aae9e8d36928965f53ab",
+  "controlVersion": "0.1.55",
+  "engineVersion": "0.1.55",
+  "source": "https://github.com/Niko1221/Strata/releases/tag/v0.2.9",
+  "gyroLFork": "Separate tested legacy engine retained; not relabeled as upstream 0.1.55",
+  "deepseekParallel": "Upstream DeepSeek path remains single-request; --parallel > 1 is ignored",
+  "dshAdmission": "Serial; no concurrency enabled by this release"
+}

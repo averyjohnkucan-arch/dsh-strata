@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { modelRuntime, modelSetupIssue } from "../lib/runtime.js";
+import {
+  modelRuntime,
+  modelSetupIssue,
+  migrateManagedRuntime,
+} from "../lib/runtime.js";
 import { createProfile, validateProfile } from "../lib/profiles.js";
 const stock = {
   controlDir: "/stock",
@@ -74,5 +78,40 @@ test("bundled runtimes select the TQP fork by tensor encodings without replacing
     modelRuntime(settings, { model: { files: [{ encodings: { 143: 1 } }] } })
       .executable,
     stock.executable,
+  );
+});
+
+test("managed runtime upgrades preserve tuned arguments and external overrides", () => {
+  const p = {
+    runtime: {},
+    config: {
+      exe: "/data/runtime/0.5.0/engine/strata",
+      cwd: "/data/runtime/0.5.0/control",
+      args: ["--native", "/unchanged/model", "--prefill-chunk", "4096"],
+      lib_dirs: ["/data/runtime/0.5.0/engine", "/external/libs"],
+      repeat_stop_tokens: 0,
+    },
+  };
+  const runtime = {
+    executable: "/data/runtime/0.8.0/engine/strata",
+    controlDir: "/data/runtime/0.8.0/control",
+  };
+  const args = structuredClone(p.config.args);
+  assert.equal(migrateManagedRuntime(p, runtime, "/data/runtime"), true);
+  assert.deepEqual(p.config.args, args);
+  assert.equal(p.config.repeat_stop_tokens, 0);
+  assert.deepEqual(p.config.lib_dirs, [
+    "/data/runtime/0.8.0/engine",
+    "/external/libs",
+  ]);
+  assert.equal(migrateManagedRuntime(p, runtime, "/data/runtime"), false);
+  p.runtime.executable = "/custom/engine";
+  assert.equal(
+    migrateManagedRuntime(
+      p,
+      { ...runtime, executable: "/new/engine" },
+      "/data/runtime",
+    ),
+    false,
   );
 });

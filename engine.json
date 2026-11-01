@@ -1,24 +1,26 @@
 {
-  "release": "v0.2.7",
-  "controlVersion": "0.1.52",
-  "engineVersion": "0.1.52",
+  "release": "v0.2.9",
+  "controlVersion": "0.1.55",
+  "engineVersion": "0.1.55",
   "assets": [
     {
-      "name": "strata-control-0.1.52-linux-x86_64.tar.gz",
-      "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.7/strata-control-0.1.52-linux-x86_64.tar.gz",
-      "sha256": "399fcc8f2d232b2f7ab7df82d863874a4b815019ced877a24f68a47ffc8110a0"
+      "name": "strata-control-0.1.55-linux-x86_64.tar.gz",
+      "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.9/strata-control-0.1.55-linux-x86_64.tar.gz",
+      "sha256": "50783d2fa6c6e98e9bdc8d4f66ad070706b1e1f3e5e2782cc59fd5dabd9488e8",
+      "component": "control"
     },
     {
-      "name": "strata-engine-0.1.52-linux-x86_64-cuda-cuda12.tar.gz",
-      "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.7/strata-engine-0.1.52-linux-x86_64-cuda-cuda12.tar.gz",
-      "sha256": "f08895a927c05664a70b1397ba9f7888ca1cf328140fa056c9e2ce9d0f15de30"
-    },
-    {
-      "name": "strata-engine-0.1.52-linux-x86_64-cuda-cuda13.tar.gz",
-      "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.7/strata-engine-0.1.52-linux-x86_64-cuda-cuda13.tar.gz",
-      "sha256": "4177c1a8ffc59bf66074093b22ac55ed477bcbe84f8bd12e378b0f1236da55c7"
+      "name": "strata-engine-0.1.55-linux-x86_64-cuda-cuda13.tar.gz",
+      "url": "https://github.com/Niko1221/Strata/releases/download/v0.2.9/strata-engine-0.1.55-linux-x86_64-cuda-cuda13.tar.gz",
+      "sha256": "ce86b23b26a4521a1871113057534b8a34c01df0ac7b916adccf9b1c8c068f92",
+      "component": "engine"
     }
   ],
-  "runtimeVersion": "0.5.0",
-  "runtimeBundleSha256": "6604c396af15b7b2b97a09c11469b40f306b2f3694a7999519da0eef7d49d7ef"
+  "runtimeVersion": "0.8.0",
+  "legacyRuntime": {
+    "version": "0.5.0",
+    "url": "https://github.com/averyjohnkucan-arch/dsh-strata/releases/download/v0.5.0/dsh-strata-0.5.0-linux-x64-cuda13.tgz",
+    "sha256": "6604c396af15b7b2b97a09c11469b40f306b2f3694a7999519da0eef7d49d7ef",
+    "forkSha256": "35bee447f597fdc41b2c6ccc2048a225d17bc2b7f5b9f126a4cef3fc078aabfe"
+  }
 }

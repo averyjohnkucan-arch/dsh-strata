@@ -1,4 +1,4 @@
-Strata Terminal 0.1.52 (linux-x86_64)
+Strata Terminal 0.1.55 (linux-x86_64)
 ====================================
 
 This is the terminal distribution. It carries its own Python 3.12.15 and its own packages, so you do not
@@ -9,8 +9,8 @@ choose, after it tells you the size) and `strata update` (the engine and the Str
 
 Install
 -------
-    tar xzf strata-terminal-0.1.52-linux-x86_64.tar.gz
-    cd strata-terminal-0.1.52-linux-x86_64
+    tar xzf strata-terminal-0.1.55-linux-x86_64.tar.gz
+    cd strata-terminal-0.1.55-linux-x86_64
     ./bin/strata --help
 
 Put `bin/` on your PATH to get the `strata` command everywhere:

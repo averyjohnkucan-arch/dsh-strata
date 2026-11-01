@@ -1,8 +1,8 @@
-"""Recover the runtime from this repository's self-contained release package."""
-
+"""Install pinned upstream releases beside existing runtimes, never over them."""
 from pathlib import Path
 import hashlib
 import json
+import os
 import platform
 import shutil
 import sys
@@ -12,40 +12,95 @@ import urllib.request
 
 ENGINE = json.loads((Path(__file__).parents[1] / "engine.json").read_text())
 VERSION = ENGINE["runtimeVersion"]
-NAME = f"dsh-strata-{VERSION}-linux-x64-cuda13.tgz"
-BASE = f"https://github.com/averyjohnkucan-arch/dsh-strata/releases/download/v{VERSION}"
+
+
+def sha256(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        while block := stream.read(4 * 1024 * 1024):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def acquire(asset, directory):
+    """Local archives and HTTPS downloads follow the same checksum rules."""
+    name = asset.get("name") or asset["url"].rsplit("/", 1)[-1]
+    cache = os.environ.get("DSH_STRATA_ASSET_CACHE")
+    cached = Path(cache) / name if cache else None
+    target = cached if cached and cached.is_file() else directory / name
+    if not (cached and cached.is_file()):
+        print("Downloading " + name, flush=True)
+        with urllib.request.urlopen(asset["url"], timeout=120) as source, target.open("wb") as output:
+            received = 0
+            while block := source.read(4 * 1024 * 1024):
+                output.write(block)
+                received += len(block)
+                print(f"{name}: {received // 1048576} MiB received", flush=True)
+    if sha256(target) != asset["sha256"]:
+        raise ValueError("Checksum mismatch: " + name)
+    return target
+
+
+def legacy_fork(root, stage):
+    """Keep the tested Gyro L fork while updating the stock upstream engine."""
+    legacy = ENGINE["legacyRuntime"]
+    existing = root.parent / legacy["version"] / "gyro-l/strata"
+    destination = stage / "gyro-l/strata"
+    destination.parent.mkdir(parents=True)
+    if existing.is_file() and sha256(existing) == legacy["forkSha256"]:
+        shutil.copy2(existing, destination)
+    else:
+        archive = acquire(legacy, stage)
+        with tarfile.open(archive) as bundle:
+            member = bundle.getmember("package/runtime/gyro-l/strata")
+            with bundle.extractfile(member) as source, destination.open("wb") as output:
+                shutil.copyfileobj(source, output)
+        if archive.parent == stage:
+            archive.unlink()
+    if sha256(destination) != legacy["forkSha256"]:
+        raise ValueError("Legacy Gyro L engine checksum mismatch")
+    destination.chmod(0o755)
 
 
 def install(root):
     if (platform.system(), platform.machine()) != ("Linux", "x86_64"):
-        raise ValueError("This bundled runtime is for Linux x86-64 NVIDIA CUDA 13")
+        raise ValueError("This runtime is for Linux x86-64 NVIDIA CUDA 13")
     root = Path(root).resolve()
-    if not (root / "manifest.json").is_file():
+    if (root / "manifest.json").is_file():
+        manifest = json.loads((root / "manifest.json").read_text())
+        if manifest.get("runtimeVersion") != VERSION:
+            raise ValueError("Existing runtime has a different version")
+    else:
         root.parent.mkdir(parents=True, exist_ok=True)
-        with tempfile.TemporaryDirectory(dir=root.parent) as stage:
-            stage = Path(stage)
-            archive = stage / NAME
-            print("Acquiring the self-contained Strata package from this plugin's GitHub release", flush=True)
-            expected = ENGINE["runtimeBundleSha256"]
-            digest = hashlib.sha256()
-            with urllib.request.urlopen(BASE + "/" + NAME, timeout=120) as response, archive.open("wb") as target:
-                received = 0
-                while block := response.read(4 * 1024 * 1024):
-                    target.write(block)
-                    digest.update(block)
-                    received += len(block)
-                    print(f"Received {received // 1048576} MiB", flush=True)
-            if digest.hexdigest() != expected:
-                raise ValueError("Self-contained package checksum mismatch")
-            with tarfile.open(archive) as bundle:
-                # Install only runtime files; executable plugin code comes from the package DSH loaded.
-                bundle.extractall(stage, members=[m for m in bundle if m.name.startswith("package/runtime/")], filter="data")
-            source = stage / "package/runtime"
-            if not (source / "manifest.json").is_file():
-                raise ValueError("The release package contains no runtime manifest")
-            if root.exists():
-                raise ValueError("Runtime directory contains an incomplete installation; choose a new data directory")
-            source.rename(root)
+        if root.exists():
+            raise ValueError("Runtime directory contains an incomplete installation")
+        with tempfile.TemporaryDirectory(prefix="strata-update-", dir=root.parent) as temporary:
+            stage = Path(temporary)
+            runtime = stage / "runtime"
+            runtime.mkdir()
+            for asset in ENGINE["assets"]:
+                archive = acquire(asset, stage)
+                target = runtime / asset["component"]
+                target.mkdir()
+                with tarfile.open(archive) as bundle:
+                    bundle.extractall(target, filter="data")
+                (target / ".archive-sha256").write_text(asset["sha256"] + "\n")
+            legacy_fork(root, runtime)
+            for required in ("control/python/bin/python3", "control/strata.py", "engine/strata"):
+                if not (runtime / required).is_file():
+                    raise ValueError("Upstream archive is missing " + required)
+            manifest = {
+                "runtimeVersion": VERSION, "pluginVersion": VERSION,
+                "platform": "linux", "arch": "x64", "cuda": "13",
+                "strataRelease": ENGINE["release"],
+                "controlVersion": ENGINE["controlVersion"],
+                "engineVersion": ENGINE["engineVersion"],
+                "engineSha256": sha256(runtime / "engine/strata"),
+                "fork": {"engineSha256": ENGINE["legacyRuntime"]["forkSha256"],
+                         "legacy": True, "cudaArchitectures": ["120"]},
+            }
+            (runtime / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+            runtime.rename(root)
     print("DSH_RESULT=" + json.dumps({"root": str(root)}), flush=True)
 
 

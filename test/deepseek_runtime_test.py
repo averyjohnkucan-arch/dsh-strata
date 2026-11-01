@@ -87,3 +87,13 @@ class SharedRuntimeTests(unittest.TestCase):
         self.assertTrue(Path(ensure(self.payload, self.engine)['exe']).exists())
 
 if __name__ == '__main__': unittest.main()
+
+class VersionFloorTests(SharedRuntimeTests):
+    def test_updating_release_does_not_reuse_obsolete_legacy_engine(self):
+        self.legacy()
+        self.payload['minimumEngineVersion'] = '0.1.55'
+        with patch('deepseek_runtime.download_engine', return_value=None) as download:
+            with self.assertRaisesRegex(ValueError, 'could not be installed'):
+                ensure(self.payload, self.engine)
+        download.assert_called_once()
+        self.assertEqual(self.engine.migrations, [])
