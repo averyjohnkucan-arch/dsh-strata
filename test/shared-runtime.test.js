@@ -36,16 +36,16 @@ test("existing managed DeepSeek profiles migrate runtime paths without repacking
     root,
     "runtime",
     "deepseek",
-    "0.8.0",
+    "0.8.2",
     "engine-dsv41",
-    "0.1.52",
+    "0.1.59",
     "strata-dsv41",
   );
   service.bridge = async (action, payload) => {
     calls++;
     assert.equal(action, "deepseek-runtime");
     assert.equal(payload.legacyModelsRoot, join(root, "models"));
-    assert.equal(payload.minimumEngineVersion, "0.1.55");
+    assert.equal(payload.minimumEngineVersion, "0.1.59");
     return { exe: shared, lib_dirs: [join(shared, "..")] };
   };
   await service.prepare(p.id, new AbortController().signal, () => {});

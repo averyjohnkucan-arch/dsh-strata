@@ -1,4 +1,4 @@
-# DSH compatibility — 0.8.1
+# DSH compatibility — 0.8.2
 
 Reviewed on November 14, 2026 against DSH **0.2.2-rc.1**, Cordis **4.1.0** and Schemastery **3.19.0**. Dependency declarations and lockfiles target the current host instead of pulling in the older DSH/Cordis API generation.
 

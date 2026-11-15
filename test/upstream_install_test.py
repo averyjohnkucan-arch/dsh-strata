@@ -45,7 +45,7 @@ class UpstreamInstallTests(unittest.TestCase):
                 installer.install(base / installer.VERSION)
                 installer.install(base / installer.VERSION)
             manifest = json.loads((base / installer.VERSION / 'manifest.json').read_text())
-            self.assertEqual(manifest['engineVersion'], '0.1.55')
+            self.assertEqual(manifest['engineVersion'], engine['engineVersion'])
             self.assertEqual(old.read_bytes(), original)
             self.assertEqual((base / installer.VERSION / 'gyro-l/strata').read_bytes(), original)
 

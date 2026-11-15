@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { bundledRuntime } from "../lib/bundled.js";
+import { bundledRuntime, runtimeVersion } from "../lib/bundled.js";
 
 test("an offline package resolves its Python, engine, helper and fork from inside itself", async (t) => {
   const root = await mkdtemp(join(tmpdir(), "strata-bundle-"));
@@ -21,7 +21,7 @@ test("an offline package resolves its Python, engine, helper and fork from insid
   await writeFile(
     join(runtime, "manifest.json"),
     JSON.stringify({
-      pluginVersion: "0.8.0",
+      pluginVersion: runtimeVersion,
       platform: process.platform,
       arch: process.arch,
       strataRelease: "v0.2.9",
@@ -37,7 +37,7 @@ test("an offline package resolves its Python, engine, helper and fork from insid
   await writeFile(
     join(runtime, "manifest.json"),
     JSON.stringify({
-      pluginVersion: "0.8.0",
+      pluginVersion: runtimeVersion,
       platform: "wrong",
       arch: process.arch,
     }),
