@@ -101,7 +101,9 @@ def build_from_bundle(bundle, output):
     """Repackage the pinned runtime with the current plugin, without engine archives in Git."""
     bundle = Path(bundle).resolve()
     expected = json.loads((REPO / "engine.json").read_text())
-    if sha256(bundle) != expected.get("runtimeBundleSha256"):
+    if not expected.get("runtimeBundleSha256"):
+        raise ValueError("This release upgrades the runtime; install the pinned runtime and package with --runtime-root")
+    if sha256(bundle) != expected["runtimeBundleSha256"]:
         raise ValueError("Runtime bundle checksum mismatch")
     output = Path(output).resolve()
     output.mkdir(parents=True, exist_ok=True)

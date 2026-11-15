@@ -58,7 +58,7 @@
     "@deepseek-ai/dsh-credentials": "0.2.2-rc.1",
     "@deepseek-ai/dsh-fs": "0.2.2-rc.1",
     "@deepseek-ai/dsh-timeout": "0.2.2-rc.1",
-    "@deepseek-ai/cordis-plugin-loader": "~1.0.6"
+    "@deepseek-ai/cordis-plugin-loader": "~1.1.0"
   },
   "dsh": {
     "bundle": {

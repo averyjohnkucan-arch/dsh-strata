@@ -1,9 +1,5 @@
-# Strata 0.7.1
+# Strata 0.8.1
 
-Fixes the offline package's shared-runtime version marker. Both GitHub URL installation and the self-contained archive retain runtime 0.5.0 independently of the plugin version. Use this release instead of the 0.7.0 offline archive.
+Updates the plugin for DSH 0.2.2 and Cordis 4.1. The self-contained package now installs and verifies the pinned Strata 0.1.55 / runtime 0.8.0 components before packaging them; it does not restamp the legacy 0.5.0 archive as a new runtime.
 
-Portable configs can now import prepared Flash-Next NVFP4 GPTQ and NVFP4/Q8 Mix packs. Import finds each component by exact byte size and MD5, restores the pack layout using links, and attaches its separate MTP runtime and selected vision projector. Dense-only GGUFs are no longer treated as complete standalone models. MTP settings recognize validated prepared packs even when their GGUFs omit the original model-name metadata.
-
-Imported tuning settings remain active without automatic preset replacement. Portable CPU affinity applies to the whole server process tree on Linux. Imports of another KV variant reuse verified file identities during the plugin session; changed files are checked again.
-
-The bundled runtime is unchanged. NVFP4 describes model weights here; this release does not add NVFP4 or FP8 KV. Stock Flash-Next serving uses MTP; DFlash2 remains CLI-only in the tested engine. Model weights stay in their original folders.
+Includes the Cores kept free setting, Off reasoning support, and Medium defaults for Qwen profiles. Preserves the 0.8.0 managed runtime migration and native DeepSeek effort choices. Model files and saved settings remain owned by the user’s DSH home.
