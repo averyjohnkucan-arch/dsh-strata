@@ -6,6 +6,7 @@ import { ProfileEditor } from "./ProfileEditor.jsx";
 import { Download } from "./Download.jsx";
 import { ModelList } from "./ModelList.jsx";
 import { Operations } from "./Operations.jsx";
+import { CpuSettings } from "./CpuSettings.jsx";
 import { ConfigImport } from "./ConfigImport.jsx";
 import css from "./styles.css";
 
@@ -109,6 +110,7 @@ function StrataCard() {
         <p>Connecting to Strata…</p>
       ) : (
         <>
+          <CpuSettings budget={state.cpuBudget} busy={busy} run={run} />
           {primary ? (
             <>
               <div className="strata-toolbar">

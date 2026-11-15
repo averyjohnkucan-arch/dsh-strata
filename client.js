@@ -36,7 +36,7 @@ __export(main_exports, {
   inject: () => inject
 });
 module.exports = __toCommonJS(main_exports);
-var import_react8 = __toESM(require("react"), 1);
+var import_react9 = __toESM(require("react"), 1);
 
 // lib/http.js
 var actionPath = "/api/dsh-strata";
@@ -693,13 +693,64 @@ function Operations({ jobs, run, history = false }) {
   return /* @__PURE__ */ import_react6.default.createElement("section", { "aria-label": history ? "Activity history" : "Current operation" }, history && !visible.length && /* @__PURE__ */ import_react6.default.createElement("p", { className: "strata-empty" }, "No recent activity."), visible.map((job) => /* @__PURE__ */ import_react6.default.createElement("div", { className: "strata-job", key: job.id }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "strata-list-heading" }, /* @__PURE__ */ import_react6.default.createElement("strong", null, job.kind === "Tune models" && job.metrics?.phase === "preparing" ? "Preparing model" : job.kind === "Tune models" && job.metrics?.phase === "waiting" ? "Waiting for GPU" : job.kind), /* @__PURE__ */ import_react6.default.createElement("small", null, job.status)), /* @__PURE__ */ import_react6.default.createElement("p", { role: job.status === "failed" ? "alert" : "status" }, job.progress), job.metrics && !["preparing", "waiting"].includes(job.metrics.phase) && /* @__PURE__ */ import_react6.default.createElement("div", { className: "strata-tuning-speeds" }, /* @__PURE__ */ import_react6.default.createElement("small", null, job.metrics.tuner === "deepseek41" ? "DeepSeek native tuner \xB7 latest measurement" : "Latest completed measurement"), /* @__PURE__ */ import_react6.default.createElement("dl", { "aria-label": "Tuning token rates" }, job.metrics.tuner !== "deepseek41" && /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("dt", null, "Prefill"), /* @__PURE__ */ import_react6.default.createElement("dd", null, rate(job.metrics.prefillTokS, job.status))), /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("dt", null, "Decode"), /* @__PURE__ */ import_react6.default.createElement("dd", null, rate(job.metrics.decodeTokS, job.status))))), job.kind === "Export config" && job.status === "complete" && /* @__PURE__ */ import_react6.default.createElement("button", { type: "button", onClick: () => downloadConfig(job.result) }, "Download config JSON"), ["queued", "running"].includes(job.status) && /* @__PURE__ */ import_react6.default.createElement("button", { type: "button", onClick: () => run("cancel", { id: job.id }) }, "Cancel"), job.kind === "Install Strata" && ["failed", "cancelled"].includes(job.status) && /* @__PURE__ */ import_react6.default.createElement("button", { type: "button", onClick: () => run("install") }, "Retry installation"), history && job.log && /* @__PURE__ */ import_react6.default.createElement("details", null, /* @__PURE__ */ import_react6.default.createElement("summary", null, "View log"), /* @__PURE__ */ import_react6.default.createElement("pre", null, job.log)))));
 }
 
-// client/ConfigImport.jsx
+// client/CpuSettings.jsx
 var import_react7 = __toESM(require("react"), 1);
-function ConfigImport({ busy, run, imported }) {
-  const [config, setConfig] = (0, import_react7.useState)(null);
-  const [path, setPath] = (0, import_react7.useState)("");
+function CpuSettings({ budget, busy, run }) {
+  const [value, setValue] = (0, import_react7.useState)(budget?.coresKeptFree ?? 0);
   const [error, setError] = (0, import_react7.useState)("");
-  return /* @__PURE__ */ import_react7.default.createElement("section", { className: "strata-panel", "aria-label": "Import model config" }, /* @__PURE__ */ import_react7.default.createElement("h4", null, "Import model config"), /* @__PURE__ */ import_react7.default.createElement("p", null, "Choose an exported JSON config and the folder containing your model files. Subfolders are searched by exact size, then MD5. Files can have different names."), /* @__PURE__ */ import_react7.default.createElement("label", null, "Model config JSON", /* @__PURE__ */ import_react7.default.createElement(
+  (0, import_react7.useEffect)(
+    () => setValue(budget?.coresKeptFree ?? 0),
+    [budget?.coresKeptFree]
+  );
+  if (!budget) return null;
+  return /* @__PURE__ */ import_react7.default.createElement(
+    "form",
+    {
+      className: "strata-panel",
+      "aria-label": "Strata CPU limit",
+      onSubmit: async (event) => {
+        event.preventDefault();
+        setError("");
+        try {
+          await run("cpu-settings", { coresKeptFree: Number(value) });
+        } catch (error2) {
+          setError(error2.message);
+        }
+      }
+    },
+    /* @__PURE__ */ import_react7.default.createElement("label", null, "Cores kept free", /* @__PURE__ */ import_react7.default.createElement(
+      "input",
+      {
+        type: "number",
+        min: "0",
+        max: budget.available - 1,
+        step: "1",
+        required: true,
+        value,
+        disabled: busy,
+        onChange: (event) => setValue(event.target.value)
+      }
+    )),
+    /* @__PURE__ */ import_react7.default.createElement("p", null, "Strata may use ", budget.limit, " of ", budget.available, " available logical CPU cores. Applies to all Strata models and tuning on their next start."),
+    /* @__PURE__ */ import_react7.default.createElement(
+      "button",
+      {
+        type: "submit",
+        disabled: busy || value === "" || Number(value) === budget.coresKeptFree
+      },
+      "Save CPU limit"
+    ),
+    error && /* @__PURE__ */ import_react7.default.createElement("p", { role: "alert" }, error)
+  );
+}
+
+// client/ConfigImport.jsx
+var import_react8 = __toESM(require("react"), 1);
+function ConfigImport({ busy, run, imported }) {
+  const [config, setConfig] = (0, import_react8.useState)(null);
+  const [path, setPath] = (0, import_react8.useState)("");
+  const [error, setError] = (0, import_react8.useState)("");
+  return /* @__PURE__ */ import_react8.default.createElement("section", { className: "strata-panel", "aria-label": "Import model config" }, /* @__PURE__ */ import_react8.default.createElement("h4", null, "Import model config"), /* @__PURE__ */ import_react8.default.createElement("p", null, "Choose an exported JSON config and the folder containing your model files. Subfolders are searched by exact size, then MD5. Files can have different names."), /* @__PURE__ */ import_react8.default.createElement("label", null, "Model config JSON", /* @__PURE__ */ import_react8.default.createElement(
     "input",
     {
       type: "file",
@@ -719,14 +770,14 @@ function ConfigImport({ busy, run, imported }) {
         }
       }
     }
-  )), config && /* @__PURE__ */ import_react7.default.createElement("p", null, config.name, " \xB7 ", config.files?.length || 0, " files to locate"), /* @__PURE__ */ import_react7.default.createElement("label", null, "Search folder", /* @__PURE__ */ import_react7.default.createElement(
+  )), config && /* @__PURE__ */ import_react8.default.createElement("p", null, config.name, " \xB7 ", config.files?.length || 0, " files to locate"), /* @__PURE__ */ import_react8.default.createElement("label", null, "Search folder", /* @__PURE__ */ import_react8.default.createElement(
     "input",
     {
       value: path,
       placeholder: "/path/to/models",
       onChange: (event) => setPath(event.target.value)
     }
-  )), error && /* @__PURE__ */ import_react7.default.createElement("p", { role: "alert" }, error), /* @__PURE__ */ import_react7.default.createElement(
+  )), error && /* @__PURE__ */ import_react8.default.createElement("p", { role: "alert" }, error), /* @__PURE__ */ import_react8.default.createElement(
     "button",
     {
       type: "button",
@@ -749,10 +800,10 @@ var styles_default = '.strata-card {\n  margin-top: 20px;\n  padding: 18px;\n  b
 
 // client/main.jsx
 function StrataCard() {
-  const [state, setState] = (0, import_react8.useState)(null), [error, setError] = (0, import_react8.useState)(""), [connectionError, setConnectionError] = (0, import_react8.useState)(""), [view, setView] = (0, import_react8.useState)("models"), [selected, setSelected] = (0, import_react8.useState)([]), [pending, setPending] = (0, import_react8.useState)(false), [importJob, setImportJob] = (0, import_react8.useState)("");
-  const content = (0, import_react8.useRef)(null);
-  const refresh = (0, import_react8.useCallback)(async () => setState(await request("state")), []);
-  (0, import_react8.useEffect)(() => {
+  const [state, setState] = (0, import_react9.useState)(null), [error, setError] = (0, import_react9.useState)(""), [connectionError, setConnectionError] = (0, import_react9.useState)(""), [view, setView] = (0, import_react9.useState)("models"), [selected, setSelected] = (0, import_react9.useState)([]), [pending, setPending] = (0, import_react9.useState)(false), [importJob, setImportJob] = (0, import_react9.useState)("");
+  const content = (0, import_react9.useRef)(null);
+  const refresh = (0, import_react9.useCallback)(async () => setState(await request("state")), []);
+  (0, import_react9.useEffect)(() => {
     let live = true;
     const update = () => request("state").then((value) => {
       if (live) {
@@ -769,14 +820,14 @@ function StrataCard() {
       clearInterval(timer);
     };
   }, []);
-  (0, import_react8.useEffect)(() => {
+  (0, import_react9.useEffect)(() => {
     const job = state?.jobs.find((job2) => job2.id === importJob);
     if (job?.status === "complete") {
       setImportJob("");
       setView(job.result.ids?.[0] || "files");
     }
   }, [state, importJob]);
-  (0, import_react8.useEffect)(() => {
+  (0, import_react9.useEffect)(() => {
     if (view !== "models") {
       content.current?.focus({ preventScroll: true });
       content.current?.scrollIntoView({ block: "nearest" });
@@ -802,7 +853,7 @@ function StrataCard() {
   const profile = state?.profiles.find((profile2) => profile2.id === view);
   const primary = ["models", "files", "activity"].includes(view);
   const missing = state?.inventory?.models.filter((model) => model.status !== "complete").length || 0;
-  return /* @__PURE__ */ import_react8.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react8.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react8.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "strata-version" }, "0.7.1")), /* @__PURE__ */ import_react8.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider", state?.sharedScheduler ? " \xB7 Shared GPU scheduler" : " \xB7 Independent GPU queue")), /* @__PURE__ */ import_react8.default.createElement(
+  return /* @__PURE__ */ import_react9.default.createElement("section", { className: "strata-card", "aria-label": "Strata" }, /* @__PURE__ */ import_react9.default.createElement("style", null, styles_default), /* @__PURE__ */ import_react9.default.createElement("header", { className: "strata-header" }, /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("h3", null, "Strata ", /* @__PURE__ */ import_react9.default.createElement("span", { className: "strata-version" }, "0.7.1")), /* @__PURE__ */ import_react9.default.createElement("small", null, state?.settings.bundledVersion ? "Included runtime" : "Local model provider", state?.sharedScheduler ? " \xB7 Shared GPU scheduler" : " \xB7 Independent GPU queue")), /* @__PURE__ */ import_react9.default.createElement(
     "button",
     {
       type: "button",
@@ -811,11 +862,11 @@ function StrataCard() {
       onClick: () => act("purge-cache")
     },
     "Purge all cache"
-  )), (error || connectionError) && /* @__PURE__ */ import_react8.default.createElement("p", { role: "alert" }, error || connectionError), !state ? /* @__PURE__ */ import_react8.default.createElement("p", null, "Connecting to Strata\u2026") : /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, primary ? /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, /* @__PURE__ */ import_react8.default.createElement("div", { className: "strata-toolbar" }, /* @__PURE__ */ import_react8.default.createElement("nav", { "aria-label": "Strata views" }, [
+  )), (error || connectionError) && /* @__PURE__ */ import_react9.default.createElement("p", { role: "alert" }, error || connectionError), !state ? /* @__PURE__ */ import_react9.default.createElement("p", null, "Connecting to Strata\u2026") : /* @__PURE__ */ import_react9.default.createElement(import_react9.default.Fragment, null, /* @__PURE__ */ import_react9.default.createElement(CpuSettings, { budget: state.cpuBudget, busy, run }), primary ? /* @__PURE__ */ import_react9.default.createElement(import_react9.default.Fragment, null, /* @__PURE__ */ import_react9.default.createElement("div", { className: "strata-toolbar" }, /* @__PURE__ */ import_react9.default.createElement("nav", { "aria-label": "Strata views" }, [
     ["models", "Models"],
     ["files", "Files"],
     ["activity", "Activity"]
-  ].map(([id, name]) => /* @__PURE__ */ import_react8.default.createElement(
+  ].map(([id, name]) => /* @__PURE__ */ import_react9.default.createElement(
     "button",
     {
       key: id,
@@ -824,7 +875,7 @@ function StrataCard() {
       onClick: () => setView(id)
     },
     name,
-    id === "files" && missing > 0 && /* @__PURE__ */ import_react8.default.createElement(
+    id === "files" && missing > 0 && /* @__PURE__ */ import_react9.default.createElement(
       "span",
       {
         className: "strata-count",
@@ -832,7 +883,7 @@ function StrataCard() {
       },
       missing
     )
-  ))), /* @__PURE__ */ import_react8.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react8.default.createElement(
+  ))), /* @__PURE__ */ import_react9.default.createElement("div", { className: "strata-actions" }, /* @__PURE__ */ import_react9.default.createElement(
     "button",
     {
       type: "button",
@@ -840,7 +891,7 @@ function StrataCard() {
       onClick: () => setView("config")
     },
     "Import config"
-  ), /* @__PURE__ */ import_react8.default.createElement(
+  ), /* @__PURE__ */ import_react9.default.createElement(
     "button",
     {
       type: "button",
@@ -848,7 +899,7 @@ function StrataCard() {
       onClick: () => setView("download")
     },
     "Download"
-  ), /* @__PURE__ */ import_react8.default.createElement(
+  ), /* @__PURE__ */ import_react9.default.createElement(
     "button",
     {
       type: "button",
@@ -857,7 +908,7 @@ function StrataCard() {
       onClick: () => setView("scan")
     },
     "Import files"
-  )))) : /* @__PURE__ */ import_react8.default.createElement(
+  )))) : /* @__PURE__ */ import_react9.default.createElement(
     "button",
     {
       type: "button",
@@ -865,7 +916,7 @@ function StrataCard() {
       onClick: () => setView("models")
     },
     "\u2190 Back to models"
-  ), /* @__PURE__ */ import_react8.default.createElement("div", { ref: content, tabIndex: -1, className: "strata-content" }, view === "models" && /* @__PURE__ */ import_react8.default.createElement(
+  ), /* @__PURE__ */ import_react9.default.createElement("div", { ref: content, tabIndex: -1, className: "strata-content" }, view === "models" && /* @__PURE__ */ import_react9.default.createElement(
     ModelList,
     {
       profiles: state.profiles,
@@ -873,7 +924,7 @@ function StrataCard() {
       open: setView,
       run: act
     }
-  ), view === "files" && /* @__PURE__ */ import_react8.default.createElement(
+  ), view === "files" && /* @__PURE__ */ import_react9.default.createElement(
     Inventory,
     {
       inventory: state.inventory,
@@ -886,7 +937,7 @@ function StrataCard() {
         setView("models");
       }
     }
-  ), view === "activity" && /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, /* @__PURE__ */ import_react8.default.createElement(Operations, { jobs: state.jobs, run: act, history: true }), state.cache?.notice && /* @__PURE__ */ import_react8.default.createElement("p", { className: "strata-notice", role: "status" }, state.cache.notice)), view === "scan" && /* @__PURE__ */ import_react8.default.createElement(
+  ), view === "activity" && /* @__PURE__ */ import_react9.default.createElement(import_react9.default.Fragment, null, /* @__PURE__ */ import_react9.default.createElement(Operations, { jobs: state.jobs, run: act, history: true }), state.cache?.notice && /* @__PURE__ */ import_react9.default.createElement("p", { className: "strata-notice", role: "status" }, state.cache.notice)), view === "scan" && /* @__PURE__ */ import_react9.default.createElement(
     FilePicker,
     {
       initialPath: state.inventory?.root,
@@ -898,7 +949,7 @@ function StrataCard() {
         setView("models");
       }
     }
-  ), view === "download" && /* @__PURE__ */ import_react8.default.createElement(Download, { busy, run: act, close: () => setView("models") }), view === "config" && /* @__PURE__ */ import_react8.default.createElement(
+  ), view === "download" && /* @__PURE__ */ import_react9.default.createElement(Download, { busy, run: act, close: () => setView("models") }), view === "config" && /* @__PURE__ */ import_react9.default.createElement(
     ConfigImport,
     {
       busy,
@@ -908,7 +959,7 @@ function StrataCard() {
         setView("models");
       }
     }
-  ), profile && /* @__PURE__ */ import_react8.default.createElement(
+  ), profile && /* @__PURE__ */ import_react9.default.createElement(
     ProfileEditor,
     {
       key: profile.id,
@@ -921,7 +972,7 @@ function StrataCard() {
       run: act,
       close: () => setView("models")
     }
-  )), view !== "activity" && /* @__PURE__ */ import_react8.default.createElement(Operations, { jobs: state.jobs, run: act }), /* @__PURE__ */ import_react8.default.createElement("footer", { className: "strata-footer" }, /* @__PURE__ */ import_react8.default.createElement("span", null, "16 GiB cache / model"), /* @__PURE__ */ import_react8.default.createElement("span", { title: "Least recently used checkpoints are removed first; files survive restarts" }, "Survives restarts"))));
+  )), view !== "activity" && /* @__PURE__ */ import_react9.default.createElement(Operations, { jobs: state.jobs, run: act }), /* @__PURE__ */ import_react9.default.createElement("footer", { className: "strata-footer" }, /* @__PURE__ */ import_react9.default.createElement("span", null, "16 GiB cache / model"), /* @__PURE__ */ import_react9.default.createElement("span", { title: "Least recently used checkpoints are removed first; files survive restarts" }, "Survives restarts"))));
 }
 var inject = ["slots"];
 function apply(ctx) {

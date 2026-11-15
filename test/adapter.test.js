@@ -87,7 +87,7 @@ test("DSH adapter streams text and usage, preserves the prompt, and releases GPU
   assert.equal(releases, 1);
   assert.deepEqual(
     call.model.reasoning.efforts.map((x) => x.name),
-    ["Low", "Medium", "High", "Uncensored"],
+    ["Off", "Low", "Medium", "High", "Uncensored"],
   );
   const conversation = [
     { role: "user", content: [{ type: "text", text: "Say OK" }] },
@@ -104,6 +104,7 @@ test("DSH adapter streams text and usage, preserves the prompt, and releases GPU
   const original = structuredClone(conversation);
   const modePrompts = new Map();
   for (const [choice, wire, projection] of [
+    ["off", "none", false],
     ["low", "low", false],
     ["medium", "medium", false],
     ["high", "xhigh", false],
@@ -126,12 +127,16 @@ test("DSH adapter streams text and usage, preserves the prompt, and releases GPU
       captured.messages.filter((m) => m.role === "system"),
     );
     assert.ok(system.includes("Original instructions"));
-    assert.ok(
-      system.includes(
-        `projection is ${projection ? "enabled" : "disabled"} for this request`,
-      ),
+    assert.equal(
+      system.includes("projection is enabled for this request"),
+      projection,
     );
-    assert.equal((system.match(/Strata runtime:/g) || []).length, 1);
+    assert.equal(
+      (system.match(/Strata runtime:/g) || []).length,
+      projection ? 1 : 0,
+    );
+    if (choice === "off")
+      assert.equal(captured.chat_template_kwargs.enable_thinking, false);
     if (modePrompts.has(projection))
       assert.equal(system, modePrompts.get(projection));
     else modePrompts.set(projection, system);

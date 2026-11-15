@@ -40,7 +40,7 @@ test("four labels use distinct native effort/projection combinations only on com
   const p = createProfile(model, 8190);
   assert.deepEqual(
     thinkingInfo(p).efforts.map((x) => x.name),
-    ["Low", "Medium", "High", "Uncensored"],
+    ["Off", "Low", "Medium", "High", "Uncensored"],
   );
   assert.deepEqual(
     ["low", "medium", "high", "uncensored"].map((x) => thinkingPreset(p, x)),

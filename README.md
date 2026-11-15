@@ -144,3 +144,7 @@ Upstream Qwen supports shared-model parallel requests through `--parallel` or
 runtime alone does not enable simultaneous DSH generations. The upstream
 DeepSeek CLI still processes one request at a time and ignores `--parallel > 1`.
 See the [upstream release](https://github.com/Niko1221/Strata/releases/tag/v0.2.9).
+
+## CPU limit
+
+In Settings → Models → Strata, set **Cores kept free**. Reserving 2 of 24 available logical CPUs limits model servers, their helpers and tuning to 22 CPUs on their next start. The setting survives DSH restarts and runtime reinstalls. Zero preserves unrestricted behavior. Linux CPU affinity enforces the limit; narrower saved model affinity remains respected.
