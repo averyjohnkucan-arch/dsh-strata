@@ -30,7 +30,7 @@ Control-vector GGUFs appear under **Files → Components**, never as loadable mo
 
 ## Thinking presets
 
-The conversation selector offers **Low**, **Medium**, **High** and, for compatible original Flash-Next models, **Uncensored**. The native requests are `low`, `medium`, `xhigh`, and `xhigh` with the bundled experimental refusal-direction projection enabled. Ordinary choices explicitly disable projection. The vector loads once with the model; switching presets applies to the next request without a model reload. Each compatible request includes a current-mode runtime notice, so the assistant can distinguish the new setting from earlier replies. Changing projection also changes this prompt suffix; the prior conversation text remains available. Native KV state is separated by projection mode, and SSD checkpoint names are partitioned by it.
+The conversation selector defaults to **Medium** and offers **Low**, **Medium**, **Xhigh** and, for compatible original Flash-Next models, **Uncensored**. The native efforts are `low`, `medium`, `xhigh`, and `medium` with the bundled experimental refusal-direction projection enabled. Legacy High selections map to Xhigh. Ordinary choices explicitly disable projection. The vector loads once with the model; switching presets applies to the next request without reloading it. Medium and Uncensored add no system prompt or runtime notice. Native KV state is separated by projection mode, and SSD checkpoint names are partitioned by it.
 
 The projection came unchanged from upstream Strata, not from this plugin's author. It is a model-specific experiment, not a guarantee that every refusal disappears. Disabling it does not undo changes already baked into an abliterated model. See [projection provenance and behavior](docs/PROJECTION.md).
 
@@ -46,9 +46,9 @@ Disk checkpoints work with **FP16/FP16, Q8/Q8 and Q4/Q4** (and legacy Q8/Q4). Th
 
 ## Runtime and storage
 
-Regular Strata is based on **v0.2.7 / Control 0.1.52 / engine 0.1.52**. Both bundled engines include a small native checkpoint fix for models without an allocated MTP draft. Their source patches, upstream revisions, licenses and binary checksums are under `vendor/`. The Gyro L fork also includes its recorded TQP CPU changes. These engines were built for the tested sm_120 machine; HIP, SYCL, Windows and other CUDA architectures were not tested.
+Retained legacy engines are based on **v0.2.7 / Control 0.1.52 / engine 0.1.52**; the current regular download channel is pinned below. Both legacy bundled engines include a small native checkpoint fix for models without an allocated MTP draft. Their source patches, upstream revisions, licenses and binary checksums are under `vendor/`. The Gyro L fork also includes its recorded TQP CPU changes. These engines were built for the tested sm_120 machine; HIP, SYCL, Windows and other CUDA architectures were not tested.
 
-Local preparation supports `qwen4exp` Flash-Next, compatible `qwen35moe` GGUFs and native-catalog `deepseek41` shard sets. Complete shards establish presence, not numerical compatibility. Engram/PLE, MTP, DFlash and vision components appear in the inventory. DFlash is inventoried only. Native Qwen loads embedded MTP, but Strata's native engine drafts only for greedy requests without sampling or penalties. It uses the native engine's FP32 KV format; external native Qwen donors are unsupported. Existing explicit Flash-Next MTP configurations remain readable.
+Local preparation supports `qwen4exp` Flash-Next, compatible `qwen35moe` GGUFs and native-catalog `deepseek41` shard sets. Complete shards establish presence, not numerical compatibility. Engram/PLE, MTP, DFlash and vision components appear in the inventory. Automatic DFlash sidecar import remains inventory-only. The latest native Flash-Next DFlash2 path can be selected with explicit engine arguments as described below. Native Qwen loads embedded MTP, but Strata's native engine drafts only for greedy requests without sampling or penalties. It uses the native engine's FP32 KV format; external native Qwen donors are unsupported. Existing explicit Flash-Next MTP configurations remain readable.
 
 Flash-Next requires a separate prepared Strata MTP directory containing `experts.bin`, `dense.bin`, `dense.txt`, and `draft_vocab.bin`. Import attaches an unambiguous discovered runtime; otherwise Strata fetches its approximately 5 GB draft from the original checkpoint and prepares a shared runtime on first use. To avoid that download, choose an existing prepared MTP folder in the model's settings. Raw MTP GGUFs from other converters are not automatically interchangeable with this runtime format. Changing MTP invalidates the previous model-specific tuning result.
 
@@ -125,11 +125,11 @@ Tuning reports **Preparing model**, then **Waiting for GPU**, then measurement. 
 
 ### Upstream runtime update (0.8.0)
 
-This plugin pins Strata **0.2.9**, Control **0.1.55**, and the upstream Linux
-CUDA 13 engine **0.1.55**. Installation downloads checksum-verified upstream
+This plugin pins Strata **0.2.13**, Control **0.1.59.1**, and the upstream Linux
+CUDA 13 engine **0.1.59**. Installation downloads checksum-verified upstream
 archives into a new versioned runtime directory. Existing runtimes remain intact;
 previous benchmark receipts still refer to their original engine. The separately
-pinned Gyro L fork remains available and is not described as an upstream 0.1.55
+pinned Gyro L fork remains available and is not described as an upstream 0.1.59
 binary. A fresh installation acquires that legacy fork from this repository's
 verified 0.5.0 release package; an update can reuse its verified local copy.
 
@@ -148,3 +148,9 @@ See the [upstream release](https://github.com/Niko1221/Strata/releases/tag/v0.2.
 ## CPU limit
 
 In Settings → Models → Strata, set **Cores kept free**. Reserving 2 of 24 available logical CPUs limits model servers, their helpers and tuning to 22 CPUs on their next start. The setting survives DSH restarts and runtime reinstalls. Zero preserves unrestricted behavior. Linux CPU affinity enforces the limit; narrower saved model affinity remains respected.
+
+### Native DFlash2 source-preview validation
+
+The pinned 0.1.59 Flash-Next server was tested with a matching prepared DFlash2 pack using `--draft dflash2 --draft-model /absolute/path/flash-dflash2.pack --draft-fallback none --spec 8 --draft-cap 8 --draft-conf 0.55`. The engine log confirmed the DFlash2 block drafter and no MTP fallback. This is a native-arguments configuration, not automatic sidecar attachment through the model importer. Draft packs are architecture-specific. `--pcie-frac` remains accepted by this Strata release even though it is hidden from its help output; explicit saved settings are preserved. Basalt has a separate CLI and rejects that flag.
+
+A short serving smoke establishes compatibility, not the sustained throughput of a saved profile. New 8K-code and 80%-full text/chat/story tuning is in progress; final paired profile names and workload receipts follow those complete measurements.
