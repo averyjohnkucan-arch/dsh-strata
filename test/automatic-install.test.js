@@ -4,6 +4,7 @@ import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { StrataService } from "../lib/service.js";
+import { runtimeVersion } from "../lib/bundled.js";
 
 test("source activation installs once, and a failed download can be retried", async (t) => {
   const root = await mkdtemp(join(tmpdir(), "strata-auto-install-"));
@@ -28,7 +29,7 @@ test("source activation installs once, and a failed download can be retried", as
       await writeFile(
         join(runtime, "manifest.json"),
         JSON.stringify({
-          runtimeVersion: "0.8.0",
+          runtimeVersion,
           pluginVersion: "0.8.0",
           platform: process.platform,
           arch: process.arch,
