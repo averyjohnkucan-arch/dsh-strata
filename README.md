@@ -154,3 +154,7 @@ In Settings → Models → Strata, set **Cores kept free**. Reserving 2 of 24 av
 The pinned 0.1.59 Flash-Next server was tested with a matching prepared DFlash2 pack using `--draft dflash2 --draft-model /absolute/path/flash-dflash2.pack --draft-fallback none --spec 8 --draft-cap 8 --draft-conf 0.55`. The engine log confirmed the DFlash2 block drafter and no MTP fallback. This is a native-arguments configuration, not automatic sidecar attachment through the model importer. Draft packs are architecture-specific. `--pcie-frac` remains accepted by this Strata release even though it is hidden from its help output; explicit saved settings are preserved. Basalt has a separate CLI and rejects that flag.
 
 A short serving smoke establishes compatibility, not the sustained throughput of a saved profile. New 8K-code and 80%-full text/chat/story tuning is in progress; final paired profile names and workload receipts follow those complete measurements.
+
+## Local tuning profile controls
+
+Saved `samplingPresets.instruct` and `samplingPresets.thinking` supply defaults for the matching reasoning mode without adding prompt text. Explicit request sampling values take precedence. Profiles without these fields keep their native defaults. Local `cpuSet` settings preserve measured Linux CPU affinity for the server process tree. The accompanying10%/90% benchmark profiles are separate local exports; these changes do not claim a universal throughput maximum.

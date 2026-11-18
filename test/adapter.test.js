@@ -47,6 +47,10 @@ test("DSH adapter streams text and usage, preserves the prompt, and releases GPU
     },
     server.address().port,
   );
+  profile.samplingPresets = {
+    instruct: { top_p: 0.8, presence_penalty: 1.5 },
+    thinking: { top_p: 0.95, presence_penalty: 0 },
+  };
   const service = {
     profiles: [profile],
     profile: () => profile,
@@ -122,6 +126,8 @@ test("DSH adapter streams text and usage, preserves the prompt, and releases GPU
     }))
       void chunk;
     assert.equal(captured.reasoning_effort, wire);
+    assert.equal(captured.top_p, choice === "off" ? 0.8 : 0.95);
+    assert.equal(captured.presence_penalty, choice === "off" ? 1.5 : 0);
     assert.equal(captured.experimental_speed_projection, projection);
     const system = JSON.stringify(
       captured.messages.filter((m) => m.role === "system"),
