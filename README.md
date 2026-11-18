@@ -1,10 +1,12 @@
 # Strata for DSH
 
+**RC4 installation trial.** Start DeepSeek Harness with `npx @deepseek-ai/dsh@0.2.2-rc.4 web` (Node.js 24.9 or newer). In **Plugins → Add plugin**, paste the full path to this RC4 trial’s `.tgz` file and enable the plugin.
+
 A local model provider for DeepSeek Harness. **0.6.0** identifies built-in MTP and supports selecting or automatically preparing a separate Flash-Next MTP runtime. It automatically downloads the verified Strata runtime after a GitHub installation. It separates Models, Files and Activity into focused views. Each model has a Settings view that opens in place, with Load beside it. Strata supports native SSD checkpoints and a top-level Purge all cache button.
 
 ## Install
 
-Requires DSH **0.2.1-rc.2** Web profile, Node **22.19+**, and `pnpm` on DSH's PATH. The included engines target **Linux x86-64, NVIDIA Blackwell sm_120, CUDA 13, glibc 2.43 or newer**. Other GPUs and operating systems have not been validated with this bundle.
+Requires DSH **0.2.2-rc.4** Web profile, Node **24.9+**, and `pnpm` on DSH's PATH. The included engines target **Linux x86-64, NVIDIA Blackwell sm_120, CUDA 13, glibc 2.43 or newer**. Other GPUs and operating systems have not been validated with this bundle.
 
 Download the `.tgz` from [Releases](https://github.com/averyjohnkucan-arch/dsh-strata/releases), then enter its absolute local path in **Plugins → Add plugin**. Enable it and open **Settings → Models**. Strata, portable Python, CUDA libraries, the GGUF helper and the Gyro L fork are included. Model weights are separate. No compiler or separate Strata installation is needed.
 

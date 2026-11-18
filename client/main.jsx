@@ -1,3 +1,4 @@
+import { EngineHeader } from "./EngineHeader.jsx";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { request } from "./api.js";
 import { Inventory } from "./Inventory.jsx";
@@ -78,22 +79,19 @@ function StrataCard() {
     state?.inventory?.models.filter((model) => model.status !== "complete")
       .length || 0;
   return (
-    <section className="strata-card" aria-label="Strata">
+    <section className="strata-card dsh-engine-panel" aria-label="Strata">
       <style>{css}</style>
-      <header className="strata-header">
-        <div>
-          <h3>
-            Strata <span className="strata-version">0.7.1</span>
-          </h3>
-          <small>
-            {state?.settings.bundledVersion
-              ? "Included runtime"
-              : "Local model provider"}
-            {state?.sharedScheduler
-              ? " · Shared GPU scheduler"
-              : " · Independent GPU queue"}
-          </small>
-        </div>
+      <EngineHeader
+        name="Strata"
+        status={
+          (state?.settings.bundledVersion
+            ? "Included runtime"
+            : "Local model provider") +
+          (state?.sharedScheduler
+            ? " · Shared GPU scheduler"
+            : " · Independent GPU queue")
+        }
+      >
         <button
           type="button"
           className="strata-text-button"
@@ -102,7 +100,7 @@ function StrataCard() {
         >
           Purge all cache
         </button>
-      </header>
+      </EngineHeader>
       {(error || connectionError) && (
         <p role="alert">{error || connectionError}</p>
       )}
